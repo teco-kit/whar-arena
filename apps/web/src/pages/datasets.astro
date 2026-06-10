@@ -1,0 +1,759 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import datasetDetailsData from "../generated/dataset-details.json";
+import paperBenchmark from "../generated/paper-benchmark.json";
+import paperLinks from "../generated/paper-links.json";
+
+type Dataset = {
+  id: string;
+  name: string;
+};
+
+type DatasetDetail = {
+  year: number;
+  citations: number;
+  subjects: number;
+  activities: number;
+  settings: string;
+  deviceTypes: string;
+  sensorModalities: string;
+  channels: number;
+};
+
+type PaperLink = {
+  title: string;
+  url: string;
+};
+
+const datasetDetails = datasetDetailsData as {
+  source: {
+    table: string;
+    note: string;
+    abbreviations: string;
+  };
+  datasets: Record<string, DatasetDetail>;
+};
+const benchmark = paperBenchmark as { catalog: { datasets: Dataset[] } };
+const links = paperLinks as { datasets: Record<string, PaperLink> };
+const datasetNames = new Map(benchmark.catalog.datasets.map((dataset) => [dataset.id, dataset.name]));
+const datasets = Object.entries(datasetDetails.datasets)
+  .map(([id, detail]) => ({
+    id,
+    name: datasetNames.get(id) ?? id,
+    detail,
+    paperLink: links.datasets[id] ?? null,
+  }))
+  .sort((a, b) => b.detail.citations - a.detail.citations);
+const snapshotDate = "May 1, 2026";
+const snapshotDateTime = "2026-05-01";
+---
+
+<BaseLayout title="WHAR Arena | Datasets">
+  <main class="page-shell">
+    <section class="catalog-intro" aria-labelledby="datasets-heading">
+      <h1 id="datasets-heading">Datasets</h1>
+      <p>{datasetDetails.source.table} dataset catalog for the static WHAR Arena paper snapshot.</p>
+    </section>
+    <section class="catalog-meta" aria-label="Datasets summary">
+      <dl class="benchmark-meta">
+        <div>
+          <span class="meta-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M7 3v3M17 3v3M4.5 9h15M6.5 5h11a2 2 0 0 1 2 2v10.5a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" />
+            </svg>
+          </span>
+          <dt>Snapshot</dt>
+          <dd><time datetime={snapshotDateTime}>{snapshotDate}</time></dd>
+        </div>
+        <div>
+          <span class="meta-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M5 6c0-1.7 3.1-3 7-3s7 1.3 7 3-3.1 3-7 3-7-1.3-7-3ZM5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6" />
+            </svg>
+          </span>
+          <dt>Datasets</dt>
+          <dd>{datasets.length}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="arena-panel">
+      <div class="panel-header">
+        <h2>{datasets.length} Datasets</h2>
+      </div>
+      <div class="table-wrap">
+        <table class="catalog-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Year</th>
+              <th>Citations</th>
+              <th>Subjects</th>
+              <th>Activities</th>
+              <th>Channels</th>
+              <th>Settings</th>
+              <th>Device Types</th>
+              <th>Sensor Modalities</th>
+              <th>Paper</th>
+            </tr>
+          </thead>
+          <tbody>
+            {datasets.map((dataset) => (
+              <tr
+                data-dataset-row
+                data-dataset-name={dataset.name}
+                data-dataset-paper-title={dataset.paperLink?.title ?? dataset.name}
+                data-dataset-paper-url={dataset.paperLink?.url ?? ""}
+                data-dataset-year={dataset.detail.year}
+                data-dataset-citations={dataset.detail.citations.toLocaleString("en-US")}
+                data-dataset-subjects={dataset.detail.subjects.toLocaleString("en-US")}
+                data-dataset-activities={dataset.detail.activities.toLocaleString("en-US")}
+                data-dataset-channels={dataset.detail.channels.toLocaleString("en-US")}
+                data-dataset-settings={dataset.detail.settings}
+                data-dataset-device-types={dataset.detail.deviceTypes}
+                data-dataset-sensor-modalities={dataset.detail.sensorModalities}
+                tabindex="0"
+                aria-label={`Open dataset details: ${dataset.name}`}
+              >
+                <td class="name-cell">
+                  <strong>{dataset.name}</strong>
+                  <span>{dataset.id}</span>
+                </td>
+                <td>
+                  <strong class="metric">{dataset.detail.year}</strong>
+                </td>
+                <td>
+                  <strong class="metric">
+                    {dataset.detail.citations.toLocaleString("en-US")}
+                  </strong>
+                </td>
+                <td>
+                  <strong class="metric">{dataset.detail.subjects}</strong>
+                </td>
+                <td>
+                  <strong class="metric">{dataset.detail.activities}</strong>
+                </td>
+                <td>
+                  <strong class="metric">{dataset.detail.channels}</strong>
+                </td>
+                <td>{dataset.detail.settings}</td>
+                <td>{dataset.detail.deviceTypes}</td>
+                <td>{dataset.detail.sensorModalities}</td>
+                <td>
+                  {dataset.paperLink ? (
+                    <a
+                      class="paper-link"
+                      href={dataset.paperLink.url}
+                      title={`Open paper: ${dataset.paperLink.title}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Open PDF
+                    </a>
+                  ) : (
+                    <span class="muted">pending</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="note-panel">
+      <strong>{datasetDetails.source.table} abbreviations</strong>
+      <p>{datasetDetails.source.abbreviations}</p>
+    </section>
+
+    <div class="modal-layer" data-dataset-modal hidden role="presentation">
+      <button
+        class="modal-backdrop"
+        type="button"
+        aria-label="Close dataset details"
+        data-dataset-modal-close
+      ></button>
+      <section
+        class="dataset-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="dataset-detail-title"
+        tabindex="-1"
+      >
+        <div class="dataset-modal-header">
+          <div>
+            <h2 id="dataset-detail-title" data-dataset-modal-title></h2>
+            <p data-dataset-modal-subtitle></p>
+          </div>
+          <button
+            class="modal-close"
+            type="button"
+            aria-label="Close dataset details"
+            data-dataset-modal-close
+          ></button>
+        </div>
+
+        <div class="detail-metrics dataset-detail-metrics" aria-label="Dataset statistics">
+          <div>
+            <span>Year</span>
+            <strong data-dataset-modal-field="year"></strong>
+          </div>
+          <div>
+            <span>Citations</span>
+            <strong data-dataset-modal-field="citations"></strong>
+          </div>
+          <div>
+            <span>Subjects</span>
+            <strong data-dataset-modal-field="subjects"></strong>
+          </div>
+          <div>
+            <span>Activities</span>
+            <strong data-dataset-modal-field="activities"></strong>
+          </div>
+          <div>
+            <span>Channels</span>
+            <strong data-dataset-modal-field="channels"></strong>
+          </div>
+          <div>
+            <span>Settings</span>
+            <strong data-dataset-modal-field="settings"></strong>
+          </div>
+          <div>
+            <span>Device Types</span>
+            <strong data-dataset-modal-field="deviceTypes"></strong>
+          </div>
+          <div>
+            <span>Sensor Modalities</span>
+            <strong data-dataset-modal-field="sensorModalities"></strong>
+          </div>
+        </div>
+
+        <div class="detail-info-card">
+          <strong>{datasetDetails.source.table} stats</strong>
+          <p>
+            {datasetDetails.source.note} Abbreviations follow the paper:
+            {datasetDetails.source.abbreviations}
+          </p>
+        </div>
+
+        <div class="detail-section">
+          <h3>Paper</h3>
+          <a
+            class="paper-link detail-paper-link"
+            href=""
+            target="_blank"
+            rel="noreferrer"
+            data-dataset-modal-paper
+          >
+            Open dataset paper PDF
+          </a>
+          <p class="muted" data-dataset-modal-paper-pending hidden>Paper link pending</p>
+        </div>
+      </section>
+    </div>
+  </main>
+</BaseLayout>
+
+<script is:inline>
+  const datasetModal = document.querySelector("[data-dataset-modal]");
+  const datasetDialog = datasetModal?.querySelector(".dataset-modal");
+  const datasetModalTitle = datasetModal?.querySelector("[data-dataset-modal-title]");
+  const datasetModalSubtitle = datasetModal?.querySelector("[data-dataset-modal-subtitle]");
+  const datasetModalPaper = datasetModal?.querySelector("[data-dataset-modal-paper]");
+  const datasetModalPaperPending = datasetModal?.querySelector(
+    "[data-dataset-modal-paper-pending]",
+  );
+  let lastDatasetTrigger = null;
+
+  const modalFields = {
+    year: datasetModal?.querySelector('[data-dataset-modal-field="year"]'),
+    citations: datasetModal?.querySelector('[data-dataset-modal-field="citations"]'),
+    subjects: datasetModal?.querySelector('[data-dataset-modal-field="subjects"]'),
+    activities: datasetModal?.querySelector('[data-dataset-modal-field="activities"]'),
+    channels: datasetModal?.querySelector('[data-dataset-modal-field="channels"]'),
+    settings: datasetModal?.querySelector('[data-dataset-modal-field="settings"]'),
+    deviceTypes: datasetModal?.querySelector('[data-dataset-modal-field="deviceTypes"]'),
+    sensorModalities: datasetModal?.querySelector(
+      '[data-dataset-modal-field="sensorModalities"]',
+    ),
+  };
+
+  function setModalText(element, value) {
+    if (element) element.textContent = value || "-";
+  }
+
+  function openDatasetModal(row) {
+    if (!datasetModal || !datasetDialog) return;
+
+    lastDatasetTrigger = row;
+    setModalText(datasetModalTitle, row.dataset.datasetName);
+    setModalText(datasetModalSubtitle, row.dataset.datasetPaperTitle);
+    setModalText(modalFields.year, row.dataset.datasetYear);
+    setModalText(modalFields.citations, row.dataset.datasetCitations);
+    setModalText(modalFields.subjects, row.dataset.datasetSubjects);
+    setModalText(modalFields.activities, row.dataset.datasetActivities);
+    setModalText(modalFields.channels, row.dataset.datasetChannels);
+    setModalText(modalFields.settings, row.dataset.datasetSettings);
+    setModalText(modalFields.deviceTypes, row.dataset.datasetDeviceTypes);
+    setModalText(modalFields.sensorModalities, row.dataset.datasetSensorModalities);
+
+    const paperUrl = row.dataset.datasetPaperUrl || "";
+    if (datasetModalPaper && datasetModalPaperPending) {
+      datasetModalPaper.hidden = !paperUrl;
+      datasetModalPaperPending.hidden = Boolean(paperUrl);
+      datasetModalPaper.setAttribute("href", paperUrl);
+      datasetModalPaper.setAttribute(
+        "title",
+        `Open paper: ${row.dataset.datasetPaperTitle || row.dataset.datasetName || "Dataset"}`,
+      );
+    }
+
+    datasetModal.hidden = false;
+    datasetDialog.focus();
+  }
+
+  function closeDatasetModal() {
+    if (!datasetModal) return;
+
+    datasetModal.hidden = true;
+    if (lastDatasetTrigger) lastDatasetTrigger.focus();
+    lastDatasetTrigger = null;
+  }
+
+  document.querySelectorAll("[data-dataset-row]").forEach((row) => {
+    row.addEventListener("click", (event) => {
+      if (event.target.closest("a, button")) return;
+      openDatasetModal(row);
+    });
+
+    row.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      openDatasetModal(row);
+    });
+  });
+
+  document.querySelectorAll("[data-dataset-modal-close]").forEach((button) => {
+    button.addEventListener("click", closeDatasetModal);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && datasetModal && !datasetModal.hidden) {
+      closeDatasetModal();
+    }
+  });
+</script>
+
+<style>
+  .page-shell {
+    width: min(1440px, calc(100vw - 24px));
+    margin: 0 auto;
+    padding: 12px 0 40px;
+  }
+
+  .catalog-intro {
+    display: grid;
+    gap: 15px;
+    padding: 0;
+  }
+
+  .catalog-intro h1 {
+    margin: 0;
+    font-family: var(--display-serif);
+    font-size: 1.55rem;
+    font-weight: 500;
+    line-height: 1.05;
+  }
+
+  .catalog-intro p {
+    margin: 0;
+    color: var(--muted-strong);
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  .catalog-meta {
+    padding: 6px 0 14px;
+  }
+
+  .benchmark-meta {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 22px;
+    margin: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .benchmark-meta div {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    gap: 6px;
+  }
+
+  .meta-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 17px;
+    height: 17px;
+    color: var(--ink);
+  }
+
+  .meta-icon svg {
+    display: block;
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+  }
+
+  .benchmark-meta dt {
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .benchmark-meta dd {
+    margin: 0;
+    color: var(--ink);
+    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.82rem;
+    font-weight: 500;
+  }
+
+  .arena-panel,
+  .note-panel {
+    min-width: 0;
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    background: var(--panel);
+    overflow: hidden;
+    box-shadow: none;
+  }
+
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+    min-height: 65px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel-soft);
+  }
+
+  .panel-header h2 {
+    margin: 0;
+    font-family: var(--display-serif);
+    font-size: 1.3rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.05;
+  }
+
+  .table-wrap {
+    min-width: 0;
+    overflow: auto;
+  }
+
+  .catalog-table {
+    width: 100%;
+    min-width: 1180px;
+    border-collapse: collapse;
+  }
+
+  .catalog-table th,
+  .catalog-table td {
+    border-bottom: 1px solid var(--line);
+    padding: 12px 16px;
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  .catalog-table th {
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .catalog-table tbody tr:hover td {
+    background: hsl(33 31% 94% / 0.72);
+  }
+
+  .catalog-table tbody tr[data-dataset-row] {
+    cursor: pointer;
+  }
+
+  .catalog-table tbody tr[data-dataset-row]:focus-visible {
+    outline: 2px solid hsl(24 6% 17% / 0.28);
+    outline-offset: -2px;
+  }
+
+  .name-cell strong,
+  .name-cell span {
+    display: block;
+  }
+
+  .name-cell strong {
+    color: var(--ink);
+    font-size: 0.94rem;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .name-cell span {
+    margin-top: 4px;
+    color: var(--muted);
+    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.72rem;
+  }
+
+  .metric {
+    color: var(--ink);
+    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.88rem;
+    font-weight: 500;
+  }
+
+  .paper-link {
+    color: var(--ink);
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: hsl(24 6% 17% / 0.3);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .paper-link:hover,
+  .paper-link:focus-visible {
+    text-decoration-color: currentColor;
+  }
+
+  .muted {
+    color: var(--muted);
+  }
+
+  .note-panel {
+    margin-top: 14px;
+    padding: 14px 16px;
+  }
+
+  .note-panel strong {
+    color: var(--ink);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .note-panel p {
+    margin: 6px 0 0;
+    color: var(--muted-strong);
+    font-size: 0.86rem;
+    line-height: 1.4;
+  }
+
+  .modal-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+  }
+
+  .modal-layer[hidden] {
+    display: none;
+  }
+
+  .modal-backdrop {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    background: hsl(24 6% 17% / 0.28);
+    cursor: pointer;
+  }
+
+  .dataset-modal {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 16px;
+    width: min(760px, calc(100vw - 32px));
+    max-height: min(760px, calc(100vh - 32px));
+    overflow: auto;
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    background: var(--panel);
+    box-shadow: none;
+    padding: 18px;
+  }
+
+  .dataset-modal:focus {
+    outline: none;
+  }
+
+  .dataset-modal-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    align-items: start;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .dataset-modal-header h2 {
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--display-serif);
+    font-size: 1.3rem;
+    font-weight: 500;
+    line-height: 1.05;
+  }
+
+  .dataset-modal-header p {
+    margin: 6px 0 0;
+    color: var(--muted-strong);
+    font-size: 0.88rem;
+    line-height: 1.35;
+  }
+
+  .modal-close {
+    position: relative;
+    display: grid;
+    width: 32px;
+    height: 32px;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid lightgray;
+    border-radius: 999px;
+    background: var(--panel-soft);
+    color: var(--ink);
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .modal-close::before,
+  .modal-close::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 13px;
+    height: 1.5px;
+    border-radius: 999px;
+    background: currentColor;
+    content: "";
+    transform-origin: center;
+  }
+
+  .modal-close::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  .modal-close::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
+
+  .modal-close:hover,
+  .modal-close:focus-visible {
+    background: var(--panel);
+    outline: 2px solid hsl(24 6% 17% / 0.2);
+    outline-offset: 2px;
+  }
+
+  .detail-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .dataset-detail-metrics {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .detail-metrics div,
+  .detail-info-card {
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    background: var(--panel-soft);
+    padding: 12px;
+  }
+
+  .detail-metrics span {
+    display: block;
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .detail-metrics strong {
+    display: block;
+    margin-top: 8px;
+    color: var(--ink);
+    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.98rem;
+    font-weight: 600;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+
+  .detail-info-card strong,
+  .detail-section h3 {
+    color: var(--ink);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .detail-info-card p {
+    margin: 6px 0 0;
+    color: var(--muted-strong);
+    font-size: 0.86rem;
+    line-height: 1.4;
+  }
+
+  .detail-section {
+    display: grid;
+    gap: 10px;
+  }
+
+  .detail-section h3 {
+    margin: 0;
+  }
+
+  .detail-paper-link {
+    width: fit-content;
+    color: var(--ink);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  @media (max-width: 760px) {
+    .panel-header {
+      display: grid;
+      align-items: start;
+    }
+
+    .modal-layer {
+      padding: 12px;
+    }
+
+    .dataset-modal {
+      width: calc(100vw - 24px);
+      max-height: calc(100vh - 24px);
+      padding: 14px;
+    }
+
+    .detail-metrics {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

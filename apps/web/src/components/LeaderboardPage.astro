@@ -1,0 +1,170 @@
+---
+import Leaderboard from "./Leaderboard.svelte";
+import catalog from "../generated/catalog.json";
+import deploymentTradeoffs from "../generated/deployment-tradeoffs.json";
+import paperBenchmark from "../generated/paper-benchmark.json";
+import results from "../generated/results.json";
+
+const usePaperStaticBenchmark = true;
+const liveBenchmark = { catalog, results };
+const benchmark = usePaperStaticBenchmark ? paperBenchmark : liveBenchmark;
+const leaderboardDate = "May 1, 2026";
+const leaderboardDateTime = "2026-05-01";
+const trainingRuns = 4760;
+const modelCount = benchmark.catalog.models.length;
+const datasetCount = benchmark.catalog.datasets.length;
+const metaRowStyle =
+  "display:flex;flex-wrap:nowrap;gap:22px;margin:0;overflow-x:auto;white-space:nowrap;";
+const metaItemStyle = "display:inline-flex;align-items:center;flex:0 0 auto;gap:6px;";
+const metaIconStyle =
+  "display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;color:var(--ink);";
+const metaIconSvgStyle =
+  "display:block;width:17px;height:17px;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.8;";
+const headingStyle =
+  "margin:0;font-family:var(--display-serif);font-size:1.55rem;font-weight:500;line-height:1.05;";
+---
+
+<main class="page-shell">
+  <section class="catalog-intro" aria-labelledby="leaderboard-heading">
+    <h1 id="leaderboard-heading" style={headingStyle}>Leaderboard</h1>
+    <p>
+      WHAR Arena benchmarks wearable human activity recognition models across
+      standardized datasets, ranking predictive performance together with
+      deployment-oriented efficiency.
+    </p>
+  </section>
+  <section class="leaderboard-intro" aria-label="Leaderboard summary">
+    <dl class="benchmark-meta" style={metaRowStyle}>
+      <div style={metaItemStyle}>
+        <span class="meta-icon" style={metaIconStyle} aria-hidden="true">
+          <svg viewBox="0 0 24 24" style={metaIconSvgStyle}>
+            <path d="M7 3v3M17 3v3M4.5 9h15M6.5 5h11a2 2 0 0 1 2 2v10.5a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" />
+          </svg>
+        </span>
+        <dt>Snapshot</dt>
+        <dd><time datetime={leaderboardDateTime}>{leaderboardDate}</time></dd>
+      </div>
+      <div style={metaItemStyle}>
+        <span class="meta-icon" style={metaIconStyle} aria-hidden="true">
+          <svg viewBox="0 0 24 24" style={metaIconSvgStyle}>
+            <path d="M7 7a3 3 0 1 1 3 3H7V7ZM14 14h3a3 3 0 1 1-3 3v-3ZM10 10l4 4M14 10l-4 4" />
+          </svg>
+        </span>
+        <dt>Training Runs</dt>
+        <dd>{trainingRuns.toLocaleString("en-US")}</dd>
+      </div>
+      <div style={metaItemStyle}>
+        <span class="meta-icon" style={metaIconStyle} aria-hidden="true">
+          <svg viewBox="0 0 24 24" style={metaIconSvgStyle}>
+            <path d="M9 8h6v6H9zM9 3v3M15 3v3M9 16v3M15 16v3M3 9h3M3 13h3M18 9h3M18 13h3M11 10h2v2h-2z" />
+          </svg>
+        </span>
+        <dt>Models</dt>
+        <dd>{modelCount}</dd>
+      </div>
+      <div style={metaItemStyle}>
+        <span class="meta-icon" style={metaIconStyle} aria-hidden="true">
+          <svg viewBox="0 0 24 24" style={metaIconSvgStyle}>
+            <path d="M5 6c0-1.7 3.1-3 7-3s7 1.3 7 3-3.1 3-7 3-7-1.3-7-3ZM5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6" />
+          </svg>
+        </span>
+        <dt>Datasets</dt>
+        <dd>{datasetCount}</dd>
+      </div>
+    </dl>
+  </section>
+  <Leaderboard
+    client:load
+    catalog={benchmark.catalog}
+    deploymentTradeoffs={deploymentTradeoffs}
+    results={benchmark.results}
+  />
+</main>
+
+<style>
+  .page-shell {
+    width: min(1440px, calc(100vw - 24px));
+    margin: 0 auto;
+    padding: 12px 0 40px;
+  }
+
+  .catalog-intro,
+  .leaderboard-intro {
+    display: grid;
+    gap: 15px;
+  }
+
+  .catalog-intro {
+    padding: 0;
+  }
+
+  .catalog-intro h1 {
+    margin: 0;
+    font-family: var(--display-serif);
+    font-size: 1.55rem;
+    font-weight: 500;
+    line-height: 1.05;
+  }
+
+  .catalog-intro p {
+    margin: 0;
+    color: var(--muted-strong);
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  .leaderboard-intro {
+    padding: 6px 0 14px;
+  }
+
+  .benchmark-meta {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 22px;
+    margin: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .benchmark-meta div {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    gap: 6px;
+  }
+
+  .meta-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 17px;
+    height: 17px;
+    color: var(--ink);
+  }
+
+  .meta-icon svg {
+    display: block;
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+  }
+
+  .benchmark-meta dt {
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .benchmark-meta dd {
+    margin: 0;
+    color: var(--ink);
+    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.82rem;
+    font-weight: 500;
+  }
+</style>

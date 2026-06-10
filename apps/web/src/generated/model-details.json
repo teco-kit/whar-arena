@@ -1,0 +1,203 @@
+{
+  "source": {
+    "table": "Table 2",
+    "input_assumption": "C=6 sensors, K=5 classes, T=128 timesteps",
+    "note": "Trainable parameter counts and approximate forward-pass FLOPs are copied from Table 2 of the WHAR Arena paper."
+  },
+  "models": {
+    "attend_discriminate": {
+      "params": "371.5k",
+      "flops": "171.5M",
+      "institutions": ["The University of Adelaide"],
+      "authors": [
+        {"name": "Alireza Abedin", "affiliation": "School of Computer Science, The University of Adelaide"},
+        {"name": "Mahsa Ehsanpour", "affiliation": "School of Computer Science, The University of Adelaide"},
+        {"name": "Qinfeng Shi", "affiliation": "School of Computer Science, The University of Adelaide"},
+        {"name": "Hamid Rezatofighi", "affiliation": "School of Computer Science, The University of Adelaide"},
+        {"name": "Damith C. Ranasinghe", "affiliation": "School of Computer Science, The University of Adelaide"}
+      ]
+    },
+    "cnn_har": {
+      "params": "63.2k",
+      "flops": "11.3M",
+      "institutions": ["A*STAR"],
+      "authors": [
+        {"name": "Jian Bo Yang", "affiliation": "Data Analytics Department, A*STAR, Singapore"},
+        {"name": "Minh Nhut Nguyen", "affiliation": "Data Analytics Department, A*STAR, Singapore"},
+        {"name": "Phyo Phyo San", "affiliation": "Data Analytics Department, A*STAR, Singapore"},
+        {"name": "Xiao Li Li", "affiliation": "Data Analytics Department, A*STAR, Singapore"},
+        {"name": "Shonali Krishnaswamy", "affiliation": "Data Analytics Department, A*STAR, Singapore"}
+      ]
+    },
+    "dana": {
+      "params": "457.9k",
+      "flops": "102.4M",
+      "institutions": ["Imperial College London", "Queen Mary University of London"],
+      "authors": [
+        {"name": "Mohammad Malekzadeh", "affiliation": "Imperial College London, UK"},
+        {"name": "Richard Clegg", "affiliation": "Queen Mary University of London, UK"},
+        {"name": "Andrea Cavallaro", "affiliation": "Queen Mary University of London, UK"},
+        {"name": "Hamed Haddadi", "affiliation": "Imperial College London, UK"}
+      ]
+    },
+    "deepconv_lstm": {
+      "params": "457.9k",
+      "flops": "176.2M",
+      "institutions": ["University of Sussex"],
+      "authors": [
+        {"name": "Francisco Javier Ordonez", "affiliation": "Wearable Technologies, Sensor Technology Research Centre, University of Sussex, Brighton BN1 9RH, UK"},
+        {"name": "Daniel Roggen", "affiliation": "Wearable Technologies, Sensor Technology Research Centre, University of Sussex, Brighton BN1 9RH, UK"}
+      ]
+    },
+    "deepconv_lstm_attention": {
+      "params": "474.6k",
+      "flops": "179.9M",
+      "institutions": ["Georgia Institute of Technology"],
+      "authors": [
+        {"name": "Vishvak S Murahari", "affiliation": "Georgia Institute of Technology, Atlanta, USA"},
+        {"name": "Thomas Ploetz", "affiliation": "Georgia Institute of Technology, Atlanta, USA"}
+      ]
+    },
+    "deepconv_lstm_iswc": {
+      "params": "399.9k",
+      "flops": "207.6M",
+      "institutions": ["University of Siegen"],
+      "authors": [
+        {"name": "Marius Bock", "affiliation": "University of Siegen, Germany"},
+        {"name": "Alexander Hoelzemann", "affiliation": "University of Siegen, Germany"},
+        {"name": "Michael Moeller", "affiliation": "University of Siegen, Germany"},
+        {"name": "Kristof Van Laerhoven", "affiliation": "University of Siegen, Germany"}
+      ]
+    },
+    "dynamic_whar": {
+      "params": "1.12M",
+      "flops": "14.7M",
+      "institutions": ["Zhejiang University"],
+      "authors": [
+        {"name": "Shenghuan Miao", "affiliation": "College of Computer Science and Technology, Zhejiang University, Hangzhou, China"},
+        {"name": "Ling Chen", "affiliation": "College of Computer Science and Technology, Zhejiang University, Hangzhou, China"},
+        {"name": "Rong Hu", "affiliation": "College of Computer Science and Technology, Zhejiang University, Hangzhou, China"},
+        {"name": "Yingsong Luo", "affiliation": "School of Software Technology, Zhejiang University, Hangzhou, China"}
+      ]
+    },
+    "knn": {
+      "params": null,
+      "flops": null,
+      "institutions": ["Karlsruhe Institute of Technology"],
+      "authors": [
+        {"name": "Maximilian Burzer", "affiliation": "Karlsruhe Institute of Technology, Germany"},
+        {"name": "Tobias King", "affiliation": "Karlsruhe Institute of Technology, Germany"},
+        {"name": "Till Riedel", "affiliation": "Karlsruhe Institute of Technology, Germany"},
+        {"name": "Michael Beigl", "affiliation": "Karlsruhe Institute of Technology, Germany"},
+        {"name": "Tobias Röddiger", "affiliation": "Karlsruhe Institute of Technology, Germany"}
+      ]
+    },
+    "lstms_ensemble": {
+      "params": "798.0k",
+      "flops": "205.6M",
+      "institutions": ["Newcastle University", "Georgia Institute of Technology"],
+      "authors": [
+        {"name": "Yu Guan", "affiliation": "Open Lab, Newcastle University, Newcastle upon Tyne, UK"},
+        {"name": "Thomas Ploetz", "affiliation": "School of Interactive Computing, Georgia Institute of Technology, Atlanta, USA"}
+      ]
+    },
+    "mlp_har": {
+      "params": "157.7k",
+      "flops": "2.3M",
+      "institutions": ["Karlsruhe Institute of Technology"],
+      "authors": [
+        {"name": "Yexu Zhou", "affiliation": "Karlsruhe Institute of Technology, Karlsruhe, Germany"},
+        {"name": "Tobias King", "affiliation": "Karlsruhe Institute of Technology, Karlsruhe, Germany"},
+        {"name": "Haibin Zhao", "affiliation": "Karlsruhe Institute of Technology, Karlsruhe, Germany"},
+        {"name": "Yiran Huang", "affiliation": "Karlsruhe Institute of Technology, Karlsruhe, Germany"},
+        {"name": "Till Riedel", "affiliation": "Karlsruhe Institute of Technology, Karlsruhe, Germany"},
+        {"name": "Michael Beigl", "affiliation": "Karlsruhe Institute of Technology, Karlsruhe, Germany"}
+      ]
+    },
+    "mlp_mixer": {
+      "params": "605.9k",
+      "flops": "87.5M",
+      "institutions": ["University of Southampton"],
+      "authors": [
+        {"name": "Kamsiriochukwu Ojiako", "affiliation": "School of Electronics and Computer Science, University of Southampton, Southampton SO17 1BJ, UK"},
+        {"name": "Katayoun Farrahi", "affiliation": "School of Electronics and Computer Science, University of Southampton, Southampton SO17 1BJ, UK"}
+      ]
+    },
+    "random_forest": {
+      "params": null,
+      "flops": null,
+      "institutions": ["Karlsruhe Institute of Technology"],
+      "authors": [
+        {"name": "Maximilian Burzer", "affiliation": "Karlsruhe Institute of Technology, Germany"},
+        {"name": "Tobias King", "affiliation": "Karlsruhe Institute of Technology, Germany"},
+        {"name": "Till Riedel", "affiliation": "Karlsruhe Institute of Technology, Germany"},
+        {"name": "Michael Beigl", "affiliation": "Karlsruhe Institute of Technology, Germany"},
+        {"name": "Tobias Röddiger", "affiliation": "Karlsruhe Institute of Technology, Germany"}
+      ]
+    },
+    "sa_har": {
+      "params": "401.3k",
+      "flops": "121.5M",
+      "institutions": ["University of Dhaka", "Independent University Bangladesh"],
+      "authors": [
+        {"name": "Saif Mahmud", "affiliation": "University of Dhaka, Bangladesh"},
+        {"name": "M Tanjid Hasan Tonmoy", "affiliation": "University of Dhaka, Bangladesh"},
+        {"name": "Kishor Kumar Bhaumik", "affiliation": "Independent University Bangladesh"},
+        {"name": "A K M Mahbubur Rahman", "affiliation": "Independent University Bangladesh"},
+        {"name": "M Ashraful Amin", "affiliation": "Independent University Bangladesh"},
+        {"name": "Mohammad Shoyaib", "affiliation": "University of Dhaka, Bangladesh"},
+        {"name": "Muhammad Asif Hossain Khan", "affiliation": "University of Dhaka, Bangladesh"},
+        {"name": "Amin Ahsan Ali", "affiliation": "Independent University Bangladesh"}
+      ]
+    },
+    "svm": {
+      "params": null,
+      "flops": null,
+      "institutions": ["Karlsruhe Institute of Technology"],
+      "authors": [
+        {"name": "Maximilian Burzer", "affiliation": "Karlsruhe Institute of Technology, Germany"},
+        {"name": "Tobias King", "affiliation": "Karlsruhe Institute of Technology, Germany"},
+        {"name": "Till Riedel", "affiliation": "Karlsruhe Institute of Technology, Germany"},
+        {"name": "Michael Beigl", "affiliation": "Karlsruhe Institute of Technology, Germany"},
+        {"name": "Tobias Röddiger", "affiliation": "Karlsruhe Institute of Technology, Germany"}
+      ]
+    },
+    "tinierhar": {
+      "params": "7.3k",
+      "flops": "892.3k",
+      "institutions": ["German Research Center for Artificial Intelligence (DFKI)"],
+      "authors": [
+        {"name": "Sizhen Bian", "affiliation": "German Research Center for Artificial Intelligence (DFKI), Kaiserslautern, Germany"},
+        {"name": "Mengxi Liu", "affiliation": "German Research Center for Artificial Intelligence (DFKI), Kaiserslautern, Germany"},
+        {"name": "Vitor Fortes Rey", "affiliation": "German Research Center for Artificial Intelligence (DFKI), Kaiserslautern, Germany"},
+        {"name": "Daniel Geissler", "affiliation": "German Research Center for Artificial Intelligence (DFKI), Kaiserslautern, Germany"},
+        {"name": "Paul Lukowicz", "affiliation": "German Research Center for Artificial Intelligence (DFKI), Kaiserslautern, Germany"}
+      ]
+    },
+    "tinyhar": {
+      "params": "159.1k",
+      "flops": "9.3M",
+      "institutions": ["Karlsruhe Institute of Technology"],
+      "authors": [
+        {"name": "Yexu Zhou", "affiliation": "TECO / Pervasive Computing Systems, Karlsruhe Institute of Technology, Germany"},
+        {"name": "Haibin Zhao", "affiliation": "TECO / Pervasive Computing Systems, Karlsruhe Institute of Technology, Germany"},
+        {"name": "Yiran Huang", "affiliation": "TECO / Pervasive Computing Systems, Karlsruhe Institute of Technology, Germany"},
+        {"name": "Till Riedel", "affiliation": "TECO / Pervasive Computing Systems, Karlsruhe Institute of Technology, Germany"},
+        {"name": "Michael Hefenbrock", "affiliation": "TECO / Pervasive Computing Systems, Karlsruhe Institute of Technology, Germany"},
+        {"name": "Michael Beigl", "affiliation": "TECO / Pervasive Computing Systems, Karlsruhe Institute of Technology, Germany"}
+      ]
+    },
+    "triple_cross_domain_attention": {
+      "params": "278.3k",
+      "flops": "17.9M",
+      "institutions": ["Nanjing Normal University", "Southeast University"],
+      "authors": [
+        {"name": "Yin Tang", "affiliation": "School of Electrical and Automation Engineering, Nanjing Normal University, Nanjing, China"},
+        {"name": "Lei Zhang", "affiliation": "School of Electrical and Automation Engineering, Nanjing Normal University, Nanjing, China"},
+        {"name": "Qi Teng", "affiliation": "School of Electrical and Automation Engineering, Nanjing Normal University, Nanjing, China"},
+        {"name": "Fuhong Min", "affiliation": "School of Electrical and Automation Engineering, Nanjing Normal University, Nanjing, China"},
+        {"name": "Aiguo Song", "affiliation": "School of Instrument Science and Engineering, Southeast University, Nanjing, China"}
+      ]
+    }
+  }
+}

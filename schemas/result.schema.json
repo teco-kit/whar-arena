@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "WHAR Arena Result",
+  "type": "object",
+  "required": [
+    "protocol_id",
+    "protocol_hash",
+    "model_id",
+    "dataset_id",
+    "split_id",
+    "fingerprint",
+    "status",
+    "metrics"
+  ],
+  "properties": {
+    "protocol_id": { "type": "string" },
+    "protocol_hash": { "type": "string" },
+    "model_id": { "type": "string" },
+    "dataset_id": { "type": "string" },
+    "split_id": { "type": "string" },
+    "fingerprint": { "type": "string" },
+    "status": { "type": "string", "enum": ["complete", "failed", "skipped", "example"] },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": { "type": ["number", "null"] }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

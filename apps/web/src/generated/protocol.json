@@ -1,0 +1,88 @@
+{
+  "data": {
+    "dataset_source": {
+      "package": "whar_datasets",
+      "symbol": "BENCHMARK_DATASET_IDS"
+    },
+    "description": "Paper-compatible WHAR Arena protocol using 10 subject groups.",
+    "id": "whar_arena_v1",
+    "metrics": {
+      "efficiency": [
+        "params",
+        "flops",
+        "exported_model_size_mb",
+        "latency_ms",
+        "peak_memory_mb"
+      ],
+      "predictive": [
+        "macro_f1",
+        "accuracy",
+        "balanced_accuracy"
+      ]
+    },
+    "model_source": {
+      "package": "whar_models",
+      "symbol": "list_models"
+    },
+    "name": "WHAR Arena v1",
+    "preprocessing": {
+      "fit_normalization_on": "train",
+      "normalization": "global_standardization"
+    },
+    "split": {
+      "k": 10,
+      "strategy": "k_subject_groups",
+      "validation_fraction": 0.2,
+      "validation_source": "train_subjects"
+    },
+    "training": {
+      "classical": {
+        "features": "tsfresh_minimal",
+        "models": {
+          "knn": {
+            "n_neighbors": 5,
+            "weights": "distance"
+          },
+          "random_forest": {
+            "criterion": "gini",
+            "max_depth": 8,
+            "min_samples_leaf": 10,
+            "n_estimators": 100
+          },
+          "svm": {
+            "C": 1.0,
+            "gamma": "scale",
+            "kernel": "rbf"
+          }
+        }
+      },
+      "deep": {
+        "batch_size": 64,
+        "early_stopping": {
+          "monitor": "val_macro_f1",
+          "patience": 10,
+          "restore_best": true
+        },
+        "framework": "torch",
+        "learning_rate": 0.001,
+        "loss": {
+          "class_weights": "train_frequency",
+          "type": "weighted_cross_entropy"
+        },
+        "max_epochs": 100,
+        "optimizer": "adamw",
+        "scheduler": "cosine_annealing",
+        "weight_decay": 0.0001
+      }
+    },
+    "window": {
+      "duration_seconds": 3,
+      "overlap": 0.5,
+      "sampling_rate": "native"
+    }
+  },
+  "hash": "e8739ef2c5b36c99",
+  "id": "whar_arena_v1",
+  "name": "WHAR Arena v1",
+  "split_count": 10
+}

@@ -1,0 +1,24 @@
+{
+  "dataset_id": "actrectut_gestures",
+  "fingerprint": "eaff03e4255322002f87dd2e53cd89cb0a3b228ef53cffd448a307736aade379",
+  "metrics": {
+    "accuracy": 0.5539568066596985,
+    "balanced_accuracy": 0.5976735904828148,
+    "macro_f1": 0.3970232903957367
+  },
+  "model_id": "deepconv_lstm_attention",
+  "protocol_hash": "e8739ef2c5b36c99",
+  "protocol_id": "whar_arena_v1",
+  "source": {
+    "best_epoch": 7,
+    "epochs_ran": 17,
+    "framework": "torch",
+    "kind": "local_training",
+    "split_identifier": "group_kfold_1",
+    "test_size": 417,
+    "train_size": 305,
+    "val_size": 76
+  },
+  "split_id": "split-01",
+  "status": "complete"
+}

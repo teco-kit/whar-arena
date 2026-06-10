@@ -1,0 +1,48 @@
+name: Benchmark Missing Runs
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: Optional model id filter
+        required: false
+      dataset:
+        description: Optional dataset id filter
+        required: false
+      limit:
+        description: Maximum missing runs to execute
+        required: false
+        default: "1"
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          path: whar-arena
+      - uses: actions/checkout@v5
+        with:
+          repository: teco-kit/whar-datasets
+          path: whar-datasets
+      - uses: actions/checkout@v5
+        with:
+          repository: teco-kit/whar-models
+          path: whar-models
+      - uses: astral-sh/setup-uv@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Show planned runs
+        working-directory: whar-arena
+        run: |
+          uv sync --all-extras
+          uv pip install -e ../whar-datasets -e ../whar-models
+          uv run whar-arena plan --only-missing \
+            ${MODEL:+--only-model "$MODEL"} \
+            ${DATASET:+--only-dataset "$DATASET"} \
+            --limit "$LIMIT"
+        env:
+          MODEL: ${{ inputs.model }}
+          DATASET: ${{ inputs.dataset }}
+          LIMIT: ${{ inputs.limit }}

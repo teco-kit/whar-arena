@@ -1,0 +1,1121 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import modelDetailsData from "../generated/model-details.json";
+import paperBenchmark from "../generated/paper-benchmark.json";
+import paperLinks from "../generated/paper-links.json";
+
+type Model = {
+  id: string;
+  name: string;
+  family: string;
+  framework: string;
+  paper?: string;
+};
+
+type ModelDetail = {
+  params: string | null;
+  flops: string | null;
+  institutions?: string[];
+};
+
+type PaperLink = {
+  title: string;
+  url: string;
+};
+
+const modelDetails = modelDetailsData as { models: Record<string, ModelDetail> };
+const benchmark = paperBenchmark as { catalog: { models: Model[] } };
+const links = paperLinks as { models: Record<string, PaperLink> };
+const familyPartsById: Record<string, string[]> = {
+  attn_cnn_dense: ["attn", "cnn", "dense"],
+  attn_cnn_dense_rnn: ["attn", "cnn", "dense", "rnn"],
+  classical_ml: ["fe"],
+  cnn: ["cnn"],
+  cnn_dense_graph: ["cnn", "dense", "graph"],
+  cnn_dense_rnn: ["cnn", "dense", "rnn"],
+  compact_neural: ["attn", "cnn", "dense", "rnn"],
+  dense: ["dense"],
+  dense_rnn: ["dense", "rnn"],
+  dense_spec: ["dense", "spec"],
+  fe: ["fe"],
+  neural: ["neural"],
+};
+const familyOrder = ["attn", "cnn", "dense", "rnn", "graph", "spec", "fe"];
+
+function getFamilyParts(family: string): string[] {
+  return familyPartsById[family] ?? family.split("_").filter(Boolean);
+}
+
+function formatFamily(family: string): string {
+  const labels: Record<string, string> = {
+    attn: "Attention",
+    cnn: "CNN",
+    dense: "Dense",
+    fe: "Features",
+    graph: "Graph",
+    neural: "Neural",
+    rnn: "RNN",
+    spec: "Spectral",
+  };
+  const parts = getFamilyParts(family);
+
+  if (labels[family]) return labels[family];
+  if (parts.length > 1) return parts.map(formatFamily).join(" ");
+  return family.replaceAll("_", " ");
+}
+
+const models = benchmark.catalog.models.map((model) => {
+  const detail = modelDetails.models[model.id] ?? { params: null, flops: null };
+
+  return {
+    ...model,
+    architecture: getFamilyParts(model.family).map(formatFamily),
+    architectureIds: getFamilyParts(model.family),
+    detail,
+    paramsValue: parseMetricValue(detail.params),
+    flopsValue: parseMetricValue(detail.flops),
+    institutionSummary: formatInstitutionSummary(detail.institutions ?? []),
+    paperLink: links.models[model.id] ?? null,
+  };
+});
+const architectureOptions = [...new Set(models.flatMap((model) => model.architectureIds))]
+  .sort((a, b) => {
+    const aIndex = familyOrder.indexOf(a);
+    const bIndex = familyOrder.indexOf(b);
+    const aRank = aIndex === -1 ? Number.POSITIVE_INFINITY : aIndex;
+    const bRank = bIndex === -1 ? Number.POSITIVE_INFINITY : bIndex;
+
+    if (aRank !== bRank) return aRank - bRank;
+    return formatFamily(a).localeCompare(formatFamily(b));
+  })
+  .map((id) => ({ id, name: formatFamily(id) }));
+const frameworkOptions = [...new Set(models.map((model) => model.framework))]
+  .sort()
+  .map((id) => ({ id, name: formatFramework(id) }));
+const paramsMax = roundMetricMax(models.map((model) => model.paramsValue));
+const flopsMax = roundMetricMax(models.map((model) => model.flopsValue));
+const snapshotDate = "May 1, 2026";
+const snapshotDateTime = "2026-05-01";
+
+function formatFramework(framework: string) {
+  const labels: Record<string, string> = {
+    sklearn: "scikit-learn",
+    torch: "PyTorch",
+  };
+
+  return labels[framework] ?? framework;
+}
+
+function formatInstitutionSummary(institutions: string[]) {
+  if (institutions.length === 0) return "Institution pending";
+  if (institutions.length > 3) return [...institutions.slice(0, 2), "et al."].join(", ");
+  return institutions.join(", ");
+}
+
+function parseMetricValue(value: string | null | undefined) {
+  if (!value) return null;
+
+  const match = value.trim().match(/^([\d.]+)\s*([kKmMbB])?$/);
+  if (!match) return null;
+
+  const amount = Number.parseFloat(match[1]);
+  const suffix = match[2]?.toLowerCase();
+  if (!Number.isFinite(amount)) return null;
+
+  if (suffix === "b") return amount * 1_000_000_000;
+  if (suffix === "m") return amount * 1_000_000;
+  if (suffix === "k") return amount * 1_000;
+  return amount;
+}
+
+function roundMetricMax(values: Array<number | null>) {
+  const max = Math.max(...values.filter((value): value is number => value !== null));
+  if (!Number.isFinite(max) || max <= 0) return 0;
+
+  const step = 10 ** Math.max(0, Math.floor(Math.log10(max)) - 1);
+  return Math.ceil(max / step) * step;
+}
+
+function formatCompactMetric(value: number) {
+  if (value >= 1_000_000_000) return `${formatScaledMetric(value / 1_000_000_000)}B`;
+  if (value >= 1_000_000) return `${formatScaledMetric(value / 1_000_000)}M`;
+  if (value >= 1_000) return `${formatScaledMetric(value / 1_000)}k`;
+  return value.toLocaleString("en-US");
+}
+
+function formatScaledMetric(value: number) {
+  return value.toFixed(value >= 10 || Number.isInteger(value) ? 0 : 1).replace(/\.0$/, "");
+}
+---
+
+<BaseLayout title="WHAR Arena | Models">
+  <main class="page-shell">
+    <section class="catalog-intro" aria-labelledby="models-heading">
+      <h1 id="models-heading">Models</h1>
+      <p>Model catalog for the static WHAR Arena paper snapshot.</p>
+    </section>
+    <section class="catalog-meta" aria-label="Models summary">
+      <dl class="benchmark-meta">
+        <div>
+          <span class="meta-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M7 3v3M17 3v3M4.5 9h15M6.5 5h11a2 2 0 0 1 2 2v10.5a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" />
+            </svg>
+          </span>
+          <dt>Snapshot</dt>
+          <dd><time datetime={snapshotDateTime}>{snapshotDate}</time></dd>
+        </div>
+        <div>
+          <span class="meta-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M9 8h6v6H9zM9 3v3M15 3v3M9 16v3M15 16v3M3 9h3M3 13h3M18 9h3M18 13h3M11 10h2v2h-2z" />
+            </svg>
+          </span>
+          <dt>Models</dt>
+          <dd>{models.length}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="arena-panel filter-panel">
+      <div class="panel-header">
+        <h2>Filters</h2>
+      </div>
+
+      <div class="filter-content">
+        <div class="model-filter">
+          <span class="filter-label">Architecture</span>
+          <details>
+            <summary aria-label="Architecture">
+              <span data-filter-summary="architecture">All architectures</span>
+              <span class="filter-count" data-filter-count="architecture">
+                {architectureOptions.length}/{architectureOptions.length}
+              </span>
+            </summary>
+            <div class="filter-menu">
+              <div class="filter-actions" aria-label="Architecture selection actions">
+                <button type="button" data-filter-action="all-architecture">All</button>
+                <button type="button" data-filter-action="none-architecture">None</button>
+              </div>
+              <div class="filter-options">
+                {architectureOptions.map((item) => (
+                  <div class="filter-option" data-filter-option="architecture">
+                    <input
+                      id={`model-architecture-filter-${item.id}`}
+                      type="checkbox"
+                      value={item.id}
+                      data-filter-kind="architecture"
+                      checked
+                    />
+                    <label
+                      class="filter-check"
+                      for={`model-architecture-filter-${item.id}`}
+                      aria-label={`Toggle ${item.name}`}
+                    ></label>
+                    <label
+                      class="filter-name-toggle"
+                      for={`model-architecture-filter-${item.id}`}
+                    >
+                      <span class="pill">{item.name}</span>
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <div class="model-filter">
+          <span class="filter-label">Framework</span>
+          <details>
+            <summary aria-label="Framework">
+              <span data-filter-summary="framework">All frameworks</span>
+              <span class="filter-count" data-filter-count="framework">
+                {frameworkOptions.length}/{frameworkOptions.length}
+              </span>
+            </summary>
+            <div class="filter-menu">
+              <div class="filter-actions" aria-label="Framework selection actions">
+                <button type="button" data-filter-action="all-framework">All</button>
+                <button type="button" data-filter-action="none-framework">None</button>
+              </div>
+              <div class="filter-options">
+                {frameworkOptions.map((item) => (
+                  <div class="filter-option" data-filter-option="framework">
+                    <input
+                      id={`model-framework-filter-${item.id}`}
+                      type="checkbox"
+                      value={item.id}
+                      data-filter-kind="framework"
+                      checked
+                    />
+                    <label
+                      class="filter-check"
+                      for={`model-framework-filter-${item.id}`}
+                      aria-label={`Toggle ${item.name}`}
+                    ></label>
+                    <label
+                      class="filter-name-toggle"
+                      for={`model-framework-filter-${item.id}`}
+                    >
+                      {item.name}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <div class="model-filter range-model-filter">
+          <span class="filter-label">Params</span>
+          <details>
+            <summary aria-label="Params">
+              <span data-range-summary="params">0 - {formatCompactMetric(paramsMax)}</span>
+              <span class="filter-count" data-range-count="params">range</span>
+            </summary>
+            <div class="filter-menu range-menu">
+              <div class="range-fields">
+                <label>
+                  <span>Min</span>
+                  <input
+                    id="model-params-min"
+                    type="number"
+                    min="0"
+                    max={paramsMax}
+                    step="1000"
+                    value="0"
+                    inputmode="numeric"
+                    data-range-kind="params"
+                    data-range-bound="min"
+                    data-range-default="0"
+                  />
+                </label>
+                <label>
+                  <span>Max</span>
+                  <input
+                    id="model-params-max"
+                    type="number"
+                    min="0"
+                    max={paramsMax}
+                    step="1000"
+                    value={paramsMax}
+                    inputmode="numeric"
+                    data-range-kind="params"
+                    data-range-bound="max"
+                    data-range-default={paramsMax}
+                  />
+                </label>
+              </div>
+              <button type="button" class="range-reset" data-range-reset="params">Reset</button>
+            </div>
+          </details>
+        </div>
+
+        <div class="model-filter range-model-filter">
+          <span class="filter-label">FLOPs</span>
+          <details>
+            <summary aria-label="FLOPs">
+              <span data-range-summary="flops">0 - {formatCompactMetric(flopsMax)}</span>
+              <span class="filter-count" data-range-count="flops">range</span>
+            </summary>
+            <div class="filter-menu range-menu">
+              <div class="range-fields">
+                <label>
+                  <span>Min</span>
+                  <input
+                    id="model-flops-min"
+                    type="number"
+                    min="0"
+                    max={flopsMax}
+                    step="100000"
+                    value="0"
+                    inputmode="numeric"
+                    data-range-kind="flops"
+                    data-range-bound="min"
+                    data-range-default="0"
+                  />
+                </label>
+                <label>
+                  <span>Max</span>
+                  <input
+                    id="model-flops-max"
+                    type="number"
+                    min="0"
+                    max={flopsMax}
+                    step="100000"
+                    value={flopsMax}
+                    inputmode="numeric"
+                    data-range-kind="flops"
+                    data-range-bound="max"
+                    data-range-default={flopsMax}
+                  />
+                </label>
+              </div>
+              <button type="button" class="range-reset" data-range-reset="flops">Reset</button>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="arena-panel">
+      <div class="panel-header">
+        <h2><span data-visible-model-count>{models.length}</span> Models</h2>
+      </div>
+      <div class="table-wrap">
+        <table class="catalog-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Architecture</th>
+              <th>Framework</th>
+              <th>Params</th>
+              <th>FLOPs</th>
+              <th>Paper</th>
+            </tr>
+          </thead>
+          <tbody>
+            {models.map((model) => (
+              <tr
+                data-model-row
+                data-architecture-parts={model.architectureIds.join(" ")}
+                data-framework={model.framework}
+                data-params-value={model.paramsValue ?? ""}
+                data-flops-value={model.flopsValue ?? ""}
+              >
+                <td class="name-cell">
+                  <strong>{model.name}</strong>
+                  <span>{model.institutionSummary}</span>
+                </td>
+                <td>
+                  <div class="pill-list" aria-label={`Architecture: ${model.architecture.join(" ")}`}>
+                    {model.architecture.map((part) => (
+                      <span class="pill">{part}</span>
+                    ))}
+                  </div>
+                </td>
+                <td>
+                  <span class="mono">{formatFramework(model.framework)}</span>
+                </td>
+                <td>
+                  <strong class="metric">{model.detail.params ?? "-"}</strong>
+                </td>
+                <td>
+                  <strong class="metric">{model.detail.flops ?? "-"}</strong>
+                </td>
+                <td>
+                  {model.paperLink ? (
+                    <a
+                      class="paper-link"
+                      href={model.paperLink.url}
+                      title={`Open paper: ${model.paperLink.title}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Open PDF
+                    </a>
+                  ) : (
+                    <span class="muted">pending</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script is:inline>
+  const modelRows = Array.from(document.querySelectorAll("[data-model-row]"));
+  const visibleModelCount = document.querySelector("[data-visible-model-count]");
+  const groups = {
+    architecture: {
+      allLabel: "All architectures",
+      noneLabel: "No architectures",
+      plural: "architectures",
+      inputs: Array.from(document.querySelectorAll('[data-filter-kind="architecture"]')),
+      summary: document.querySelector('[data-filter-summary="architecture"]'),
+      count: document.querySelector('[data-filter-count="architecture"]'),
+    },
+    framework: {
+      allLabel: "All frameworks",
+      noneLabel: "No frameworks",
+      plural: "frameworks",
+      inputs: Array.from(document.querySelectorAll('[data-filter-kind="framework"]')),
+      summary: document.querySelector('[data-filter-summary="framework"]'),
+      count: document.querySelector('[data-filter-count="framework"]'),
+    },
+  };
+  const ranges = {
+    params: {
+      min: document.querySelector('[data-range-kind="params"][data-range-bound="min"]'),
+      max: document.querySelector('[data-range-kind="params"][data-range-bound="max"]'),
+      summary: document.querySelector('[data-range-summary="params"]'),
+      count: document.querySelector('[data-range-count="params"]'),
+    },
+    flops: {
+      min: document.querySelector('[data-range-kind="flops"][data-range-bound="min"]'),
+      max: document.querySelector('[data-range-kind="flops"][data-range-bound="max"]'),
+      summary: document.querySelector('[data-range-summary="flops"]'),
+      count: document.querySelector('[data-range-count="flops"]'),
+    },
+  };
+
+  function selectedValues(kind) {
+    return new Set(groups[kind].inputs.filter((input) => input.checked).map((input) => input.value));
+  }
+
+  function optionLabel(input) {
+    return input
+      .closest(".filter-option")
+      ?.querySelector(".filter-name-toggle")
+      ?.textContent.trim();
+  }
+
+  function updateSummary(kind) {
+    const group = groups[kind];
+    const checked = group.inputs.filter((input) => input.checked);
+    const selectedCount = checked.length;
+    const total = group.inputs.length;
+
+    if (group.count) group.count.textContent = `${selectedCount}/${total}`;
+    if (!group.summary) return;
+    if (selectedCount === total) {
+      group.summary.textContent = group.allLabel;
+    } else if (selectedCount === 0) {
+      group.summary.textContent = group.noneLabel;
+    } else if (selectedCount === 1) {
+      group.summary.textContent = optionLabel(checked[0]) ?? `1 ${kind}`;
+    } else {
+      group.summary.textContent = `${selectedCount} ${group.plural}`;
+    }
+  }
+
+  function compactMetric(value) {
+    if (!Number.isFinite(value)) return "0";
+    if (value >= 1_000_000_000) return `${scaledMetric(value / 1_000_000_000)}B`;
+    if (value >= 1_000_000) return `${scaledMetric(value / 1_000_000)}M`;
+    if (value >= 1_000) return `${scaledMetric(value / 1_000)}k`;
+    return value.toLocaleString("en-US");
+  }
+
+  function scaledMetric(value) {
+    return value.toFixed(value >= 10 || Number.isInteger(value) ? 0 : 1).replace(/\.0$/, "");
+  }
+
+  function inputNumber(input, fallback) {
+    const value = Number(input?.value);
+    return Number.isFinite(value) ? value : fallback;
+  }
+
+  function rangeState(kind) {
+    const range = ranges[kind];
+    const defaultMin = inputNumber({ value: range.min?.dataset.rangeDefault }, 0);
+    const defaultMax = inputNumber({ value: range.max?.dataset.rangeDefault }, 0);
+    const min = Math.max(0, inputNumber(range.min, defaultMin));
+    const max = Math.max(0, inputNumber(range.max, defaultMax));
+
+    return {
+      min,
+      max,
+      defaultMin,
+      defaultMax,
+      isDefault: min <= defaultMin && max >= defaultMax,
+    };
+  }
+
+  function updateRangeSummary(kind, state = rangeState(kind)) {
+    const range = ranges[kind];
+    if (range.summary) {
+      range.summary.textContent = `${compactMetric(state.min)} - ${compactMetric(state.max)}`;
+    }
+    if (range.count) {
+      range.count.textContent = state.isDefault ? "range" : "filtered";
+    }
+  }
+
+  function isMetricInRange(rawValue, state) {
+    if (rawValue === undefined || rawValue === null || rawValue === "") {
+      return state.isDefault;
+    }
+
+    const value = Number(rawValue);
+    if (!Number.isFinite(value)) return state.isDefault;
+    return value >= state.min && value <= state.max;
+  }
+
+  function updateModelFilters() {
+    const selectedArchitecture = selectedValues("architecture");
+    const selectedFramework = selectedValues("framework");
+    const paramsRange = rangeState("params");
+    const flopsRange = rangeState("flops");
+    let visibleCount = 0;
+
+    modelRows.forEach((row) => {
+      const architectureParts = (row.dataset.architectureParts ?? "")
+        .split(" ")
+        .filter(Boolean);
+      const isArchitectureVisible = architectureParts.every((part) =>
+        selectedArchitecture.has(part),
+      );
+      const isFrameworkVisible = selectedFramework.has(row.dataset.framework ?? "");
+      const isParamsVisible = isMetricInRange(row.dataset.paramsValue, paramsRange);
+      const isFlopsVisible = isMetricInRange(row.dataset.flopsValue, flopsRange);
+      const isVisible =
+        isArchitectureVisible && isFrameworkVisible && isParamsVisible && isFlopsVisible;
+
+      row.hidden = !isVisible;
+      if (isVisible) visibleCount += 1;
+    });
+
+    if (visibleModelCount) visibleModelCount.textContent = String(visibleCount);
+    updateSummary("architecture");
+    updateSummary("framework");
+    updateRangeSummary("params", paramsRange);
+    updateRangeSummary("flops", flopsRange);
+  }
+
+  document.querySelectorAll("[data-filter-action]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const action = button.getAttribute("data-filter-action");
+      const [mode, kind] = action.split("-");
+      const group = groups[kind];
+
+      if (!group) return;
+      group.inputs.forEach((input) => {
+        input.checked = mode === "all";
+      });
+      updateModelFilters();
+    });
+  });
+
+  document.querySelectorAll("[data-range-reset]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const kind = button.getAttribute("data-range-reset");
+      const range = ranges[kind];
+      if (!range) return;
+
+      range.min.value = range.min.dataset.rangeDefault;
+      range.max.value = range.max.dataset.rangeDefault;
+      updateModelFilters();
+    });
+  });
+
+  document.querySelectorAll(".model-filter details").forEach((details) => {
+    details.addEventListener("toggle", () => {
+      if (!details.open) return;
+      details.closest(".filter-panel")?.querySelectorAll(".model-filter details").forEach((other) => {
+        if (other !== details) other.open = false;
+      });
+    });
+  });
+
+  Object.values(groups).forEach((group) => {
+    group.inputs.forEach((input) => {
+      input.addEventListener("change", updateModelFilters);
+    });
+  });
+
+  Object.values(ranges).forEach((range) => {
+    [range.min, range.max].forEach((input) => {
+      input.addEventListener("input", updateModelFilters);
+      input.addEventListener("change", updateModelFilters);
+    });
+  });
+
+  updateModelFilters();
+</script>
+
+<style>
+  .page-shell {
+    width: min(1440px, calc(100vw - 24px));
+    margin: 0 auto;
+    padding: 12px 0 40px;
+  }
+
+  .catalog-intro {
+    display: grid;
+    gap: 15px;
+    padding: 0;
+  }
+
+  .catalog-intro h1 {
+    margin: 0;
+    font-family: var(--display-serif);
+    font-size: 1.55rem;
+    font-weight: 500;
+    line-height: 1.05;
+  }
+
+  .catalog-intro p {
+    margin: 0;
+    color: var(--muted-strong);
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  .catalog-meta {
+    padding: 6px 0 14px;
+  }
+
+  .benchmark-meta {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 22px;
+    margin: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .benchmark-meta div {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    gap: 6px;
+  }
+
+  .meta-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 17px;
+    height: 17px;
+    color: var(--ink);
+  }
+
+  .meta-icon svg {
+    display: block;
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+  }
+
+  .benchmark-meta dt {
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .benchmark-meta dd {
+    margin: 0;
+    color: var(--ink);
+    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.82rem;
+    font-weight: 500;
+  }
+
+  .filter-panel {
+    position: relative;
+    z-index: 20;
+    margin-bottom: 14px;
+    overflow: visible;
+  }
+
+  .filter-panel > .panel-header {
+    border-radius: 7px 7px 0 0;
+  }
+
+  .filter-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 14px 16px 16px;
+  }
+
+  .filter-label {
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .model-filter {
+    position: relative;
+    display: grid;
+    gap: 6px;
+    width: min(320px, 100%);
+  }
+
+  .model-filter details {
+    position: relative;
+  }
+
+  .model-filter summary {
+    display: flex;
+    min-height: 36px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    background: var(--panel-soft);
+    color: var(--ink);
+    padding: 0 10px;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .model-filter summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .model-filter summary::after {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-right: 1.5px solid var(--muted);
+    border-bottom: 1.5px solid var(--muted);
+    transform: rotate(45deg) translateY(-2px);
+  }
+
+  .model-filter details[open] summary::after {
+    transform: rotate(225deg) translateY(-1px);
+  }
+
+  .model-filter summary span:first-child {
+    overflow: hidden;
+    color: var(--ink);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .model-filter summary:focus-visible {
+    outline: 2px solid hsl(24 6% 17% / 0.28);
+    outline-offset: 2px;
+  }
+
+  .model-filter summary:hover {
+    border-color: var(--accent);
+    background: var(--panel);
+  }
+
+  .filter-count {
+    margin-left: auto;
+    color: var(--muted);
+    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.74rem;
+  }
+
+  .filter-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 10;
+    width: min(360px, calc(100vw - 48px));
+    max-height: min(560px, 72vh);
+    overflow: auto;
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    background: var(--panel);
+    box-shadow: none;
+  }
+
+  .filter-actions {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    gap: 8px;
+    padding: 8px;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel-soft);
+  }
+
+  .filter-actions button {
+    min-height: 28px;
+    border: 1px solid var(--line-strong);
+    border-radius: 7px;
+    background: var(--panel);
+    color: var(--muted-strong);
+    padding: 0 10px;
+    cursor: pointer;
+  }
+
+  .filter-actions button:hover {
+    border-color: var(--accent);
+    color: var(--ink);
+  }
+
+  .range-menu {
+    padding: 10px;
+  }
+
+  .range-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .range-fields label {
+    display: grid;
+    gap: 5px;
+  }
+
+  .range-fields label span {
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .range-fields input {
+    width: 100%;
+    min-height: 32px;
+    border: 1px solid var(--line-strong);
+    border-radius: 7px;
+    background: var(--panel-soft);
+    color: var(--ink);
+    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.78rem;
+    padding: 0 8px;
+  }
+
+  .range-fields input:focus-visible {
+    outline: 2px solid hsl(24 6% 17% / 0.28);
+    outline-offset: 2px;
+  }
+
+  .range-reset {
+    min-height: 28px;
+    margin-top: 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: 7px;
+    background: var(--panel);
+    color: var(--muted-strong);
+    padding: 0 10px;
+    cursor: pointer;
+  }
+
+  .range-reset:hover,
+  .range-reset:focus-visible {
+    border-color: var(--accent);
+    color: var(--ink);
+  }
+
+  .filter-options {
+    display: grid;
+    padding: 4px 0;
+  }
+
+  .filter-option {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    gap: 9px;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 10px;
+    color: var(--muted-strong);
+  }
+
+  .filter-option:hover {
+    background: var(--panel-soft);
+  }
+
+  .filter-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .filter-check {
+    display: grid;
+    width: 16px;
+    height: 16px;
+    place-items: center;
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    background: var(--panel);
+  }
+
+  .filter-check::after {
+    content: "";
+    width: 7px;
+    height: 4px;
+    border-bottom: 2px solid var(--panel);
+    border-left: 2px solid var(--panel);
+    opacity: 0;
+    transform: rotate(-45deg) translateY(-1px);
+  }
+
+  .filter-option input:checked + .filter-check {
+    border-color: var(--accent-strong);
+    background: var(--accent);
+  }
+
+  .filter-option input:checked + .filter-check::after {
+    opacity: 1;
+  }
+
+  .filter-option input:focus-visible + .filter-check {
+    outline: 2px solid hsl(24 6% 17% / 0.28);
+    outline-offset: 2px;
+  }
+
+  .filter-name-toggle {
+    overflow: hidden;
+    color: var(--muted-strong);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .arena-panel {
+    min-width: 0;
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    background: var(--panel);
+    overflow: hidden;
+    box-shadow: none;
+  }
+
+  .arena-panel.filter-panel {
+    overflow: visible;
+  }
+
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+    min-height: 65px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel-soft);
+  }
+
+  .panel-header h2 {
+    margin: 0;
+    font-family: var(--display-serif);
+    font-size: 1.3rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.05;
+  }
+
+  .table-wrap {
+    min-width: 0;
+    overflow: auto;
+  }
+
+  .catalog-table {
+    width: 100%;
+    min-width: 920px;
+    border-collapse: collapse;
+  }
+
+  .catalog-table tr[hidden] {
+    display: none;
+  }
+
+  .catalog-table th,
+  .catalog-table td {
+    border-bottom: 1px solid var(--line);
+    padding: 12px 16px;
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  .catalog-table th {
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .catalog-table tbody tr:hover td {
+    background: hsl(33 31% 94% / 0.72);
+  }
+
+  .name-cell strong,
+  .name-cell span {
+    display: block;
+  }
+
+  .name-cell strong {
+    color: var(--ink);
+    font-size: 0.94rem;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .name-cell span {
+    margin-top: 4px;
+    color: var(--muted);
+    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.72rem;
+  }
+
+  .pill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px 6px;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 20px;
+    border: 1px solid lightgray;
+    border-radius: 999px;
+    background: var(--panel-soft);
+    color: var(--ink);
+    padding: 3px 8px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1.05;
+  }
+
+  .metric,
+  .mono {
+    color: var(--ink);
+    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.88rem;
+    font-weight: 500;
+  }
+
+  .paper-link {
+    color: var(--ink);
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: hsl(24 6% 17% / 0.3);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .paper-link:hover,
+  .paper-link:focus-visible {
+    text-decoration-color: currentColor;
+  }
+
+  .muted {
+    color: var(--muted);
+  }
+
+  @media (max-width: 720px) {
+    .panel-header {
+      display: grid;
+      align-items: start;
+    }
+
+    .model-filter {
+      width: 100%;
+    }
+
+    .filter-menu {
+      position: static;
+      width: 100%;
+      max-height: 340px;
+      margin-top: 6px;
+    }
+  }
+</style>

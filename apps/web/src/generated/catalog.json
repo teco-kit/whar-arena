@@ -1,0 +1,332 @@
+{
+  "datasets": [
+    {
+      "id": "actrectut_gestures",
+      "name": "ActRecTut (Gestures)",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "daphnet",
+      "name": "Daphnet",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "dsads",
+      "name": "DSADS",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "gotov",
+      "name": "GOTOV",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "hang_time",
+      "name": "Hang-Time",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "hapt",
+      "name": "HAPT",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "har70",
+      "name": "HAR70+",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "harth",
+      "name": "HARTH",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "hhar",
+      "name": "HHAR",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "hugadb",
+      "name": "HuGaDB",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "mhealth",
+      "name": "MHEALTH",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "motion_sense",
+      "name": "MotionSense",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "opportunity",
+      "name": "OPPO (Locomotion)",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "pamap2",
+      "name": "PAMAP2",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "real_disp",
+      "name": "REALDISP",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "real_life_har",
+      "name": "RealLifeHAR",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "real_world",
+      "name": "RealWorld",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "sad",
+      "name": "SAD",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "uca_ehar",
+      "name": "UCA-EHAR",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "uci_har",
+      "name": "UCI-HAR",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "uma_fall",
+      "name": "UMAFall",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "unimib_shar",
+      "name": "UniMiB-SHAR",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "up_fall",
+      "name": "UP-Fall",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "usc_had",
+      "name": "USC-HAD",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "utd_mhad",
+      "name": "UTD-MHAD",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "w_har",
+      "name": "w-HAR",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "wear",
+      "name": "WEAR",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "wisdm",
+      "name": "WISDM",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "wisdm_19_phone",
+      "name": "WISDM-19 (Phone)",
+      "package": "whar-datasets"
+    },
+    {
+      "id": "wisdm_19_watch",
+      "name": "WISDM-19 (Watch)",
+      "package": "whar-datasets"
+    }
+  ],
+  "models": [
+    {
+      "family": "neural",
+      "framework": "torch",
+      "id": "aroma_joint_model",
+      "name": "AROMA Joint",
+      "package": "whar-models",
+      "paper": "AROMA: A Deep Multi-Task Learning Based Simple and Complex Human Activity Recognition Method Using Wearable Sensors"
+    },
+    {
+      "family": "attn_cnn_dense_rnn",
+      "framework": "torch",
+      "id": "attend_discriminate",
+      "name": "Attend+Discriminate",
+      "package": "whar-models",
+      "paper": "Attend and Discriminate: Beyond the State-of-the-Art for Human Activity Recognition Using Wearable Sensors"
+    },
+    {
+      "family": "neural",
+      "framework": "torch",
+      "id": "attensense",
+      "name": "AttenSense",
+      "package": "whar-models",
+      "paper": "AttnSense: Multi-level Attention Mechanism for Multimodal Human Activity Recognition"
+    },
+    {
+      "family": "cnn",
+      "framework": "torch",
+      "id": "cnn_har",
+      "name": "CNN-HAR",
+      "package": "whar-models",
+      "paper": "Deep Convolutional Neural Networks on Multichannel Time Series for Human Activity Recognition"
+    },
+    {
+      "family": "cnn_dense_rnn",
+      "framework": "torch",
+      "id": "dana",
+      "name": "DANA",
+      "package": "whar-models",
+      "paper": "DANA: Dimension-Adaptive Neural Architecture for Multivariate Sensor Data"
+    },
+    {
+      "family": "cnn_dense_rnn",
+      "framework": "torch",
+      "id": "deepconv_lstm",
+      "name": "DeepConvLSTM",
+      "package": "whar-models",
+      "paper": "Deep Convolutional and LSTM Recurrent Neural Networks for Multimodal Wearable Activity Recognition"
+    },
+    {
+      "family": "attn_cnn_dense_rnn",
+      "framework": "torch",
+      "id": "deepconv_lstm_attention",
+      "name": "DeepConvLSTM-Attn",
+      "package": "whar-models",
+      "paper": "On Attention Models for Human Activity Recognition"
+    },
+    {
+      "family": "cnn_dense_rnn",
+      "framework": "torch",
+      "id": "deepconv_lstm_iswc",
+      "name": "DeepConvShallowLSTM",
+      "package": "whar-models",
+      "paper": "Improving Deep Learning for HAR with Shallow LSTMs"
+    },
+    {
+      "family": "neural",
+      "framework": "torch",
+      "id": "deepsense",
+      "name": "DeepSense",
+      "package": "whar-models",
+      "paper": "DeepSense: A Unified Deep Learning Framework for Time-Series Mobile Sensing Data Processing"
+    },
+    {
+      "family": "cnn_dense_graph",
+      "framework": "torch",
+      "id": "dynamic_whar",
+      "name": "DynamicWHAR",
+      "package": "whar-models",
+      "paper": "Towards a Dynamic Inter-Sensor Correlations Learning Framework for Multi-Sensor-Based Wearable Human Activity Recognition"
+    },
+    {
+      "family": "neural",
+      "framework": "torch",
+      "id": "global_fusion",
+      "name": "GlobalFusion",
+      "package": "whar-models",
+      "paper": "GlobalFusion: A Global Attentional Deep Learning Framework for Multisensor Information Fusion"
+    },
+    {
+      "family": "neural",
+      "framework": "torch",
+      "id": "if_conv_transformer",
+      "name": "IF-ConvTransformer",
+      "package": "whar-models",
+      "paper": "IF-ConvTransformer: A Framework for Human Activity Recognition Using IMU Fusion and ConvTransformer"
+    },
+    {
+      "family": "fe",
+      "framework": "sklearn",
+      "id": "knn",
+      "name": "k-NN",
+      "package": "whar-models",
+      "paper": "WHAR Arena: Benchmarking the State of the Art in Efficient Wearable Human Activity Recognition"
+    },
+    {
+      "family": "dense_rnn",
+      "framework": "torch",
+      "id": "lstms_ensemble",
+      "name": "Guan-LSTM",
+      "package": "whar-models",
+      "paper": "Ensembles of Deep LSTM Learners for Activity Recognition Using Wearables"
+    },
+    {
+      "family": "dense_spec",
+      "framework": "torch",
+      "id": "mlp_har",
+      "name": "MLP-HAR",
+      "package": "whar-models",
+      "paper": "MLP-HAR: Boosting Performance and Efficiency of HAR Models on Edge Devices with Purely Fully Connected Layers"
+    },
+    {
+      "family": "dense",
+      "framework": "torch",
+      "id": "mlp_mixer",
+      "name": "MLP-Mixer",
+      "package": "whar-models",
+      "paper": "MLPs Are All You Need for Human Activity Recognition"
+    },
+    {
+      "family": "fe",
+      "framework": "sklearn",
+      "id": "random_forest",
+      "name": "Random Forest",
+      "package": "whar-models",
+      "paper": "WHAR Arena: Benchmarking the State of the Art in Efficient Wearable Human Activity Recognition"
+    },
+    {
+      "family": "attn_cnn_dense",
+      "framework": "torch",
+      "id": "sa_har",
+      "name": "SA-HAR",
+      "package": "whar-models",
+      "paper": "Human Activity Recognition from Wearable Sensor Data Using Self-Attention"
+    },
+    {
+      "family": "fe",
+      "framework": "sklearn",
+      "id": "svm",
+      "name": "SVM",
+      "package": "whar-models",
+      "paper": "WHAR Arena: Benchmarking the State of the Art in Efficient Wearable Human Activity Recognition"
+    },
+    {
+      "family": "attn_cnn_dense_rnn",
+      "framework": "torch",
+      "id": "tinierhar",
+      "name": "TinierHAR",
+      "package": "whar-models",
+      "paper": "TinierHAR: Towards Ultra-Lightweight Deep Learning Models for Efficient Human Activity Recognition on Edge Devices"
+    },
+    {
+      "family": "attn_cnn_dense_rnn",
+      "framework": "torch",
+      "id": "tinyhar",
+      "name": "TinyHAR",
+      "package": "whar-models",
+      "paper": "TinyHAR: A Lightweight Deep Learning Model Designed for Human Activity Recognition"
+    },
+    {
+      "family": "attn_cnn_dense",
+      "framework": "torch",
+      "id": "triple_cross_domain_attention",
+      "name": "Triple-Cross-Attn",
+      "package": "whar-models",
+      "paper": "Triple Cross-domain Attention for Human Activity Recognition"
+    }
+  ]
+}

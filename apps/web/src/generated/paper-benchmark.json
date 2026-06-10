@@ -1,0 +1,7443 @@
+{
+  "source": {
+    "kind": "paper_static_snapshot",
+    "paper": "WHAR Arena: Benchmarking the State of the Art in Efficient Wearable Human Activity Recognition",
+    "macro_f1_figure": "Figure 6",
+    "model_size_index_figure": "Figure 9",
+    "notes": "Static paper snapshot used until live WHAR Arena result files are connected."
+  },
+  "catalog": {
+    "datasets": [
+      {
+        "id": "sad",
+        "name": "SAD",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "uci_har",
+        "name": "UCI-HAR",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "motion_sense",
+        "name": "MotionSense",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "wear",
+        "name": "WEAR",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "dsads",
+        "name": "DSADS",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "mhealth",
+        "name": "MHEALTH",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "wisdm",
+        "name": "WISDM",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "real_disp",
+        "name": "REALDISP",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "hapt",
+        "name": "HAPT",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "hhar",
+        "name": "HHAR",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "usc_had",
+        "name": "USC-HAD",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "wisdm_19_watch",
+        "name": "WISDM-19 (Watch)",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "opportunity",
+        "name": "OPPO (Locomotion)",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "harth",
+        "name": "HARTH",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "gotov",
+        "name": "GOTOV",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "real_world",
+        "name": "RealWorld",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "har70",
+        "name": "HAR70+",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "pamap2",
+        "name": "PAMAP2",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "up_fall",
+        "name": "UP-Fall",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "utd_mhad",
+        "name": "UTD-MHAD",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "uca_ehar",
+        "name": "UCA-EHAR",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "unimib_shar",
+        "name": "UniMiB-SHAR",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "real_life_har",
+        "name": "RealLifeHAR",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "hang_time",
+        "name": "Hang-Time",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "w_har",
+        "name": "w-HAR",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "uma_fall",
+        "name": "UMAFall",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "hugadb",
+        "name": "HuGaDB",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "actrectut_gestures",
+        "name": "ActRecTut (Gestures)",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "daphnet",
+        "name": "Daphnet",
+        "package": "whar-datasets"
+      },
+      {
+        "id": "wisdm_19_phone",
+        "name": "WISDM-19 (Phone)",
+        "package": "whar-datasets"
+      }
+    ],
+    "models": [
+      {
+        "family": "cnn",
+        "framework": "torch",
+        "id": "cnn_har",
+        "name": "CNN-HAR",
+        "package": "whar-models",
+        "paper": "Deep Convolutional Neural Networks on Multichannel Time Series for Human Activity Recognition"
+      },
+      {
+        "family": "attn_cnn_dense_rnn",
+        "framework": "torch",
+        "id": "tinyhar",
+        "name": "TinyHAR",
+        "package": "whar-models",
+        "paper": "TinyHAR: A Lightweight Deep Learning Model Designed for Human Activity Recognition"
+      },
+      {
+        "family": "attn_cnn_dense",
+        "framework": "torch",
+        "id": "triple_cross_domain_attention",
+        "name": "Triple-Cross-Attn",
+        "package": "whar-models",
+        "paper": "Triple Cross-domain Attention for Human Activity Recognition"
+      },
+      {
+        "family": "cnn_dense_rnn",
+        "framework": "torch",
+        "id": "dana",
+        "name": "DANA",
+        "package": "whar-models",
+        "paper": "DANA: Dimension-Adaptive Neural Architecture for Multivariate Sensor Data"
+      },
+      {
+        "family": "attn_cnn_dense_rnn",
+        "framework": "torch",
+        "id": "tinierhar",
+        "name": "TinierHAR",
+        "package": "whar-models",
+        "paper": "TinierHAR: Towards Ultra-Lightweight Deep Learning Models for Efficient Human Activity Recognition on Edge Devices"
+      },
+      {
+        "family": "attn_cnn_dense_rnn",
+        "framework": "torch",
+        "id": "attend_discriminate",
+        "name": "Attend+Discriminate",
+        "package": "whar-models",
+        "paper": "Attend and Discriminate: Beyond the State-of-the-Art for Human Activity Recognition Using Wearable Sensors"
+      },
+      {
+        "family": "cnn_dense_graph",
+        "framework": "torch",
+        "id": "dynamic_whar",
+        "name": "DynamicWHAR",
+        "package": "whar-models",
+        "paper": "Towards a Dynamic Inter-Sensor Correlations Learning Framework for Multi-Sensor-Based Wearable Human Activity Recognition"
+      },
+      {
+        "family": "fe",
+        "framework": "sklearn",
+        "id": "random_forest",
+        "name": "Random Forest",
+        "package": "whar-models",
+        "paper": "WHAR Arena: Benchmarking the State of the Art in Efficient Wearable Human Activity Recognition"
+      },
+      {
+        "family": "attn_cnn_dense_rnn",
+        "framework": "torch",
+        "id": "deepconv_lstm_attention",
+        "name": "DeepConvLSTM-Attn",
+        "package": "whar-models",
+        "paper": "On Attention Models for Human Activity Recognition"
+      },
+      {
+        "family": "dense_spec",
+        "framework": "torch",
+        "id": "mlp_har",
+        "name": "MLP-HAR",
+        "package": "whar-models",
+        "paper": "MLP-HAR: Boosting Performance and Efficiency of HAR Models on Edge Devices with Purely Fully Connected Layers"
+      },
+      {
+        "family": "cnn_dense_rnn",
+        "framework": "torch",
+        "id": "deepconv_lstm",
+        "name": "DeepConvLSTM",
+        "package": "whar-models",
+        "paper": "Deep Convolutional and LSTM Recurrent Neural Networks for Multimodal Wearable Activity Recognition"
+      },
+      {
+        "family": "dense",
+        "framework": "torch",
+        "id": "mlp_mixer",
+        "name": "MLP-Mixer",
+        "package": "whar-models",
+        "paper": "MLPs Are All You Need for Human Activity Recognition"
+      },
+      {
+        "family": "dense_rnn",
+        "framework": "torch",
+        "id": "lstms_ensemble",
+        "name": "Guan-LSTM",
+        "package": "whar-models",
+        "paper": "Ensembles of Deep LSTM Learners for Activity Recognition Using Wearables"
+      },
+      {
+        "family": "cnn_dense_rnn",
+        "framework": "torch",
+        "id": "deepconv_lstm_iswc",
+        "name": "DeepConvShallowLSTM",
+        "package": "whar-models",
+        "paper": "Improving Deep Learning for HAR with Shallow LSTMs"
+      },
+      {
+        "family": "attn_cnn_dense",
+        "framework": "torch",
+        "id": "sa_har",
+        "name": "SA-HAR",
+        "package": "whar-models",
+        "paper": "Human Activity Recognition from Wearable Sensor Data Using Self-Attention"
+      },
+      {
+        "family": "fe",
+        "framework": "sklearn",
+        "id": "svm",
+        "name": "SVM",
+        "package": "whar-models",
+        "paper": "WHAR Arena: Benchmarking the State of the Art in Efficient Wearable Human Activity Recognition"
+      },
+      {
+        "family": "fe",
+        "framework": "sklearn",
+        "id": "knn",
+        "name": "k-NN",
+        "package": "whar-models",
+        "paper": "WHAR Arena: Benchmarking the State of the Art in Efficient Wearable Human Activity Recognition"
+      }
+    ]
+  },
+  "results": [
+    {
+      "dataset_id": "sad",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.956,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "sad",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9767,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "sad",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9077,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "sad",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9341,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "sad",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9122,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "sad",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9568,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "sad",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9567,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "sad",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9825,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "sad",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9143,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "sad",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9738,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "sad",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9114,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "sad",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9351,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "sad",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.901,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "sad",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9545,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "sad",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8124,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "sad",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9036,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "sad",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8209,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uci_har",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9603,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uci_har",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9611,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uci_har",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9596,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uci_har",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9497,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uci_har",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9517,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uci_har",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9405,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uci_har",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9212,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uci_har",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8469,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uci_har",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9257,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uci_har",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9319,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uci_har",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.93,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uci_har",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9457,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uci_har",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9146,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uci_har",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9002,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uci_har",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9227,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uci_har",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7272,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uci_har",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7123,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "motion_sense",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9151,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "motion_sense",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.912,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "motion_sense",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9134,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "motion_sense",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8891,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "motion_sense",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.909,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "motion_sense",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8857,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "motion_sense",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9348,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "motion_sense",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9149,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "motion_sense",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8848,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "motion_sense",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9116,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "motion_sense",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8756,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "motion_sense",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9124,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "motion_sense",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.9052,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "motion_sense",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.886,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "motion_sense",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8526,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "motion_sense",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7654,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "motion_sense",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6742,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wear",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.869,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wear",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8648,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wear",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8852,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wear",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8701,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wear",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8704,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wear",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8563,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wear",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8965,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wear",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8734,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wear",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8416,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wear",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8528,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wear",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8333,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wear",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8399,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wear",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8281,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wear",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8113,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wear",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8424,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wear",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7592,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wear",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6967,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "dsads",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8687,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "dsads",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8677,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "dsads",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8557,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "dsads",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8442,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "dsads",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.864,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "dsads",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8615,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "dsads",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8785,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "dsads",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8933,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "dsads",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8379,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "dsads",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8426,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "dsads",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8198,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "dsads",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.815,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "dsads",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8322,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "dsads",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8569,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "dsads",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7743,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "dsads",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7588,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "dsads",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7094,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "mhealth",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8613,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "mhealth",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8053,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "mhealth",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8128,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "mhealth",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8296,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "mhealth",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8476,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "mhealth",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8395,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "mhealth",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8574,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "mhealth",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8765,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "mhealth",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8052,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "mhealth",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8076,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "mhealth",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7803,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "mhealth",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.772,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "mhealth",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7844,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "mhealth",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8191,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "mhealth",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.765,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "mhealth",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7661,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "mhealth",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6417,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8144,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.85,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8355,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8549,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8377,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8379,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8193,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7158,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8465,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7607,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8399,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8298,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8424,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8297,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6506,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5916,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5119,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_disp",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8697,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_disp",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.883,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_disp",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8716,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_disp",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8408,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_disp",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8626,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_disp",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8639,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_disp",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6896,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_disp",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8491,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_disp",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8007,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_disp",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8541,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_disp",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7935,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_disp",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6611,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_disp",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6831,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_disp",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8022,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_disp",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8068,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_disp",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5285,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_disp",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3831,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hapt",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.848,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hapt",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8102,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hapt",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8202,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hapt",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8358,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hapt",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8142,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hapt",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8138,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hapt",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7941,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hapt",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6713,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hapt",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7952,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hapt",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7922,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hapt",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7733,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hapt",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.805,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hapt",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7344,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hapt",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5974,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hapt",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7569,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hapt",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6386,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hapt",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6634,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hhar",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8247,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hhar",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8067,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hhar",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7806,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hhar",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8002,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hhar",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7859,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hhar",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7995,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hhar",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7882,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hhar",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7538,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hhar",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7539,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hhar",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7296,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hhar",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7769,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hhar",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8033,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hhar",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7504,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hhar",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7791,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hhar",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7921,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hhar",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6516,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hhar",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.476,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "usc_had",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7616,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "usc_had",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7809,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "usc_had",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7434,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "usc_had",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7111,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "usc_had",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7567,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "usc_had",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7332,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "usc_had",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.757,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "usc_had",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7268,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "usc_had",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7099,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "usc_had",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7652,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "usc_had",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.735,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "usc_had",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7883,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "usc_had",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6888,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "usc_had",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6288,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "usc_had",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6982,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "usc_had",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3774,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "usc_had",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4325,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_watch",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6879,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_watch",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6872,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_watch",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6851,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_watch",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.713,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_watch",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.686,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_watch",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6938,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_watch",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6893,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_watch",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.598,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_watch",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6904,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_watch",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.618,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_watch",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6718,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_watch",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6977,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_watch",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7061,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_watch",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6782,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_watch",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6539,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_watch",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4976,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_watch",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4391,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "opportunity",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6312,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "opportunity",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6537,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "opportunity",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7057,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "opportunity",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.587,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "opportunity",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6588,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "opportunity",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6144,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "opportunity",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6265,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "opportunity",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7063,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "opportunity",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.652,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "opportunity",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7471,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "opportunity",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6215,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "opportunity",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6026,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "opportunity",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6588,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "opportunity",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6514,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "opportunity",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5808,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "opportunity",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6668,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "opportunity",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5942,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "harth",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7238,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "harth",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7114,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "harth",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7269,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "harth",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6986,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "harth",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7264,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "harth",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6668,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "harth",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6753,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "harth",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.559,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "harth",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6338,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "harth",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6515,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "harth",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6403,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "harth",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6684,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "harth",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6672,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "harth",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5407,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "harth",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6154,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "harth",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4428,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "harth",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4306,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "gotov",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6438,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "gotov",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6627,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "gotov",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6802,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "gotov",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6681,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "gotov",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6493,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "gotov",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6516,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "gotov",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7009,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "gotov",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6563,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "gotov",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6424,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "gotov",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.644,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "gotov",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6327,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "gotov",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5992,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "gotov",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6005,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "gotov",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.597,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "gotov",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5994,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "gotov",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5137,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "gotov",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4445,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_world",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5755,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_world",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6018,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_world",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6169,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_world",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6397,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_world",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6089,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_world",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.572,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_world",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6839,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_world",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.8035,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_world",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5925,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_world",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5886,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_world",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5503,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_world",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5185,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_world",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.508,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_world",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6726,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_world",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5297,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_world",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5672,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_world",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4729,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "har70",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6924,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "har70",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.658,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "har70",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.595,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "har70",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.606,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "har70",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6847,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "har70",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6236,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "har70",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5749,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "har70",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.575,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "har70",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5943,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "har70",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5984,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "har70",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6037,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "har70",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6242,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "har70",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5624,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "har70",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5331,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "har70",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5663,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "har70",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4859,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "har70",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4411,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "pamap2",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6206,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "pamap2",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.622,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "pamap2",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6194,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "pamap2",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6027,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "pamap2",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5963,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "pamap2",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6225,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "pamap2",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6424,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "pamap2",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6506,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "pamap2",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5758,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "pamap2",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6309,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "pamap2",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5581,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "pamap2",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4781,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "pamap2",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5182,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "pamap2",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5591,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "pamap2",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5897,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "pamap2",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4805,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "pamap2",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4897,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "up_fall",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5502,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "up_fall",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6096,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "up_fall",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5866,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "up_fall",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5262,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "up_fall",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5565,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "up_fall",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5449,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "up_fall",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6112,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "up_fall",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.7277,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "up_fall",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5224,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "up_fall",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5654,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "up_fall",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5287,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "up_fall",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4316,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "up_fall",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4567,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "up_fall",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5453,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "up_fall",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5173,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "up_fall",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4685,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "up_fall",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4043,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "utd_mhad",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6816,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "utd_mhad",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6575,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "utd_mhad",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6697,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "utd_mhad",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.648,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "utd_mhad",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.61,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "utd_mhad",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6721,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "utd_mhad",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6466,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "utd_mhad",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.512,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "utd_mhad",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.594,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "utd_mhad",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6159,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "utd_mhad",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5491,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "utd_mhad",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.649,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "utd_mhad",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.2469,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "utd_mhad",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.1902,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "utd_mhad",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6096,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "utd_mhad",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.2392,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "utd_mhad",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3385,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uca_ehar",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5866,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uca_ehar",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5797,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uca_ehar",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5809,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uca_ehar",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.601,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uca_ehar",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5599,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uca_ehar",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5985,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uca_ehar",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5736,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uca_ehar",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4759,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uca_ehar",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5683,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uca_ehar",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.53,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uca_ehar",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5633,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uca_ehar",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5787,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uca_ehar",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5947,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uca_ehar",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4285,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uca_ehar",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5035,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uca_ehar",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3668,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uca_ehar",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3173,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "unimib_shar",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.633,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "unimib_shar",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5865,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "unimib_shar",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5522,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "unimib_shar",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6242,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "unimib_shar",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5841,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "unimib_shar",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6097,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "unimib_shar",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5251,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "unimib_shar",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4449,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "unimib_shar",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6108,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "unimib_shar",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4226,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "unimib_shar",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5634,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "unimib_shar",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5719,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "unimib_shar",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5555,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "unimib_shar",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3795,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "unimib_shar",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3871,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "unimib_shar",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.192,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "unimib_shar",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.2345,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_life_har",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4764,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_life_har",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4905,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_life_har",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4933,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_life_har",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5256,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_life_har",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4816,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_life_har",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5305,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_life_har",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5501,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_life_har",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6256,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_life_har",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4872,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_life_har",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.463,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_life_har",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4811,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_life_har",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.423,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_life_har",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4332,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_life_har",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5359,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_life_har",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4285,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_life_har",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.487,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "real_life_har",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3804,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hang_time",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.515,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hang_time",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5114,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hang_time",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5108,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hang_time",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5215,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hang_time",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5093,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hang_time",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5095,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hang_time",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4698,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hang_time",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4694,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hang_time",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5149,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hang_time",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4778,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hang_time",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.515,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hang_time",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5079,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hang_time",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5229,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hang_time",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4649,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hang_time",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.429,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hang_time",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3677,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hang_time",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3919,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "w_har",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5272,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "w_har",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5216,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "w_har",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4983,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "w_har",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4931,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "w_har",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4914,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "w_har",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4863,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "w_har",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4991,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "w_har",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5307,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "w_har",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4881,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "w_har",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4628,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "w_har",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4723,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "w_har",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4888,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "w_har",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3909,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "w_har",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3578,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "w_har",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5097,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "w_har",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3148,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "w_har",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3243,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uma_fall",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4999,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uma_fall",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5017,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uma_fall",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5243,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uma_fall",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5185,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uma_fall",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5122,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uma_fall",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.506,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uma_fall",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5618,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uma_fall",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5419,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uma_fall",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4571,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uma_fall",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4906,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uma_fall",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4549,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uma_fall",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3305,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uma_fall",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3731,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uma_fall",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4082,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uma_fall",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4188,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uma_fall",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.2976,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "uma_fall",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.2919,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hugadb",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4915,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hugadb",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4663,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hugadb",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4779,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hugadb",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4482,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hugadb",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4826,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hugadb",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4294,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hugadb",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4414,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hugadb",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5247,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hugadb",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4286,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hugadb",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4614,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hugadb",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4431,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hugadb",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4194,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hugadb",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4455,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hugadb",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4388,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hugadb",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4142,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hugadb",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4122,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "hugadb",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3848,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "actrectut_gestures",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5225,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "actrectut_gestures",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5106,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "actrectut_gestures",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.6149,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "actrectut_gestures",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5723,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "actrectut_gestures",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4517,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "actrectut_gestures",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5376,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "actrectut_gestures",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4147,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "actrectut_gestures",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4189,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "actrectut_gestures",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.5253,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "actrectut_gestures",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4378,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "actrectut_gestures",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4821,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "actrectut_gestures",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3777,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "actrectut_gestures",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3542,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "actrectut_gestures",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4689,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "actrectut_gestures",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3107,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "actrectut_gestures",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.2759,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "actrectut_gestures",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.2864,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "daphnet",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4023,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "daphnet",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4394,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "daphnet",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4272,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "daphnet",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4359,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "daphnet",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4541,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "daphnet",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4301,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "daphnet",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3781,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "daphnet",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3384,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "daphnet",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4181,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "daphnet",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4063,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "daphnet",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.4066,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "daphnet",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3893,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "daphnet",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.292,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "daphnet",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3544,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "daphnet",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3769,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "daphnet",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3173,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "daphnet",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3111,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_phone",
+      "model_id": "cnn_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3045,
+        "model_size_efficiency_index": 0.709
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_phone",
+      "model_id": "tinyhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.2917,
+        "model_size_efficiency_index": 0.7
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_phone",
+      "model_id": "triple_cross_domain_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3205,
+        "model_size_efficiency_index": 0.55
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_phone",
+      "model_id": "dana",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3172,
+        "model_size_efficiency_index": 0.495
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_phone",
+      "model_id": "tinierhar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3028,
+        "model_size_efficiency_index": 0.967
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_phone",
+      "model_id": "attend_discriminate",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.2953,
+        "model_size_efficiency_index": 0.525
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_phone",
+      "model_id": "dynamic_whar",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3223,
+        "model_size_efficiency_index": 0.346
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_phone",
+      "model_id": "random_forest",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.2681,
+        "model_size_efficiency_index": 0.616
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_phone",
+      "model_id": "deepconv_lstm_attention",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.2907,
+        "model_size_efficiency_index": 0.485
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_phone",
+      "model_id": "mlp_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.236,
+        "model_size_efficiency_index": 0.446
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_phone",
+      "model_id": "deepconv_lstm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.2764,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_phone",
+      "model_id": "mlp_mixer",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.2731,
+        "model_size_efficiency_index": 0.508
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_phone",
+      "model_id": "lstms_ensemble",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.2685,
+        "model_size_efficiency_index": 0.478
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_phone",
+      "model_id": "deepconv_lstm_iswc",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.3168,
+        "model_size_efficiency_index": 0.441
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_phone",
+      "model_id": "sa_har",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.2385,
+        "model_size_efficiency_index": 0.543
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_phone",
+      "model_id": "svm",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.1846,
+        "model_size_efficiency_index": 0.152
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    },
+    {
+      "dataset_id": "wisdm_19_phone",
+      "model_id": "knn",
+      "split_id": "paper-mean",
+      "status": "complete",
+      "metrics": {
+        "macro_f1": 0.1759,
+        "model_size_efficiency_index": 0
+      },
+      "source": {
+        "kind": "paper_static_snapshot",
+        "figure": "Figure 6"
+      }
+    }
+  ]
+}

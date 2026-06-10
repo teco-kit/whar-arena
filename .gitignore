@@ -1,0 +1,8 @@
+.DS_Store
+.venv/
+__pycache__/
+.pytest_cache/
+dist/
+apps/web/node_modules/
+apps/web/dist/
+apps/web/.astro/

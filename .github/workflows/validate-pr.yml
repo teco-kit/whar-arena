@@ -1,0 +1,76 @@
+name: Validate PR
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          path: whar-arena
+      - uses: actions/checkout@v5
+        with:
+          repository: teco-kit/whar-datasets
+          path: whar-datasets
+      - uses: actions/checkout@v5
+        with:
+          repository: teco-kit/whar-models
+          path: whar-models
+      - uses: astral-sh/setup-uv@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install local packages
+        working-directory: whar-arena
+        run: |
+          uv sync --all-extras
+          uv pip install -e ../whar-datasets -e ../whar-models
+      - name: Validate result files
+        working-directory: whar-arena
+        run: uv run whar-arena validate-results
+      - name: Plan missing runs
+        working-directory: whar-arena
+        run: uv run whar-arena plan --only-missing --limit 50
+      - name: Run tests
+        working-directory: whar-arena
+        run: uv run pytest
+
+  web:
+    runs-on: ubuntu-latest
+    needs: python
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          path: whar-arena
+      - uses: actions/checkout@v5
+        with:
+          repository: teco-kit/whar-datasets
+          path: whar-datasets
+      - uses: actions/checkout@v5
+        with:
+          repository: teco-kit/whar-models
+          path: whar-models
+      - uses: astral-sh/setup-uv@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: whar-arena/apps/web/package-lock.json
+      - name: Export site data
+        working-directory: whar-arena
+        run: |
+          uv sync --all-extras
+          uv pip install -e ../whar-datasets -e ../whar-models
+          uv run whar-arena export-site-data
+      - name: Build website
+        working-directory: whar-arena/apps/web
+        run: |
+          npm install
+          npm run build

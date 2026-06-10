@@ -1,0 +1,70 @@
+id: whar_arena_v1
+name: WHAR Arena v1
+description: Paper-compatible WHAR Arena protocol using 10 subject groups.
+
+dataset_source:
+  package: whar_datasets
+  symbol: BENCHMARK_DATASET_IDS
+
+model_source:
+  package: whar_models
+  symbol: list_models
+
+window:
+  duration_seconds: 3
+  overlap: 0.5
+  sampling_rate: native
+
+preprocessing:
+  normalization: global_standardization
+  fit_normalization_on: train
+
+split:
+  strategy: k_subject_groups
+  k: 10
+  validation_fraction: 0.2
+  validation_source: train_subjects
+
+training:
+  deep:
+    framework: torch
+    optimizer: adamw
+    learning_rate: 0.001
+    scheduler: cosine_annealing
+    weight_decay: 0.0001
+    batch_size: 64
+    max_epochs: 100
+    early_stopping:
+      monitor: val_macro_f1
+      patience: 10
+      restore_best: true
+    loss:
+      type: weighted_cross_entropy
+      class_weights: train_frequency
+  classical:
+    features: tsfresh_minimal
+    models:
+      knn:
+        n_neighbors: 5
+        weights: distance
+      random_forest:
+        n_estimators: 100
+        criterion: gini
+        max_depth: 8
+        min_samples_leaf: 10
+      svm:
+        kernel: rbf
+        C: 1.0
+        gamma: scale
+
+metrics:
+  predictive:
+    - macro_f1
+    - accuracy
+    - balanced_accuracy
+  efficiency:
+    - params
+    - flops
+    - exported_model_size_mb
+    - latency_ms
+    - peak_memory_mb

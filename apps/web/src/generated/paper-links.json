@@ -1,0 +1,194 @@
+{
+  "datasets": {
+    "actrectut_gestures": {
+      "title": "A tutorial on human activity recognition using body-worn inertial sensors",
+      "url": "https://www.collaborative-ai.org/publications/bulling14_csur.pdf"
+    },
+    "daphnet": {
+      "title": "Ambulatory monitoring of freezing of gait in Parkinson's disease",
+      "url": "https://doi.org/10.1016/j.jneumeth.2007.08.023"
+    },
+    "dsads": {
+      "title": "Comparative study on classifying human activities with miniature inertial and magnetic sensors",
+      "url": "https://repository.bilkent.edu.tr/bitstreams/e56f2841-d911-454f-bac1-8c2a3af5ee38/download"
+    },
+    "gotov": {
+      "title": "A recurrent neural network architecture to model physical activity energy expenditure in older people",
+      "url": "https://link.springer.com/content/pdf/10.1007/s10618-021-00817-w.pdf"
+    },
+    "hang_time": {
+      "title": "Hang-Time HAR: A benchmark dataset for basketball activity recognition using wrist-worn inertial sensors",
+      "url": "https://www.mdpi.com/1424-8220/23/13/5879/pdf"
+    },
+    "hapt": {
+      "title": "Transition-Aware Human Activity Recognition Using Smartphones",
+      "url": "https://upcommons.upc.edu/bitstreams/9502bb2a-95a5-47ca-9816-39faadb6c4d8/download"
+    },
+    "har70": {
+      "title": "A machine learning classifier for detection of physical activity types and postures during free-living",
+      "url": "https://folk.idi.ntnu.no/kerstinb/paper/2022-BachEtAl-HUNT4-ML.pdf"
+    },
+    "harth": {
+      "title": "HARTH: A Human Activity Recognition Dataset for Machine Learning",
+      "url": "https://www.mdpi.com/1424-8220/21/23/7853/pdf"
+    },
+    "hhar": {
+      "title": "Smart Devices are Different: Assessing and Mitigating Mobile Sensing Heterogeneities for Activity Recognition",
+      "url": "https://pure.au.dk/ws/files/93103132/sen099_stisenAT3.pdf"
+    },
+    "hugadb": {
+      "title": "HuGaDB: Human Gait Database for Activity Recognition from Wearable Inertial Sensor Networks",
+      "url": "https://arxiv.org/pdf/1705.08506"
+    },
+    "mhealth": {
+      "title": "mHealthDroid: A Novel Framework for Agile Development of Mobile Health Applications",
+      "url": "https://link.springer.com/content/pdf/10.1007/978-3-319-13105-4_14.pdf"
+    },
+    "motion_sense": {
+      "title": "Mobile Sensor Data Anonymization",
+      "url": "https://arxiv.org/pdf/1810.11546"
+    },
+    "opportunity": {
+      "title": "Collecting complex activity datasets in highly rich networked sensor environments",
+      "url": "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=5573462"
+    },
+    "pamap2": {
+      "title": "Introducing a New Benchmarked Dataset for Activity Monitoring",
+      "url": "https://doi.org/10.1109/ISWC.2012.13"
+    },
+    "real_disp": {
+      "title": "Dealing with the Effects of Sensor Displacement in Wearable Activity Recognition",
+      "url": "https://www.mdpi.com/1424-8220/14/6/9995/pdf"
+    },
+    "real_life_har": {
+      "title": "A Public Domain Dataset for Real-Life Human Activity Recognition Using Smartphone Sensors",
+      "url": "https://www.mdpi.com/1424-8220/20/8/2200/pdf"
+    },
+    "real_world": {
+      "title": "On-body Localization of Wearable Devices: An Investigation of Position-Aware Activity Recognition",
+      "url": "https://publications.wim.uni-mannheim.de/informatik/lski/Sztyler2016Localization.pdf"
+    },
+    "sad": {
+      "title": "Fusion of Smartphone Motion Sensors for Physical Activity Recognition",
+      "url": "https://www.mdpi.com/1424-8220/14/6/10146/pdf"
+    },
+    "uca_ehar": {
+      "title": "UCA-EHAR: A Dataset for Human Activity Recognition with Embedded AI on Smart Glasses",
+      "url": "https://www.mdpi.com/2076-3417/12/8/3849/pdf"
+    },
+    "uci_har": {
+      "title": "A Public Domain Dataset for Human Activity Recognition Using Smartphones",
+      "url": "https://www.esann.org/sites/default/files/proceedings/legacy/es2013-84.pdf"
+    },
+    "uma_fall": {
+      "title": "UMAFall: A Multisensor Dataset for the Research on Automatic Fall Detection",
+      "url": "https://doi.org/10.1016/j.procs.2017.06.110"
+    },
+    "unimib_shar": {
+      "title": "UniMiB SHAR: A Dataset for Human Activity Recognition Using Acceleration Data from Smartphones",
+      "url": "https://www.mdpi.com/2076-3417/7/10/1101/pdf"
+    },
+    "up_fall": {
+      "title": "UP-Fall Detection Dataset: A Multimodal Approach",
+      "url": "https://www.mdpi.com/1424-8220/19/9/1988/pdf"
+    },
+    "usc_had": {
+      "title": "USC-HAD: A Daily Activity Dataset for Ubiquitous Activity Recognition Using Wearable Sensors",
+      "url": "https://sipi.usc.edu/had/mi_ubicomp_sagaware12.pdf"
+    },
+    "utd_mhad": {
+      "title": "UTD-MHAD: A Multimodal Dataset for Human Action Recognition Utilizing a Depth Camera and a Wearable Inertial Sensor",
+      "url": "https://jafari.tamu.edu/wp-content/uploads/2019/06/ICIP2015-Chen-Final.pdf"
+    },
+    "w_har": {
+      "title": "w-HAR: An Activity Recognition Dataset and Framework Using Low-Power Wearable Devices",
+      "url": "https://www.mdpi.com/1424-8220/20/18/5356/pdf"
+    },
+    "wear": {
+      "title": "WEAR: An Outdoor Sports Dataset for Wearable and Egocentric Activity Recognition",
+      "url": "https://dl.acm.org/doi/pdf/10.1145/3699776"
+    },
+    "wisdm": {
+      "title": "Activity Recognition using Cell Phone Accelerometers",
+      "url": "https://www.cis.fordham.edu/wisdm/includes/files/sensorKDD-2010.pdf"
+    },
+    "wisdm_19_phone": {
+      "title": "WISDM: Smartphone and Smartwatch Activity and Biometrics Dataset",
+      "url": "https://archive.ics.uci.edu/ml/machine-learning-databases/00507/WISDM-dataset-description.pdf"
+    },
+    "wisdm_19_watch": {
+      "title": "WISDM: Smartphone and Smartwatch Activity and Biometrics Dataset",
+      "url": "https://archive.ics.uci.edu/ml/machine-learning-databases/00507/WISDM-dataset-description.pdf"
+    }
+  },
+  "models": {
+    "attend_discriminate": {
+      "title": "Attend and Discriminate: Beyond the State-of-the-Art for Human Activity Recognition Using Wearable Sensors",
+      "url": "https://arxiv.org/pdf/2007.07172"
+    },
+    "cnn_har": {
+      "title": "Deep Convolutional Neural Networks on Multichannel Time Series for Human Activity Recognition",
+      "url": "https://www.ijcai.org/Proceedings/15/Papers/561.pdf"
+    },
+    "dana": {
+      "title": "DANA: Dimension-Adaptive Neural Architecture for Multivariate Sensor Data",
+      "url": "https://arxiv.org/pdf/2008.02397"
+    },
+    "deepconv_lstm": {
+      "title": "Deep Convolutional and LSTM Recurrent Neural Networks for Multimodal Wearable Activity Recognition",
+      "url": "https://www.mdpi.com/1424-8220/16/1/115/pdf"
+    },
+    "deepconv_lstm_attention": {
+      "title": "On Attention Models for Human Activity Recognition",
+      "url": "https://arxiv.org/pdf/1805.07648"
+    },
+    "deepconv_lstm_iswc": {
+      "title": "Improving Deep Learning for HAR with Shallow LSTMs",
+      "url": "https://dl.acm.org/doi/pdf/10.1145/3460421.3480419"
+    },
+    "dynamic_whar": {
+      "title": "Towards a Dynamic Inter-Sensor Correlations Learning Framework for Multi-Sensor-Based Wearable Human Activity Recognition",
+      "url": "https://dl.acm.org/doi/pdf/10.1145/3550331"
+    },
+    "knn": {
+      "title": "WHAR Arena: Benchmarking the State of the Art in Efficient Wearable Human Activity Recognition",
+      "url": "/whar-arena-paper.pdf"
+    },
+    "lstms_ensemble": {
+      "title": "Ensembles of Deep LSTM Learners for Activity Recognition Using Wearables",
+      "url": "https://arxiv.org/pdf/1703.09370"
+    },
+    "mlp_har": {
+      "title": "MLP-HAR: Boosting Performance and Efficiency of HAR Models on Edge Devices with Purely Fully Connected Layers",
+      "url": "https://dl.acm.org/doi/pdf/10.1145/3675095.3676624"
+    },
+    "mlp_mixer": {
+      "title": "MLPs Are All You Need for Human Activity Recognition",
+      "url": "https://www.mdpi.com/2076-3417/13/20/11154/pdf"
+    },
+    "random_forest": {
+      "title": "WHAR Arena: Benchmarking the State of the Art in Efficient Wearable Human Activity Recognition",
+      "url": "/whar-arena-paper.pdf"
+    },
+    "sa_har": {
+      "title": "Human Activity Recognition from Wearable Sensor Data Using Self-Attention",
+      "url": "https://arxiv.org/pdf/2003.09018"
+    },
+    "svm": {
+      "title": "WHAR Arena: Benchmarking the State of the Art in Efficient Wearable Human Activity Recognition",
+      "url": "/whar-arena-paper.pdf"
+    },
+    "tinierhar": {
+      "title": "TinierHAR: Towards Ultra-Lightweight Deep Learning Models for Efficient Human Activity Recognition on Edge Devices",
+      "url": "https://arxiv.org/pdf/2507.07949"
+    },
+    "tinyhar": {
+      "title": "TinyHAR: A Lightweight Deep Learning Model Designed for Human Activity Recognition",
+      "url": "https://dl.acm.org/doi/pdf/10.1145/3544794.3558467"
+    },
+    "triple_cross_domain_attention": {
+      "title": "Triple Cross-Domain Attention on Human Activity Recognition Using Wearable Sensors",
+      "url": "https://yinntag.github.io/publications/P3.pdf"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "whar-arena-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --host 0.0.0.0",
+    "build": "astro check && astro build",
+    "preview": "astro preview --host 0.0.0.0"
+  },
+  "dependencies": {
+    "@astrojs/svelte": "^8.1.2",
+    "astro": "^6.4.4",
+    "svelte": "^5.56.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "typescript": "^5.9.3"
+  }
+}

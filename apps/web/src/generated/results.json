@@ -1,0 +1,1010 @@
+[
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "d18fa4ae5fe26bfd489c7d55d1ccc7b468b9dfc51c494ac691be7133a880660a",
+    "metrics": {
+      "accuracy": 0.7322834730148315,
+      "balanced_accuracy": 0.6012442722969039,
+      "macro_f1": 0.4227215349674225
+    },
+    "model_id": "aroma_joint_model",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 13,
+      "epochs_ran": 23,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    "split_id": "split-00",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "ca3552cbac1bd0c4d19ded3f32ce75c148327b494911d317c7d9d4970e90bcaa",
+    "metrics": {
+      "accuracy": 0.4724220633506775,
+      "balanced_accuracy": 0.4666838913835228,
+      "macro_f1": 0.3108959197998047
+    },
+    "model_id": "aroma_joint_model",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 22,
+      "epochs_ran": 32,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    },
+    "split_id": "split-01",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "d912b5b8d48aede90f175202036bdf83e065a067b067d2781a9ff30e54568c41",
+    "metrics": {
+      "accuracy": 0.8188976645469666,
+      "balanced_accuracy": 0.6370724791777422,
+      "macro_f1": 0.4565081298351288
+    },
+    "model_id": "attend_discriminate",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 6,
+      "epochs_ran": 16,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    "split_id": "split-00",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "1735215d623c1aa32ecd26a68cb6756fc4b8dfd8aae96f0434ecc8ab9ef8ba30",
+    "metrics": {
+      "accuracy": 0.8872901797294617,
+      "balanced_accuracy": 0.8880535180325536,
+      "macro_f1": 0.6476715207099915
+    },
+    "model_id": "attend_discriminate",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 12,
+      "epochs_ran": 22,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    },
+    "split_id": "split-01",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "676985f2864843a6f588d42444fd128144bd807c55859a7a19a8567eb58e2a87",
+    "metrics": {
+      "accuracy": 0.4645669162273407,
+      "balanced_accuracy": 0.37844413646807223,
+      "macro_f1": 0.25339004397392273
+    },
+    "model_id": "attensense",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 12,
+      "epochs_ran": 22,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    "split_id": "split-00",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "0fe70b1616b659676ab039c704633b14d754030a0eb457db8a102636fff8fee2",
+    "metrics": {
+      "accuracy": 0.513189435005188,
+      "balanced_accuracy": 0.41611740260189617,
+      "macro_f1": 0.2923023998737335
+    },
+    "model_id": "attensense",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 34,
+      "epochs_ran": 44,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    },
+    "split_id": "split-01",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "57dcdee08e76b5907292e388dc51f79c46d67abe8177c0ead2bdb9ac9c6f0927",
+    "metrics": {
+      "accuracy": 0.808398962020874,
+      "balanced_accuracy": 0.8202157084042029,
+      "macro_f1": 0.5911754965782166
+    },
+    "model_id": "cnn_har",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 5,
+      "epochs_ran": 15,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    "split_id": "split-00",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "81296153fbfbb0c27e33acbe02afec7bc8b456cf05bb7fd020f9347f83c27da2",
+    "metrics": {
+      "accuracy": 0.7242206335067749,
+      "balanced_accuracy": 0.6338403869438353,
+      "macro_f1": 0.4538567066192627
+    },
+    "model_id": "cnn_har",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 4,
+      "epochs_ran": 14,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    },
+    "split_id": "split-01",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "2e672f378b04468eb99b529b006f7345b2ea0becb4a8f06b710d76da3cdb0e4e",
+    "metrics": {
+      "accuracy": 0.6955380439758301,
+      "balanced_accuracy": 0.6350598719019771,
+      "macro_f1": 0.46376967430114746
+    },
+    "model_id": "dana",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 6,
+      "epochs_ran": 16,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    "split_id": "split-00",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "4acc57c7765bc0409446910f91f131ca2a505cb7281c7b6384ecf242508c0b75",
+    "metrics": {
+      "accuracy": 0.743405282497406,
+      "balanced_accuracy": 0.6957562780413933,
+      "macro_f1": 0.5093055367469788
+    },
+    "model_id": "dana",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 14,
+      "epochs_ran": 24,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    },
+    "split_id": "split-01",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "b86c643554e29eaed906ced232dd44667f38ce9ba79c6836108dd4b45c8e68bd",
+    "metrics": {
+      "accuracy": 0.6220472455024719,
+      "balanced_accuracy": 0.5838394304870573,
+      "macro_f1": 0.3738589584827423
+    },
+    "model_id": "deepconv_lstm",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 6,
+      "epochs_ran": 16,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    "split_id": "split-00",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "44288839eab878372d666778a87ad36be416b226e7cbe05a6bb6aa959ff9c79d",
+    "metrics": {
+      "accuracy": 0.6834532618522644,
+      "balanced_accuracy": 0.6852068799441025,
+      "macro_f1": 0.4892745912075043
+    },
+    "model_id": "deepconv_lstm",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 10,
+      "epochs_ran": 20,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    },
+    "split_id": "split-01",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "6659cc45065a49c95ce8cc49f86022a4121dc7f1118e0a95f64bc8b44c3e0164",
+    "metrics": {
+      "accuracy": 0.7769029140472412,
+      "balanced_accuracy": 0.7204055900982325,
+      "macro_f1": 0.4663029611110687
+    },
+    "model_id": "deepconv_lstm_attention",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 13,
+      "epochs_ran": 23,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    "split_id": "split-00",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "eaff03e4255322002f87dd2e53cd89cb0a3b228ef53cffd448a307736aade379",
+    "metrics": {
+      "accuracy": 0.5539568066596985,
+      "balanced_accuracy": 0.5976735904828148,
+      "macro_f1": 0.3970232903957367
+    },
+    "model_id": "deepconv_lstm_attention",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 7,
+      "epochs_ran": 17,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    },
+    "split_id": "split-01",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "22bfd553bf2fbb4a3d9476f0e5bdab194e7163a36437903ee0e9ecb67b62b077",
+    "metrics": {
+      "accuracy": 0.6929134130477905,
+      "balanced_accuracy": 0.5136246836913231,
+      "macro_f1": 0.3670503795146942
+    },
+    "model_id": "deepconv_lstm_iswc",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 11,
+      "epochs_ran": 21,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    "split_id": "split-00",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "6b952b61e7b10700ac8972d36a4f0efc31a6773481f9e0171252f56ff1948abb",
+    "metrics": {
+      "accuracy": 0.7482014298439026,
+      "balanced_accuracy": 0.6251036771234849,
+      "macro_f1": 0.48750877380371094
+    },
+    "model_id": "deepconv_lstm_iswc",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 24,
+      "epochs_ran": 34,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    },
+    "split_id": "split-01",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "81a6b60ade7fd2bfdd15f31bfff719c9a740a034e56bb81c6ed3cb9901a8c105",
+    "metrics": {
+      "accuracy": 0.5328084230422974,
+      "balanced_accuracy": 0.5538488771454908,
+      "macro_f1": 0.3789656162261963
+    },
+    "model_id": "dynamic_whar",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 12,
+      "epochs_ran": 22,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    "split_id": "split-00",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "fcfaecbebf6e50eb7c8d206ebca265c34ea653acaef4a0465c6be4fc3c08bd11",
+    "metrics": {
+      "accuracy": 0.7937650084495544,
+      "balanced_accuracy": 0.7154828736596972,
+      "macro_f1": 0.48013290762901306
+    },
+    "model_id": "dynamic_whar",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 14,
+      "epochs_ran": 24,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    },
+    "split_id": "split-01",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "81c5478df2d4a76a88c3a9598204f53131b6bb48d8e8307d96b377c988e90d23",
+    "metrics": {
+      "accuracy": 0.887139081954956,
+      "balanced_accuracy": 0.8653350548087391,
+      "macro_f1": 0.6102271676063538
+    },
+    "model_id": "global_fusion",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 8,
+      "epochs_ran": 18,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    "split_id": "split-00",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "9fe2e09fd53bdf2b31dd1863ed83d45ee05cbc3b8cf5320821899d63197402bf",
+    "metrics": {
+      "accuracy": 0.8369304537773132,
+      "balanced_accuracy": 0.7328480609836787,
+      "macro_f1": 0.5222254991531372
+    },
+    "model_id": "global_fusion",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 14,
+      "epochs_ran": 24,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    },
+    "split_id": "split-01",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "87865ab7a3edbc13433d534a47a3fbc1de896331b7fa3b1420438af09465719d",
+    "metrics": {
+      "accuracy": 0.6745406985282898,
+      "balanced_accuracy": 0.6331721952284988,
+      "macro_f1": 0.4544175863265991
+    },
+    "model_id": "if_conv_transformer",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 5,
+      "epochs_ran": 15,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    "split_id": "split-00",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "a8f34219e0678a82f1d940ce1ed68c6bb407e411e92fda5c43a928f53bdf8f04",
+    "metrics": {
+      "accuracy": 0.9040767550468445,
+      "balanced_accuracy": 0.9431680140492402,
+      "macro_f1": 0.6962016224861145
+    },
+    "model_id": "if_conv_transformer",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 7,
+      "epochs_ran": 17,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    },
+    "split_id": "split-01",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "6cd0759f2b35aa22c9c1f159a0e6eaf4d3e9cba188802b364687289003c07c36",
+    "metrics": {
+      "accuracy": 0.5511810779571533,
+      "balanced_accuracy": 0.41483647390080136,
+      "macro_f1": 0.30304500460624695
+    },
+    "model_id": "knn",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": null,
+      "epochs_ran": 0,
+      "framework": "sklearn",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    "split_id": "split-00",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "06d9f3ed71ef37f3ef70583fc76ad434304798b0630984d75bd6f94598210087",
+    "metrics": {
+      "accuracy": 0.4916067123413086,
+      "balanced_accuracy": 0.38540757014551563,
+      "macro_f1": 0.26983946561813354
+    },
+    "model_id": "knn",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": null,
+      "epochs_ran": 0,
+      "framework": "sklearn",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    },
+    "split_id": "split-01",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "4534064e6b5f79ee112e9c9799c6677da2d2de59ea08127d45d5d1e7ef44ae09",
+    "metrics": {
+      "accuracy": 0.5144357085227966,
+      "balanced_accuracy": 0.40373255195776614,
+      "macro_f1": 0.2849554717540741
+    },
+    "model_id": "lstms_ensemble",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 8,
+      "epochs_ran": 18,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    "split_id": "split-00",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "b9cf6e364e2a755e5684756e84f7ca37072ef9b90603cd7e8bdd5e06f2084cb4",
+    "metrics": {
+      "accuracy": 0.7074340581893921,
+      "balanced_accuracy": 0.6525463916015496,
+      "macro_f1": 0.4605461657047272
+    },
+    "model_id": "lstms_ensemble",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 35,
+      "epochs_ran": 45,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    },
+    "split_id": "split-01",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "4b1e77ee12eac622c06c08f4b30e7c0aa61f7f297197196dee52c7c7874dfabb",
+    "metrics": {
+      "accuracy": 0.7270340919494629,
+      "balanced_accuracy": 0.5619456727847861,
+      "macro_f1": 0.43375515937805176
+    },
+    "model_id": "mlp_har",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 6,
+      "epochs_ran": 16,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    "split_id": "split-00",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "ce81d6c43d667e6f013d563a735f1b9d1beda37e30bdf7adb449848da84e42c3",
+    "metrics": {
+      "accuracy": 0.7913669347763062,
+      "balanced_accuracy": 0.6349790730727621,
+      "macro_f1": 0.4419015645980835
+    },
+    "model_id": "mlp_har",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 15,
+      "epochs_ran": 25,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    },
+    "split_id": "split-01",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "c7f4d1fbe6aa63b936dda298a9a7c07469f41e7a726b92cb7428fee54bd54eef",
+    "metrics": {
+      "accuracy": 0.6430445909500122,
+      "balanced_accuracy": 0.4850930637480345,
+      "macro_f1": 0.3455849885940552
+    },
+    "model_id": "mlp_mixer",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 9,
+      "epochs_ran": 19,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    "split_id": "split-00",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "c7e1e40aa2023b26308a693c245ff47548b657985b7baeab6fdfdb0b59de9a00",
+    "metrics": {
+      "accuracy": 0.6019184589385986,
+      "balanced_accuracy": 0.714004146197452,
+      "macro_f1": 0.4097497761249542
+    },
+    "model_id": "mlp_mixer",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 8,
+      "epochs_ran": 18,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    },
+    "split_id": "split-01",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "5ad4cf063e2a9858078da0e5244b7e7b282d7c1358daf608f9466ffc0aed80b1",
+    "metrics": {
+      "accuracy": 0.5354330539703369,
+      "balanced_accuracy": 0.43044361811531673,
+      "macro_f1": 0.2907271087169647
+    },
+    "model_id": "random_forest",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": null,
+      "epochs_ran": 0,
+      "framework": "sklearn",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    "split_id": "split-00",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "157b4b7ac8a112d9b44593b11b71aca9d6bd0cf6deeb090f0042ef4d65a68592",
+    "metrics": {
+      "accuracy": 0.880095899105072,
+      "balanced_accuracy": 0.6976463525122529,
+      "macro_f1": 0.5192677974700928
+    },
+    "model_id": "random_forest",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": null,
+      "epochs_ran": 0,
+      "framework": "sklearn",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    },
+    "split_id": "split-01",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "f9431f96dbe2132c0855abc0636968d5d933def88e0b7c181e8568e3a16fe7ea",
+    "metrics": {
+      "accuracy": 0.22047244012355804,
+      "balanced_accuracy": 0.1111111111111111,
+      "macro_f1": 0.0301075279712677
+    },
+    "model_id": "sa_har",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 7,
+      "epochs_ran": 17,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    "split_id": "split-00",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "d24afc1819d06e59fde39ba4f48ae9d3a61bb86f4bafc0395717fed4521d79bb",
+    "metrics": {
+      "accuracy": 0.1390887349843979,
+      "balanced_accuracy": 0.1111111111111111,
+      "macro_f1": 0.020350877195596695
+    },
+    "model_id": "sa_har",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 19,
+      "epochs_ran": 29,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    },
+    "split_id": "split-01",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "668d57258bcca073cf96b6e1546c883e328c383949ecfd7bd016d5b8784c1050",
+    "metrics": {
+      "accuracy": 0.530183732509613,
+      "balanced_accuracy": 0.39694606887589345,
+      "macro_f1": 0.2942619323730469
+    },
+    "model_id": "svm",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": null,
+      "epochs_ran": 0,
+      "framework": "sklearn",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    "split_id": "split-00",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "be26cfd860baf95d0174f189a96db9c57aebfc1bf27629bc1858939c16e95d47",
+    "metrics": {
+      "accuracy": 0.47961631417274475,
+      "balanced_accuracy": 0.39855094203102587,
+      "macro_f1": 0.2489892691373825
+    },
+    "model_id": "svm",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": null,
+      "epochs_ran": 0,
+      "framework": "sklearn",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    },
+    "split_id": "split-01",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "7468cec122b34a9e883b0a40b1816562b6a07722ae500340b407fa7ce7ead9ff",
+    "metrics": {
+      "accuracy": 0.7742782235145569,
+      "balanced_accuracy": 0.5956802094500993,
+      "macro_f1": 0.45222291350364685
+    },
+    "model_id": "tinierhar",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 21,
+      "epochs_ran": 31,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    "split_id": "split-00",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "c54b1358696b386313f4dea9e7d63740a445dc1b08f9ba05efe297a9d3c82cff",
+    "metrics": {
+      "accuracy": 0.8968824744224548,
+      "balanced_accuracy": 0.758663706043161,
+      "macro_f1": 0.5572393536567688
+    },
+    "model_id": "tinierhar",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 37,
+      "epochs_ran": 47,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    },
+    "split_id": "split-01",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "8b9d34e10b88a0c232e478dd774cc24d34c5cb7602a305e6223a4081dea2c8d6",
+    "metrics": {
+      "accuracy": 0.6876640319824219,
+      "balanced_accuracy": 0.6493615410384076,
+      "macro_f1": 0.4518202841281891
+    },
+    "model_id": "tinyhar",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 5,
+      "epochs_ran": 15,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    "split_id": "split-00",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "0f53184b8eb631ea0fd6977645176edec710cf4ce598e3aa17e12a0237207ed0",
+    "metrics": {
+      "accuracy": 0.7410072088241577,
+      "balanced_accuracy": 0.8019087504622097,
+      "macro_f1": 0.5531537532806396
+    },
+    "model_id": "tinyhar",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 8,
+      "epochs_ran": 18,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    },
+    "split_id": "split-01",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "4e9bef72d62d5b18668834c5b7407e3ab99eb1cf12cdfa9095f396c1cdae6de9",
+    "metrics": {
+      "accuracy": 0.8293963074684143,
+      "balanced_accuracy": 0.8118313296879869,
+      "macro_f1": 0.6129605174064636
+    },
+    "model_id": "triple_cross_domain_attention",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 6,
+      "epochs_ran": 16,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    "split_id": "split-00",
+    "status": "complete"
+  },
+  {
+    "dataset_id": "actrectut_gestures",
+    "fingerprint": "0b5d736ca05fff8e10946abb007b2eaded389adf126a237afb9a1d9c0ade09cf",
+    "metrics": {
+      "accuracy": 0.8417266011238098,
+      "balanced_accuracy": 0.8443139049009071,
+      "macro_f1": 0.6153748631477356
+    },
+    "model_id": "triple_cross_domain_attention",
+    "protocol_hash": "e8739ef2c5b36c99",
+    "protocol_id": "whar_arena_v1",
+    "source": {
+      "best_epoch": 12,
+      "epochs_ran": 22,
+      "framework": "torch",
+      "kind": "local_training",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    },
+    "split_id": "split-01",
+    "status": "complete"
+  }
+]

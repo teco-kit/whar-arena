@@ -1,0 +1,34 @@
+{
+  "dataset_id": "actrectut_gestures",
+  "mean_macro_f1": 0.5662263333797455,
+  "model_id": "global_fusion",
+  "protocol_hash": "e8739ef2c5b36c99",
+  "protocol_id": "whar_arena_v1",
+  "splits": [
+    {
+      "accuracy": 0.887139081954956,
+      "balanced_accuracy": 0.8653350548087391,
+      "best_epoch": 8,
+      "epochs_ran": 18,
+      "macro_f1": 0.6102271676063538,
+      "split_id": "split-00",
+      "split_identifier": "group_kfold_0",
+      "test_size": 381,
+      "train_size": 334,
+      "val_size": 83
+    },
+    {
+      "accuracy": 0.8369304537773132,
+      "balanced_accuracy": 0.7328480609836787,
+      "best_epoch": 14,
+      "epochs_ran": 24,
+      "macro_f1": 0.5222254991531372,
+      "split_id": "split-01",
+      "split_identifier": "group_kfold_1",
+      "test_size": 417,
+      "train_size": 305,
+      "val_size": 76
+    }
+  ],
+  "std_macro_f1": 0.062226576518999696
+}
