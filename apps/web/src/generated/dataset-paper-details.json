@@ -1,0 +1,292 @@
+{
+  "source": {
+    "note": "Dataset paper author names are taken from the WHAR Arena reference list. Institution summaries are paper-level affiliations used for display in the static catalog."
+  },
+  "datasets": {
+    "actrectut_gestures": {
+      "institutions": ["Max Planck Institute for Informatics", "ETH Zurich"],
+      "authors": [
+        {"name": "Andreas Bulling", "affiliation": "Max Planck Institute for Informatics"},
+        {"name": "Ulf Blanke", "affiliation": "ETH Zurich"},
+        {"name": "Bernt Schiele", "affiliation": "Max Planck Institute for Informatics"}
+      ]
+    },
+    "daphnet": {
+      "institutions": ["Mount Sinai School of Medicine", "University of Sydney", "Baylor College of Medicine"],
+      "authors": [
+        {"name": "Steven T. Moore", "affiliation": "Mount Sinai School of Medicine"},
+        {"name": "Hamish G. MacDougall", "affiliation": "University of Sydney"},
+        {"name": "William G. Ondo", "affiliation": "Baylor College of Medicine"}
+      ]
+    },
+    "dsads": {
+      "institutions": ["Bilkent University"],
+      "authors": [
+        {"name": "Kerem Altun", "affiliation": "Bilkent University"},
+        {"name": "Billur Barshan", "affiliation": "Bilkent University"},
+        {"name": "Orkun Tuncel", "affiliation": "Bilkent University"}
+      ]
+    },
+    "gotov": {
+      "institutions": ["Leiden University Medical Center", "Leiden University"],
+      "authors": [
+        {"name": "Stylianos Paraschiakos", "affiliation": "Leiden University"},
+        {"name": "Claudio Rebelo De Sa", "affiliation": "Leiden University"},
+        {"name": "Jeremiah Okai", "affiliation": "Leiden University Medical Center"},
+        {"name": "P. Eline Slagboom", "affiliation": "Leiden University Medical Center"},
+        {"name": "Marian Beekman", "affiliation": "Leiden University Medical Center"},
+        {"name": "Arno Knobbe", "affiliation": "Leiden University"}
+      ]
+    },
+    "hang_time": {
+      "institutions": ["University of Siegen", "University of Colorado Boulder"],
+      "authors": [
+        {"name": "Alexander Hoelzemann", "affiliation": "University of Siegen"},
+        {"name": "Julia Lee Romero", "affiliation": "University of Colorado Boulder"},
+        {"name": "Marius Bock", "affiliation": "University of Siegen"},
+        {"name": "Kristof Van Laerhoven", "affiliation": "University of Siegen"},
+        {"name": "Qin Lv", "affiliation": "University of Colorado Boulder"}
+      ]
+    },
+    "hapt": {
+      "institutions": ["University of Genova", "Universitat Politecnica de Catalunya"],
+      "authors": [
+        {"name": "Jorge-L. Reyes-Ortiz", "affiliation": "University of Genova"},
+        {"name": "Luca Oneto", "affiliation": "University of Genova"},
+        {"name": "Albert Sama", "affiliation": "Universitat Politecnica de Catalunya"},
+        {"name": "Xavier Parra", "affiliation": "Universitat Politecnica de Catalunya"},
+        {"name": "Davide Anguita", "affiliation": "University of Genova"}
+      ]
+    },
+    "har70": {
+      "institutions": ["Norwegian University of Science and Technology"],
+      "authors": [
+        {"name": "Kerstin Bach", "affiliation": "Norwegian University of Science and Technology"},
+        {"name": "Atle Kongsvold", "affiliation": "Norwegian University of Science and Technology"},
+        {"name": "Hilde Bardstu", "affiliation": "Norwegian University of Science and Technology"},
+        {"name": "Ellen Marie Bardal", "affiliation": "Norwegian University of Science and Technology"},
+        {"name": "Hakon S. Kjaernli", "affiliation": "Norwegian University of Science and Technology"},
+        {"name": "Sverre Herland", "affiliation": "Norwegian University of Science and Technology"},
+        {"name": "Aleksej Logacjov", "affiliation": "Norwegian University of Science and Technology"},
+        {"name": "Paul Jarle Mork", "affiliation": "Norwegian University of Science and Technology"}
+      ]
+    },
+    "harth": {
+      "institutions": ["Norwegian University of Science and Technology"],
+      "authors": [
+        {"name": "Aleksej Logacjov", "affiliation": "Norwegian University of Science and Technology"},
+        {"name": "Kerstin Bach", "affiliation": "Norwegian University of Science and Technology"},
+        {"name": "Atle Kongsvold", "affiliation": "Norwegian University of Science and Technology"},
+        {"name": "Hilde Bremseth Bardstu", "affiliation": "Norwegian University of Science and Technology"},
+        {"name": "Paul Jarle Mork", "affiliation": "Norwegian University of Science and Technology"}
+      ]
+    },
+    "hhar": {
+      "institutions": ["Aarhus University", "Carnegie Mellon University"],
+      "authors": [
+        {"name": "Allan Stisen", "affiliation": "Aarhus University"},
+        {"name": "Henrik Blunck", "affiliation": "Aarhus University"},
+        {"name": "Sourav Bhattacharya", "affiliation": "Aarhus University"},
+        {"name": "Thor Siiger Prentow", "affiliation": "Aarhus University"},
+        {"name": "Mikkel Baun Kjaergaard", "affiliation": "Aarhus University"},
+        {"name": "Anind Dey", "affiliation": "Carnegie Mellon University"},
+        {"name": "Tobias Sonne", "affiliation": "Aarhus University"},
+        {"name": "Mads Moller Jensen", "affiliation": "Aarhus University"}
+      ]
+    },
+    "hugadb": {
+      "institutions": ["Eotvos Lorand University"],
+      "authors": [
+        {"name": "Roman Chereshnev", "affiliation": "Eotvos Lorand University"},
+        {"name": "Attila Kertesz-Farkas", "affiliation": "Eotvos Lorand University"}
+      ]
+    },
+    "mhealth": {
+      "institutions": ["University of Granada"],
+      "authors": [
+        {"name": "Oresti Banos", "affiliation": "University of Granada"},
+        {"name": "Rafael Garcia", "affiliation": "University of Granada"},
+        {"name": "Juan Holgado-Terriza", "affiliation": "University of Granada"},
+        {"name": "Miguel Damas", "affiliation": "University of Granada"},
+        {"name": "Hector Pomares", "affiliation": "University of Granada"},
+        {"name": "Ignacio Rojas", "affiliation": "University of Granada"},
+        {"name": "Alejandro Saez", "affiliation": "University of Granada"}
+      ]
+    },
+    "motion_sense": {
+      "institutions": ["Imperial College London", "Queen Mary University of London"],
+      "authors": [
+        {"name": "Mohammad Malekzadeh", "affiliation": "Imperial College London"},
+        {"name": "Richard G. Clegg", "affiliation": "Queen Mary University of London"},
+        {"name": "Andrea Cavallaro", "affiliation": "Queen Mary University of London"},
+        {"name": "Hamed Haddadi", "affiliation": "Imperial College London"}
+      ]
+    },
+    "opportunity": {
+      "institutions": ["ETH Zurich", "DFKI", "University of Passau", "EPFL"],
+      "authors": [
+        {"name": "Daniel Roggen", "affiliation": "ETH Zurich"},
+        {"name": "Alberto Calatroni", "affiliation": "ETH Zurich"},
+        {"name": "Mirco Rossi", "affiliation": "ETH Zurich"},
+        {"name": "Thomas Holleczek", "affiliation": "ETH Zurich"},
+        {"name": "Kilian Forster", "affiliation": "ETH Zurich"},
+        {"name": "Gerhard Troster", "affiliation": "ETH Zurich"},
+        {"name": "Paul Lukowicz", "affiliation": "DFKI"},
+        {"name": "David Bannach", "affiliation": "University of Passau"},
+        {"name": "Gerald Pirkl", "affiliation": "University of Passau"},
+        {"name": "Alois Ferscha", "affiliation": "University of Passau"},
+        {"name": "Jakob Doppler", "affiliation": "University of Passau"},
+        {"name": "Clemens Holzmann", "affiliation": "University of Passau"},
+        {"name": "Marc Kurz", "affiliation": "University of Passau"},
+        {"name": "Gerald Holl", "affiliation": "University of Passau"},
+        {"name": "Ricardo Chavarriaga", "affiliation": "EPFL"},
+        {"name": "Hesam Sagha", "affiliation": "EPFL"},
+        {"name": "Hamidreza Bayati", "affiliation": "EPFL"},
+        {"name": "Marco Creatura", "affiliation": "EPFL"},
+        {"name": "Jose del R. Millan", "affiliation": "EPFL"}
+      ]
+    },
+    "pamap2": {
+      "institutions": ["DFKI", "University of Kaiserslautern"],
+      "authors": [
+        {"name": "Attila Reiss", "affiliation": "DFKI"},
+        {"name": "Didier Stricker", "affiliation": "DFKI"}
+      ]
+    },
+    "real_disp": {
+      "institutions": ["University of Granada"],
+      "authors": [
+        {"name": "Oresti Banos", "affiliation": "University of Granada"},
+        {"name": "Mate Toth", "affiliation": "University of Granada"},
+        {"name": "Miguel Damas", "affiliation": "University of Granada"},
+        {"name": "Hector Pomares", "affiliation": "University of Granada"},
+        {"name": "Ignacio Rojas", "affiliation": "University of Granada"}
+      ]
+    },
+    "real_life_har": {
+      "institutions": ["University of A Coruna"],
+      "authors": [
+        {"name": "Daniel Garcia-Gonzalez", "affiliation": "University of A Coruna"},
+        {"name": "Daniel Rivero", "affiliation": "University of A Coruna"},
+        {"name": "Enrique Fernandez-Blanco", "affiliation": "University of A Coruna"},
+        {"name": "Miguel R. Luaces", "affiliation": "University of A Coruna"}
+      ]
+    },
+    "real_world": {
+      "institutions": ["University of Mannheim"],
+      "authors": [
+        {"name": "Timo Sztyler", "affiliation": "University of Mannheim"},
+        {"name": "Heiner Stuckenschmidt", "affiliation": "University of Mannheim"}
+      ]
+    },
+    "sad": {
+      "institutions": ["University of Twente", "Galatasaray University"],
+      "authors": [
+        {"name": "Muhammad Shoaib", "affiliation": "University of Twente"},
+        {"name": "Stephan Bosch", "affiliation": "University of Twente"},
+        {"name": "Ozlem Incel", "affiliation": "Galatasaray University"},
+        {"name": "Hans Scholten", "affiliation": "University of Twente"},
+        {"name": "Paul Havinga", "affiliation": "University of Twente"}
+      ]
+    },
+    "uca_ehar": {
+      "institutions": ["Universite Cote d'Azur"],
+      "authors": [
+        {"name": "Pierre-Emmanuel Novac", "affiliation": "Universite Cote d'Azur"},
+        {"name": "Alain Pegatoquet", "affiliation": "Universite Cote d'Azur"},
+        {"name": "Benoit Miramond", "affiliation": "Universite Cote d'Azur"},
+        {"name": "Christophe Caquineau", "affiliation": "Universite Cote d'Azur"}
+      ]
+    },
+    "uci_har": {
+      "institutions": ["University of Genova", "Universitat Politecnica de Catalunya"],
+      "authors": [
+        {"name": "Davide Anguita", "affiliation": "University of Genova"},
+        {"name": "Alessandro Ghio", "affiliation": "University of Genova"},
+        {"name": "Luca Oneto", "affiliation": "University of Genova"},
+        {"name": "Xavier Parra", "affiliation": "Universitat Politecnica de Catalunya"},
+        {"name": "Jorge L. Reyes-Ortiz", "affiliation": "University of Genova"}
+      ]
+    },
+    "uma_fall": {
+      "institutions": ["University of Malaga"],
+      "authors": [
+        {"name": "Eduardo Casilari", "affiliation": "University of Malaga"},
+        {"name": "Jose A. Santoyo-Ramon", "affiliation": "University of Malaga"},
+        {"name": "Jose M. Cano-Garcia", "affiliation": "University of Malaga"}
+      ]
+    },
+    "unimib_shar": {
+      "institutions": ["University of Milano-Bicocca"],
+      "authors": [
+        {"name": "Daniela Micucci", "affiliation": "University of Milano-Bicocca"},
+        {"name": "Marco Mobilio", "affiliation": "University of Milano-Bicocca"},
+        {"name": "Paolo Napoletano", "affiliation": "University of Milano-Bicocca"}
+      ]
+    },
+    "up_fall": {
+      "institutions": ["Universidad Panamericana"],
+      "authors": [
+        {"name": "Lourdes Martinez-Villasenor", "affiliation": "Universidad Panamericana"},
+        {"name": "Hiram Ponce", "affiliation": "Universidad Panamericana"},
+        {"name": "Jorge Brieva", "affiliation": "Universidad Panamericana"},
+        {"name": "Ernesto Moya-Albor", "affiliation": "Universidad Panamericana"},
+        {"name": "Jose Nunez-Martinez", "affiliation": "Universidad Panamericana"},
+        {"name": "Carlos Penafort-Asturiano", "affiliation": "Universidad Panamericana"}
+      ]
+    },
+    "usc_had": {
+      "institutions": ["University of Southern California"],
+      "authors": [
+        {"name": "Mi Zhang", "affiliation": "University of Southern California"},
+        {"name": "Alexander A. Sawchuk", "affiliation": "University of Southern California"}
+      ]
+    },
+    "utd_mhad": {
+      "institutions": ["University of Texas at Dallas", "Texas A&M University"],
+      "authors": [
+        {"name": "Chen Chen", "affiliation": "University of Texas at Dallas"},
+        {"name": "Roozbeh Jafari", "affiliation": "Texas A&M University"},
+        {"name": "Nasser Kehtarnavaz", "affiliation": "University of Texas at Dallas"}
+      ]
+    },
+    "w_har": {
+      "institutions": ["Arizona State University", "Barrow Neurological Institute"],
+      "authors": [
+        {"name": "Ganapati Bhat", "affiliation": "Arizona State University"},
+        {"name": "Nicholas Tran", "affiliation": "Arizona State University"},
+        {"name": "Holly Shill", "affiliation": "Barrow Neurological Institute"},
+        {"name": "Umit Y. Ogras", "affiliation": "Arizona State University"}
+      ]
+    },
+    "wear": {
+      "institutions": ["University of Siegen"],
+      "authors": [
+        {"name": "Marius Bock", "affiliation": "University of Siegen"},
+        {"name": "Hilde Kuehne", "affiliation": "University of Siegen"},
+        {"name": "Kristof Van Laerhoven", "affiliation": "University of Siegen"},
+        {"name": "Michael Moeller", "affiliation": "University of Siegen"}
+      ]
+    },
+    "wisdm": {
+      "institutions": ["Fordham University"],
+      "authors": [
+        {"name": "Jennifer R. Kwapisz", "affiliation": "Fordham University"},
+        {"name": "Gary M. Weiss", "affiliation": "Fordham University"},
+        {"name": "Samuel A. Moore", "affiliation": "Fordham University"}
+      ]
+    },
+    "wisdm_19_phone": {
+      "institutions": ["Fordham University"],
+      "authors": [
+        {"name": "Gary M. Weiss", "affiliation": "Fordham University"}
+      ]
+    },
+    "wisdm_19_watch": {
+      "institutions": ["Fordham University"],
+      "authors": [
+        {"name": "Gary M. Weiss", "affiliation": "Fordham University"}
+      ]
+    }
+  }
+}

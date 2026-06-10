@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import datasetDetailsData from "../generated/dataset-details.json";
+import datasetPaperDetailsData from "../generated/dataset-paper-details.json";
 import paperBenchmark from "../generated/paper-benchmark.json";
 import paperLinks from "../generated/paper-links.json";
 
@@ -25,6 +26,14 @@ type PaperLink = {
   url: string;
 };
 
+type DatasetPaperDetail = {
+  institutions?: string[];
+  authors?: Array<{
+    name: string;
+    affiliation: string;
+  }>;
+};
+
 const datasetDetails = datasetDetailsData as {
   source: {
     table: string;
@@ -33,19 +42,73 @@ const datasetDetails = datasetDetailsData as {
   };
   datasets: Record<string, DatasetDetail>;
 };
+const datasetPaperDetails = datasetPaperDetailsData as {
+  source: {
+    note: string;
+  };
+  datasets: Record<string, DatasetPaperDetail>;
+};
 const benchmark = paperBenchmark as { catalog: { datasets: Dataset[] } };
 const links = paperLinks as { datasets: Record<string, PaperLink> };
 const datasetNames = new Map(benchmark.catalog.datasets.map((dataset) => [dataset.id, dataset.name]));
 const datasets = Object.entries(datasetDetails.datasets)
-  .map(([id, detail]) => ({
-    id,
-    name: datasetNames.get(id) ?? id,
-    detail,
-    paperLink: links.datasets[id] ?? null,
-  }))
-  .sort((a, b) => b.detail.citations - a.detail.citations);
+  .map(([id, detail]) => {
+    const paperDetail = datasetPaperDetails.datasets[id] ?? { institutions: [], authors: [] };
+
+    return {
+      id,
+      name: datasetNames.get(id) ?? id,
+      detail,
+      paperDetail,
+      institutionSummary: formatInstitutionSummary(paperDetail.institutions ?? []),
+      paperLink: links.datasets[id] ?? null,
+    };
+  })
+  .sort((a, b) => b.detail.year - a.detail.year || a.name.localeCompare(b.name));
+const sensorModalityOptions = uniqueParts(
+  datasets.flatMap((dataset) => splitList(dataset.detail.sensorModalities)),
+);
+const deviceTypeOptions = uniqueParts(
+  datasets.flatMap((dataset) => splitList(dataset.detail.deviceTypes)),
+);
+const subjectsMax = roundMetricMax(datasets.map((dataset) => dataset.detail.subjects));
+const activitiesMax = roundMetricMax(datasets.map((dataset) => dataset.detail.activities));
+const channelsMax = roundMetricMax(datasets.map((dataset) => dataset.detail.channels));
 const snapshotDate = "May 1, 2026";
 const snapshotDateTime = "2026-05-01";
+
+function splitList(value: string) {
+  return value
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+function uniqueParts(parts: string[]) {
+  return [...new Set(parts)].sort((a, b) => a.localeCompare(b));
+}
+
+function optionId(kind: string, value: string) {
+  return `dataset-${kind}-filter-${value.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+}
+
+function roundMetricMax(values: number[]) {
+  const max = Math.max(...values);
+  if (!Number.isFinite(max) || max <= 0) return 0;
+
+  const step = 10 ** Math.max(0, Math.floor(Math.log10(max)) - 1);
+  return Math.ceil(max / step) * step;
+}
+
+function formatRangeMetric(value: number) {
+  return value.toLocaleString("en-US");
+}
+
+function formatInstitutionSummary(institutions: string[]) {
+  if (institutions.length === 0) return "Institution pending";
+  if (institutions.length > 3) return [...institutions.slice(0, 2), "et al."].join(", ");
+  return institutions.join(", ");
+}
 ---
 
 <BaseLayout title="WHAR Arena | Datasets">
@@ -77,55 +140,360 @@ const snapshotDateTime = "2026-05-01";
       </dl>
     </section>
 
+    <section class="arena-panel filter-panel">
+      <div class="panel-header">
+        <h2>Filters</h2>
+      </div>
+
+      <div class="filter-content">
+        <div class="dataset-filter range-dataset-filter">
+          <span class="filter-label">Subjects</span>
+          <details>
+            <summary aria-label="Subjects">
+              <span data-range-summary="subjects">0 - {formatRangeMetric(subjectsMax)}</span>
+              <span class="filter-count" data-range-count="subjects">range</span>
+            </summary>
+            <div class="filter-menu range-menu">
+              <div class="range-fields">
+                <label>
+                  <span>Min</span>
+                  <input
+                    id="dataset-subjects-min"
+                    type="number"
+                    min="0"
+                    max={subjectsMax}
+                    step="1"
+                    value="0"
+                    inputmode="numeric"
+                    data-range-kind="subjects"
+                    data-range-bound="min"
+                    data-range-default="0"
+                  />
+                </label>
+                <label>
+                  <span>Max</span>
+                  <input
+                    id="dataset-subjects-max"
+                    type="number"
+                    min="0"
+                    max={subjectsMax}
+                    step="1"
+                    value={subjectsMax}
+                    inputmode="numeric"
+                    data-range-kind="subjects"
+                    data-range-bound="max"
+                    data-range-default={subjectsMax}
+                  />
+                </label>
+              </div>
+              <button type="button" class="range-reset" data-range-reset="subjects">Reset</button>
+            </div>
+          </details>
+        </div>
+
+        <div class="dataset-filter range-dataset-filter">
+          <span class="filter-label">Activities</span>
+          <details>
+            <summary aria-label="Activities">
+              <span data-range-summary="activities">0 - {formatRangeMetric(activitiesMax)}</span>
+              <span class="filter-count" data-range-count="activities">range</span>
+            </summary>
+            <div class="filter-menu range-menu">
+              <div class="range-fields">
+                <label>
+                  <span>Min</span>
+                  <input
+                    id="dataset-activities-min"
+                    type="number"
+                    min="0"
+                    max={activitiesMax}
+                    step="1"
+                    value="0"
+                    inputmode="numeric"
+                    data-range-kind="activities"
+                    data-range-bound="min"
+                    data-range-default="0"
+                  />
+                </label>
+                <label>
+                  <span>Max</span>
+                  <input
+                    id="dataset-activities-max"
+                    type="number"
+                    min="0"
+                    max={activitiesMax}
+                    step="1"
+                    value={activitiesMax}
+                    inputmode="numeric"
+                    data-range-kind="activities"
+                    data-range-bound="max"
+                    data-range-default={activitiesMax}
+                  />
+                </label>
+              </div>
+              <button type="button" class="range-reset" data-range-reset="activities">Reset</button>
+            </div>
+          </details>
+        </div>
+
+        <div class="dataset-filter range-dataset-filter">
+          <span class="filter-label">Channels</span>
+          <details>
+            <summary aria-label="Channels">
+              <span data-range-summary="channels">0 - {formatRangeMetric(channelsMax)}</span>
+              <span class="filter-count" data-range-count="channels">range</span>
+            </summary>
+            <div class="filter-menu range-menu">
+              <div class="range-fields">
+                <label>
+                  <span>Min</span>
+                  <input
+                    id="dataset-channels-min"
+                    type="number"
+                    min="0"
+                    max={channelsMax}
+                    step="1"
+                    value="0"
+                    inputmode="numeric"
+                    data-range-kind="channels"
+                    data-range-bound="min"
+                    data-range-default="0"
+                  />
+                </label>
+                <label>
+                  <span>Max</span>
+                  <input
+                    id="dataset-channels-max"
+                    type="number"
+                    min="0"
+                    max={channelsMax}
+                    step="1"
+                    value={channelsMax}
+                    inputmode="numeric"
+                    data-range-kind="channels"
+                    data-range-bound="max"
+                    data-range-default={channelsMax}
+                  />
+                </label>
+              </div>
+              <button type="button" class="range-reset" data-range-reset="channels">Reset</button>
+            </div>
+          </details>
+        </div>
+
+        <div class="dataset-filter">
+          <span class="filter-label">Sensor Modalities</span>
+          <details>
+            <summary aria-label="Sensor Modalities">
+              <span data-filter-summary="sensorModalities">All sensor modalities</span>
+              <span class="filter-count" data-filter-count="sensorModalities">
+                {sensorModalityOptions.length}/{sensorModalityOptions.length}
+              </span>
+            </summary>
+            <div class="filter-menu">
+              <div class="filter-actions" aria-label="Sensor modality selection actions">
+                <button type="button" data-filter-action="all" data-filter-target="sensorModalities">
+                  All
+                </button>
+                <button type="button" data-filter-action="none" data-filter-target="sensorModalities">
+                  None
+                </button>
+              </div>
+              <div class="filter-options">
+                {sensorModalityOptions.map((item) => (
+                  <div class="filter-option" data-filter-option="sensorModalities">
+                    <input
+                      id={optionId("sensor-modality", item)}
+                      type="checkbox"
+                      value={item}
+                      data-filter-kind="sensorModalities"
+                      checked
+                    />
+                    <label
+                      class="filter-check"
+                      for={optionId("sensor-modality", item)}
+                      aria-label={`Toggle ${item}`}
+                    ></label>
+                    <label class="filter-name-toggle" for={optionId("sensor-modality", item)}>
+                      {item}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <div class="dataset-filter">
+          <span class="filter-label">Device Types</span>
+          <details>
+            <summary aria-label="Device Types">
+              <span data-filter-summary="deviceTypes">All device types</span>
+              <span class="filter-count" data-filter-count="deviceTypes">
+                {deviceTypeOptions.length}/{deviceTypeOptions.length}
+              </span>
+            </summary>
+            <div class="filter-menu">
+              <div class="filter-actions" aria-label="Device type selection actions">
+                <button type="button" data-filter-action="all" data-filter-target="deviceTypes">
+                  All
+                </button>
+                <button type="button" data-filter-action="none" data-filter-target="deviceTypes">
+                  None
+                </button>
+              </div>
+              <div class="filter-options">
+                {deviceTypeOptions.map((item) => (
+                  <div class="filter-option" data-filter-option="deviceTypes">
+                    <input
+                      id={optionId("device-type", item)}
+                      type="checkbox"
+                      value={item}
+                      data-filter-kind="deviceTypes"
+                      checked
+                    />
+                    <label
+                      class="filter-check"
+                      for={optionId("device-type", item)}
+                      aria-label={`Toggle ${item}`}
+                    ></label>
+                    <label class="filter-name-toggle" for={optionId("device-type", item)}>
+                      {item}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
     <section class="arena-panel">
       <div class="panel-header">
-        <h2>{datasets.length} Datasets</h2>
+        <h2><span data-visible-dataset-count>{datasets.length}</span> Datasets</h2>
       </div>
       <div class="table-wrap">
         <table class="catalog-table">
           <thead>
             <tr>
               <th>Name</th>
-              <th>Year</th>
-              <th>Citations</th>
-              <th>Subjects</th>
-              <th>Activities</th>
-              <th>Channels</th>
+              <th aria-sort="descending">
+                <button
+                  class="sort-button is-active"
+                  type="button"
+                  data-sort-key="year"
+                  data-sort-type="number"
+                  data-sort-default="desc"
+                  data-sort-direction="desc"
+                >
+                  Year
+                  <span class="sort-arrows" aria-hidden="true">
+                    <span class="sort-arrow-up"></span>
+                    <span class="sort-arrow-down"></span>
+                  </span>
+                </button>
+              </th>
+              <th aria-sort="none">
+                <button
+                  class="sort-button"
+                  type="button"
+                  data-sort-key="subjects"
+                  data-sort-type="number"
+                  data-sort-default="asc"
+                >
+                  Subjects
+                  <span class="sort-arrows" aria-hidden="true">
+                    <span class="sort-arrow-up"></span>
+                    <span class="sort-arrow-down"></span>
+                  </span>
+                </button>
+              </th>
+              <th aria-sort="none">
+                <button
+                  class="sort-button"
+                  type="button"
+                  data-sort-key="activities"
+                  data-sort-type="number"
+                  data-sort-default="asc"
+                >
+                  Activities
+                  <span class="sort-arrows" aria-hidden="true">
+                    <span class="sort-arrow-up"></span>
+                    <span class="sort-arrow-down"></span>
+                  </span>
+                </button>
+              </th>
+              <th aria-sort="none">
+                <button
+                  class="sort-button"
+                  type="button"
+                  data-sort-key="channels"
+                  data-sort-type="number"
+                  data-sort-default="asc"
+                >
+                  Channels
+                  <span class="sort-arrows" aria-hidden="true">
+                    <span class="sort-arrow-up"></span>
+                    <span class="sort-arrow-down"></span>
+                  </span>
+                </button>
+              </th>
               <th>Settings</th>
-              <th>Device Types</th>
+              <th aria-sort="none">
+                <button
+                  class="sort-button"
+                  type="button"
+                  data-sort-key="deviceTypes"
+                  data-sort-type="string"
+                  data-sort-default="asc"
+                >
+                  Device Types
+                  <span class="sort-arrows" aria-hidden="true">
+                    <span class="sort-arrow-up"></span>
+                    <span class="sort-arrow-down"></span>
+                  </span>
+                </button>
+              </th>
               <th>Sensor Modalities</th>
               <th>Paper</th>
             </tr>
           </thead>
-          <tbody>
-            {datasets.map((dataset) => (
+          <tbody data-dataset-table-body>
+            {datasets.map((dataset, index) => (
               <tr
                 data-dataset-row
                 data-dataset-name={dataset.name}
                 data-dataset-paper-title={dataset.paperLink?.title ?? dataset.name}
                 data-dataset-paper-url={dataset.paperLink?.url ?? ""}
+                data-dataset-authors={JSON.stringify(dataset.paperDetail.authors ?? [])}
                 data-dataset-year={dataset.detail.year}
-                data-dataset-citations={dataset.detail.citations.toLocaleString("en-US")}
                 data-dataset-subjects={dataset.detail.subjects.toLocaleString("en-US")}
                 data-dataset-activities={dataset.detail.activities.toLocaleString("en-US")}
                 data-dataset-channels={dataset.detail.channels.toLocaleString("en-US")}
                 data-dataset-settings={dataset.detail.settings}
                 data-dataset-device-types={dataset.detail.deviceTypes}
                 data-dataset-sensor-modalities={dataset.detail.sensorModalities}
+                data-subjects-value={dataset.detail.subjects}
+                data-activities-value={dataset.detail.activities}
+                data-channels-value={dataset.detail.channels}
+                data-device-type-parts={splitList(dataset.detail.deviceTypes).join("|")}
+                data-sensor-modality-parts={splitList(dataset.detail.sensorModalities).join("|")}
+                data-sort-index={index}
+                data-sort-year={dataset.detail.year}
+                data-sort-subjects={dataset.detail.subjects}
+                data-sort-activities={dataset.detail.activities}
+                data-sort-channels={dataset.detail.channels}
+                data-sort-device-types={dataset.detail.deviceTypes}
                 tabindex="0"
                 aria-label={`Open dataset details: ${dataset.name}`}
               >
                 <td class="name-cell">
                   <strong>{dataset.name}</strong>
-                  <span>{dataset.id}</span>
+                  <span>{dataset.institutionSummary}</span>
                 </td>
                 <td>
                   <strong class="metric">{dataset.detail.year}</strong>
-                </td>
-                <td>
-                  <strong class="metric">
-                    {dataset.detail.citations.toLocaleString("en-US")}
-                  </strong>
                 </td>
                 <td>
                   <strong class="metric">{dataset.detail.subjects}</strong>
@@ -199,10 +567,6 @@ const snapshotDateTime = "2026-05-01";
             <strong data-dataset-modal-field="year"></strong>
           </div>
           <div>
-            <span>Citations</span>
-            <strong data-dataset-modal-field="citations"></strong>
-          </div>
-          <div>
             <span>Subjects</span>
             <strong data-dataset-modal-field="subjects"></strong>
           </div>
@@ -249,6 +613,11 @@ const snapshotDateTime = "2026-05-01";
           </a>
           <p class="muted" data-dataset-modal-paper-pending hidden>Paper link pending</p>
         </div>
+
+        <div class="detail-section">
+          <h3>Authors And Affiliations</h3>
+          <ul class="author-list" data-dataset-modal-authors></ul>
+        </div>
       </section>
     </div>
   </main>
@@ -263,11 +632,20 @@ const snapshotDateTime = "2026-05-01";
   const datasetModalPaperPending = datasetModal?.querySelector(
     "[data-dataset-modal-paper-pending]",
   );
+  const datasetModalAuthors = datasetModal?.querySelector("[data-dataset-modal-authors]");
+  const datasetTableBody = document.querySelector("[data-dataset-table-body]");
+  const datasetSortButtons = Array.from(document.querySelectorAll("[data-sort-key]"));
+  const datasetRows = Array.from(document.querySelectorAll("[data-dataset-row]"));
+  const visibleDatasetCount = document.querySelector("[data-visible-dataset-count]");
   let lastDatasetTrigger = null;
+  const datasetSortState = {
+    key: "year",
+    direction: "desc",
+    type: "number",
+  };
 
   const modalFields = {
     year: datasetModal?.querySelector('[data-dataset-modal-field="year"]'),
-    citations: datasetModal?.querySelector('[data-dataset-modal-field="citations"]'),
     subjects: datasetModal?.querySelector('[data-dataset-modal-field="subjects"]'),
     activities: datasetModal?.querySelector('[data-dataset-modal-field="activities"]'),
     channels: datasetModal?.querySelector('[data-dataset-modal-field="channels"]'),
@@ -276,6 +654,44 @@ const snapshotDateTime = "2026-05-01";
     sensorModalities: datasetModal?.querySelector(
       '[data-dataset-modal-field="sensorModalities"]',
     ),
+  };
+  const groups = {
+    sensorModalities: {
+      allLabel: "All sensor modalities",
+      noneLabel: "No sensor modalities",
+      plural: "sensor modalities",
+      inputs: Array.from(document.querySelectorAll('[data-filter-kind="sensorModalities"]')),
+      summary: document.querySelector('[data-filter-summary="sensorModalities"]'),
+      count: document.querySelector('[data-filter-count="sensorModalities"]'),
+    },
+    deviceTypes: {
+      allLabel: "All device types",
+      noneLabel: "No device types",
+      plural: "device types",
+      inputs: Array.from(document.querySelectorAll('[data-filter-kind="deviceTypes"]')),
+      summary: document.querySelector('[data-filter-summary="deviceTypes"]'),
+      count: document.querySelector('[data-filter-count="deviceTypes"]'),
+    },
+  };
+  const ranges = {
+    subjects: {
+      min: document.querySelector('[data-range-kind="subjects"][data-range-bound="min"]'),
+      max: document.querySelector('[data-range-kind="subjects"][data-range-bound="max"]'),
+      summary: document.querySelector('[data-range-summary="subjects"]'),
+      count: document.querySelector('[data-range-count="subjects"]'),
+    },
+    activities: {
+      min: document.querySelector('[data-range-kind="activities"][data-range-bound="min"]'),
+      max: document.querySelector('[data-range-kind="activities"][data-range-bound="max"]'),
+      summary: document.querySelector('[data-range-summary="activities"]'),
+      count: document.querySelector('[data-range-count="activities"]'),
+    },
+    channels: {
+      min: document.querySelector('[data-range-kind="channels"][data-range-bound="min"]'),
+      max: document.querySelector('[data-range-kind="channels"][data-range-bound="max"]'),
+      summary: document.querySelector('[data-range-summary="channels"]'),
+      count: document.querySelector('[data-range-count="channels"]'),
+    },
   };
 
   function setModalText(element, value) {
@@ -286,6 +702,39 @@ const snapshotDateTime = "2026-05-01";
     return target instanceof Element && Boolean(target.closest("a, button"));
   }
 
+  function datasetAuthors(row) {
+    try {
+      const authors = JSON.parse(row.dataset.datasetAuthors || "[]");
+      return Array.isArray(authors) ? authors : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function renderDatasetAuthors(authors) {
+    if (!datasetModalAuthors) return;
+
+    datasetModalAuthors.replaceChildren();
+    if (authors.length === 0) {
+      const item = document.createElement("li");
+      const pending = document.createElement("span");
+      pending.textContent = "Author information pending";
+      item.append(pending);
+      datasetModalAuthors.append(item);
+      return;
+    }
+
+    authors.forEach((author) => {
+      const item = document.createElement("li");
+      const name = document.createElement("strong");
+      const affiliation = document.createElement("span");
+      name.textContent = author.name || "Author pending";
+      affiliation.textContent = author.affiliation || "Affiliation pending";
+      item.append(name, affiliation);
+      datasetModalAuthors.append(item);
+    });
+  }
+
   function openDatasetModal(row) {
     if (!datasetModal || !datasetDialog) return;
 
@@ -293,13 +742,13 @@ const snapshotDateTime = "2026-05-01";
     setModalText(datasetModalTitle, row.dataset.datasetName);
     setModalText(datasetModalSubtitle, row.dataset.datasetPaperTitle);
     setModalText(modalFields.year, row.dataset.datasetYear);
-    setModalText(modalFields.citations, row.dataset.datasetCitations);
     setModalText(modalFields.subjects, row.dataset.datasetSubjects);
     setModalText(modalFields.activities, row.dataset.datasetActivities);
     setModalText(modalFields.channels, row.dataset.datasetChannels);
     setModalText(modalFields.settings, row.dataset.datasetSettings);
     setModalText(modalFields.deviceTypes, row.dataset.datasetDeviceTypes);
     setModalText(modalFields.sensorModalities, row.dataset.datasetSensorModalities);
+    renderDatasetAuthors(datasetAuthors(row));
 
     const paperUrl = row.dataset.datasetPaperUrl || "";
     if (datasetModalPaper && datasetModalPaperPending) {
@@ -324,7 +773,254 @@ const snapshotDateTime = "2026-05-01";
     lastDatasetTrigger = null;
   }
 
-  document.querySelectorAll("[data-dataset-row]").forEach((row) => {
+  function selectedValues(kind) {
+    return new Set(groups[kind].inputs.filter((input) => input.checked).map((input) => input.value));
+  }
+
+  function optionLabel(input) {
+    return input
+      .closest(".filter-option")
+      ?.querySelector(".filter-name-toggle")
+      ?.textContent.trim();
+  }
+
+  function updateSummary(kind) {
+    const group = groups[kind];
+    const checked = group.inputs.filter((input) => input.checked);
+    const selectedCount = checked.length;
+    const total = group.inputs.length;
+
+    if (group.count) group.count.textContent = `${selectedCount}/${total}`;
+    if (!group.summary) return;
+    if (selectedCount === total) {
+      group.summary.textContent = group.allLabel;
+    } else if (selectedCount === 0) {
+      group.summary.textContent = group.noneLabel;
+    } else if (selectedCount === 1) {
+      group.summary.textContent = optionLabel(checked[0]) ?? `1 ${kind}`;
+    } else {
+      group.summary.textContent = `${selectedCount} ${group.plural}`;
+    }
+  }
+
+  function inputNumber(input, fallback) {
+    const value = Number(input?.value);
+    return Number.isFinite(value) ? value : fallback;
+  }
+
+  function rangeState(kind) {
+    const range = ranges[kind];
+    const defaultMin = inputNumber({ value: range.min?.dataset.rangeDefault }, 0);
+    const defaultMax = inputNumber({ value: range.max?.dataset.rangeDefault }, 0);
+    const rawMin = Math.max(0, inputNumber(range.min, defaultMin));
+    const rawMax = Math.max(0, inputNumber(range.max, defaultMax));
+    const min = Math.min(rawMin, rawMax);
+    const max = Math.max(rawMin, rawMax);
+
+    return {
+      min,
+      max,
+      defaultMin,
+      defaultMax,
+      isDefault: min <= defaultMin && max >= defaultMax,
+    };
+  }
+
+  function formatRangeValue(value) {
+    return value.toLocaleString("en-US");
+  }
+
+  function updateRangeSummary(kind, state = rangeState(kind)) {
+    const range = ranges[kind];
+    if (range.summary) {
+      range.summary.textContent = `${formatRangeValue(state.min)} - ${formatRangeValue(state.max)}`;
+    }
+    if (range.count) {
+      range.count.textContent = state.isDefault ? "range" : "filtered";
+    }
+  }
+
+  function isMetricInRange(rawValue, state) {
+    if (rawValue === undefined || rawValue === null || rawValue === "") {
+      return state.isDefault;
+    }
+
+    const value = Number(rawValue);
+    if (!Number.isFinite(value)) return state.isDefault;
+    return value >= state.min && value <= state.max;
+  }
+
+  function sortRawValue(row, key) {
+    const attributeKey = key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+    return row.getAttribute(`data-sort-${attributeKey}`) ?? "";
+  }
+
+  function sortNumberValue(row, key) {
+    const rawValue = sortRawValue(row, key).trim();
+    if (!rawValue) return null;
+
+    const value = Number(rawValue);
+    return Number.isFinite(value) ? value : null;
+  }
+
+  function compareOriginalIndex(a, b) {
+    return Number(a.dataset.sortIndex ?? 0) - Number(b.dataset.sortIndex ?? 0);
+  }
+
+  function compareSortValues(a, b, state) {
+    const direction = state.direction === "asc" ? 1 : -1;
+
+    if (state.type === "number") {
+      const aValue = sortNumberValue(a, state.key);
+      const bValue = sortNumberValue(b, state.key);
+
+      if (aValue === null && bValue === null) return compareOriginalIndex(a, b);
+      if (aValue === null) return 1;
+      if (bValue === null) return -1;
+      if (aValue !== bValue) return (aValue - bValue) * direction;
+      return compareOriginalIndex(a, b);
+    }
+
+    const aValue = sortRawValue(a, state.key).toLowerCase();
+    const bValue = sortRawValue(b, state.key).toLowerCase();
+
+    if (!aValue && !bValue) return compareOriginalIndex(a, b);
+    if (!aValue) return 1;
+    if (!bValue) return -1;
+    return aValue.localeCompare(bValue) * direction || compareOriginalIndex(a, b);
+  }
+
+  function updateDatasetSortButtons() {
+    datasetSortButtons.forEach((button) => {
+      const isActive = button.dataset.sortKey === datasetSortState.key;
+      button.classList.toggle("is-active", isActive);
+      button.dataset.sortDirection = isActive ? datasetSortState.direction : "";
+      button.setAttribute("aria-pressed", isActive ? "true" : "false");
+      button
+        .closest("th")
+        ?.setAttribute(
+          "aria-sort",
+          isActive ? (datasetSortState.direction === "asc" ? "ascending" : "descending") : "none",
+        );
+    });
+  }
+
+  function applyDatasetSort() {
+    if (!datasetTableBody) return;
+
+    [...datasetRows]
+      .sort((a, b) => compareSortValues(a, b, datasetSortState))
+      .forEach((row) => datasetTableBody.append(row));
+    updateDatasetSortButtons();
+  }
+
+  function rowParts(row, attributeName) {
+    return (row.getAttribute(attributeName) ?? "").split("|").filter(Boolean);
+  }
+
+  function updateDatasetFilters() {
+    const selectedSensorModalities = selectedValues("sensorModalities");
+    const selectedDeviceTypes = selectedValues("deviceTypes");
+    const subjectsRange = rangeState("subjects");
+    const activitiesRange = rangeState("activities");
+    const channelsRange = rangeState("channels");
+    let visibleCount = 0;
+
+    datasetRows.forEach((row) => {
+      const isSensorVisible = rowParts(row, "data-sensor-modality-parts").every((part) =>
+        selectedSensorModalities.has(part),
+      );
+      const isDeviceVisible = rowParts(row, "data-device-type-parts").every((part) =>
+        selectedDeviceTypes.has(part),
+      );
+      const isSubjectsVisible = isMetricInRange(row.dataset.subjectsValue, subjectsRange);
+      const isActivitiesVisible = isMetricInRange(row.dataset.activitiesValue, activitiesRange);
+      const isChannelsVisible = isMetricInRange(row.dataset.channelsValue, channelsRange);
+      const isVisible =
+        isSensorVisible &&
+        isDeviceVisible &&
+        isSubjectsVisible &&
+        isActivitiesVisible &&
+        isChannelsVisible;
+
+      row.hidden = !isVisible;
+      if (isVisible) visibleCount += 1;
+    });
+
+    if (visibleDatasetCount) visibleDatasetCount.textContent = String(visibleCount);
+    updateSummary("sensorModalities");
+    updateSummary("deviceTypes");
+    updateRangeSummary("subjects", subjectsRange);
+    updateRangeSummary("activities", activitiesRange);
+    updateRangeSummary("channels", channelsRange);
+  }
+
+  document.querySelectorAll("[data-filter-action]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const mode = button.getAttribute("data-filter-action");
+      const kind = button.getAttribute("data-filter-target");
+      const group = groups[kind];
+
+      if (!group) return;
+      group.inputs.forEach((input) => {
+        input.checked = mode === "all";
+      });
+      updateDatasetFilters();
+    });
+  });
+
+  document.querySelectorAll("[data-range-reset]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const kind = button.getAttribute("data-range-reset");
+      const range = ranges[kind];
+      if (!range) return;
+
+      range.min.value = range.min.dataset.rangeDefault;
+      range.max.value = range.max.dataset.rangeDefault;
+      updateDatasetFilters();
+    });
+  });
+
+  document.querySelectorAll(".dataset-filter details").forEach((details) => {
+    details.addEventListener("toggle", () => {
+      if (!details.open) return;
+      details.closest(".filter-panel")?.querySelectorAll(".dataset-filter details").forEach((other) => {
+        if (other !== details) other.open = false;
+      });
+    });
+  });
+
+  Object.values(groups).forEach((group) => {
+    group.inputs.forEach((input) => {
+      input.addEventListener("change", updateDatasetFilters);
+    });
+  });
+
+  Object.values(ranges).forEach((range) => {
+    [range.min, range.max].forEach((input) => {
+      input.addEventListener("input", updateDatasetFilters);
+      input.addEventListener("change", updateDatasetFilters);
+    });
+  });
+
+  datasetSortButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const key = button.dataset.sortKey;
+      if (!key) return;
+
+      if (datasetSortState.key === key) {
+        datasetSortState.direction = datasetSortState.direction === "asc" ? "desc" : "asc";
+      } else {
+        datasetSortState.key = key;
+        datasetSortState.type = button.dataset.sortType || "string";
+        datasetSortState.direction = button.dataset.sortDefault || "asc";
+      }
+
+      applyDatasetSort();
+    });
+  });
+
+  datasetRows.forEach((row) => {
     row.addEventListener("click", (event) => {
       if (isInteractiveTarget(event.target)) return;
       openDatasetModal(row);
@@ -346,6 +1042,9 @@ const snapshotDateTime = "2026-05-01";
       closeDatasetModal();
     }
   });
+
+  applyDatasetSort();
+  updateDatasetFilters();
 </script>
 
 <style>
@@ -431,6 +1130,265 @@ const snapshotDateTime = "2026-05-01";
     font-weight: 500;
   }
 
+  .filter-panel {
+    position: relative;
+    z-index: 20;
+    margin-bottom: 14px;
+    overflow: visible;
+  }
+
+  .filter-panel > .panel-header {
+    border-radius: 7px 7px 0 0;
+  }
+
+  .filter-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 14px 16px 16px;
+  }
+
+  .filter-label {
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .dataset-filter {
+    position: relative;
+    display: grid;
+    gap: 6px;
+    width: min(320px, 100%);
+  }
+
+  .range-dataset-filter {
+    width: min(240px, 100%);
+  }
+
+  .dataset-filter details {
+    position: relative;
+  }
+
+  .dataset-filter summary {
+    display: flex;
+    min-height: 36px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    background: var(--panel-soft);
+    color: var(--ink);
+    padding: 0 10px;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .dataset-filter summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .dataset-filter summary::after {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-right: 1.5px solid var(--muted);
+    border-bottom: 1.5px solid var(--muted);
+    transform: rotate(45deg) translateY(-2px);
+  }
+
+  .dataset-filter details[open] summary::after {
+    transform: rotate(225deg) translateY(-1px);
+  }
+
+  .dataset-filter summary span:first-child {
+    overflow: hidden;
+    color: var(--ink);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dataset-filter summary:focus-visible {
+    outline: 2px solid hsl(24 6% 17% / 0.28);
+    outline-offset: 2px;
+  }
+
+  .dataset-filter summary:hover {
+    border-color: var(--accent);
+    background: var(--panel);
+  }
+
+  .filter-count {
+    margin-left: auto;
+    color: var(--muted);
+    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.74rem;
+  }
+
+  .filter-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 10;
+    width: min(360px, calc(100vw - 48px));
+    max-height: min(560px, 72vh);
+    overflow: auto;
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    background: var(--panel);
+    box-shadow: none;
+  }
+
+  .filter-actions {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    gap: 8px;
+    padding: 8px;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel-soft);
+  }
+
+  .filter-actions button {
+    min-height: 28px;
+    border: 1px solid var(--line-strong);
+    border-radius: 7px;
+    background: var(--panel);
+    color: var(--muted-strong);
+    padding: 0 10px;
+    cursor: pointer;
+  }
+
+  .filter-actions button:hover {
+    border-color: var(--accent);
+    color: var(--ink);
+  }
+
+  .range-menu {
+    padding: 10px;
+  }
+
+  .range-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .range-fields label {
+    display: grid;
+    gap: 5px;
+  }
+
+  .range-fields label span {
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .range-fields input {
+    width: 100%;
+    min-height: 32px;
+    border: 1px solid var(--line-strong);
+    border-radius: 7px;
+    background: var(--panel-soft);
+    color: var(--ink);
+    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.78rem;
+    padding: 0 8px;
+  }
+
+  .range-fields input:focus-visible {
+    outline: 2px solid hsl(24 6% 17% / 0.28);
+    outline-offset: 2px;
+  }
+
+  .range-reset {
+    min-height: 28px;
+    margin-top: 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: 7px;
+    background: var(--panel);
+    color: var(--muted-strong);
+    padding: 0 10px;
+    cursor: pointer;
+  }
+
+  .range-reset:hover,
+  .range-reset:focus-visible {
+    border-color: var(--accent);
+    color: var(--ink);
+  }
+
+  .filter-options {
+    display: grid;
+    padding: 4px 0;
+  }
+
+  .filter-option {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    gap: 9px;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 10px;
+    color: var(--muted-strong);
+  }
+
+  .filter-option:hover {
+    background: var(--panel-soft);
+  }
+
+  .filter-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .filter-check {
+    display: grid;
+    width: 16px;
+    height: 16px;
+    place-items: center;
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    background: var(--panel);
+  }
+
+  .filter-check::after {
+    content: "";
+    width: 7px;
+    height: 4px;
+    border-bottom: 2px solid var(--panel);
+    border-left: 2px solid var(--panel);
+    opacity: 0;
+    transform: rotate(-45deg) translateY(-1px);
+  }
+
+  .filter-option input:checked + .filter-check {
+    border-color: var(--accent-strong);
+    background: var(--accent);
+  }
+
+  .filter-option input:checked + .filter-check::after {
+    opacity: 1;
+  }
+
+  .filter-option input:focus-visible + .filter-check {
+    outline: 2px solid hsl(24 6% 17% / 0.28);
+    outline-offset: 2px;
+  }
+
+  .filter-name-toggle {
+    overflow: hidden;
+    color: var(--muted-strong);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
   .arena-panel,
   .note-panel {
     min-width: 0;
@@ -439,6 +1397,10 @@ const snapshotDateTime = "2026-05-01";
     background: var(--panel);
     overflow: hidden;
     box-shadow: none;
+  }
+
+  .arena-panel.filter-panel {
+    overflow: visible;
   }
 
   .panel-header {
@@ -468,8 +1430,12 @@ const snapshotDateTime = "2026-05-01";
 
   .catalog-table {
     width: 100%;
-    min-width: 1180px;
+    min-width: 1080px;
     border-collapse: collapse;
+  }
+
+  .catalog-table tr[hidden] {
+    display: none;
   }
 
   .catalog-table th,
@@ -485,6 +1451,62 @@ const snapshotDateTime = "2026-05-01";
     font-size: 0.72rem;
     font-weight: 600;
     text-transform: uppercase;
+  }
+
+  .sort-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    letter-spacing: inherit;
+    padding: 0;
+    text-align: left;
+    text-transform: inherit;
+  }
+
+  .sort-button:hover,
+  .sort-button:focus-visible,
+  .sort-button.is-active {
+    color: var(--ink);
+  }
+
+  .sort-button:focus-visible {
+    outline: 2px solid hsl(24 6% 17% / 0.28);
+    outline-offset: 3px;
+  }
+
+  .sort-arrows {
+    display: inline-grid;
+    gap: 2px;
+    width: 8px;
+  }
+
+  .sort-arrow-up,
+  .sort-arrow-down {
+    width: 0;
+    height: 0;
+    opacity: 0.28;
+  }
+
+  .sort-arrow-up {
+    border-right: 4px solid transparent;
+    border-bottom: 5px solid currentColor;
+    border-left: 4px solid transparent;
+  }
+
+  .sort-arrow-down {
+    border-top: 5px solid currentColor;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+  }
+
+  .sort-button.is-active[data-sort-direction="asc"] .sort-arrow-up,
+  .sort-button.is-active[data-sort-direction="desc"] .sort-arrow-down {
+    opacity: 1;
   }
 
   .catalog-table tbody tr:hover td {
@@ -740,10 +1762,54 @@ const snapshotDateTime = "2026-05-01";
     font-weight: 600;
   }
 
+  .author-list {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .author-list li {
+    display: grid;
+    gap: 3px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 8px;
+  }
+
+  .author-list li:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .author-list strong {
+    color: var(--ink);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .author-list span {
+    color: var(--muted-strong);
+    font-size: 0.82rem;
+    line-height: 1.35;
+  }
+
   @media (max-width: 760px) {
     .panel-header {
       display: grid;
       align-items: start;
+    }
+
+    .dataset-filter,
+    .range-dataset-filter {
+      width: 100%;
+    }
+
+    .filter-menu {
+      position: static;
+      width: 100%;
+      max-height: 340px;
+      margin-top: 6px;
     }
 
     .modal-layer {

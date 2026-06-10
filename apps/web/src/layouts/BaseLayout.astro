@@ -1,5 +1,5 @@
 ---
-const { title = "WHAR Arena" } = Astro.props;
+const { title = "WHAR Arena", showCitation = true } = Astro.props;
 const basePath = import.meta.env.BASE_URL.endsWith("/")
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
@@ -143,19 +143,23 @@ const acknowledgementLogos = [
       </nav>
     </header>
     <slot />
-    <section class="citation-section" aria-labelledby="citation-heading">
-      <div class="citation-header">
-        <h2 id="citation-heading">Citation</h2>
-        <button class="citation-copy-button" type="button" data-copy-citation title="Copy BibTeX">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M8 8.5V6.8A2.8 2.8 0 0 1 10.8 4h6.4A2.8 2.8 0 0 1 20 6.8v6.4a2.8 2.8 0 0 1-2.8 2.8h-1.7" />
-            <path d="M4 10.8A2.8 2.8 0 0 1 6.8 8h6.4a2.8 2.8 0 0 1 2.8 2.8v6.4a2.8 2.8 0 0 1-2.8 2.8H6.8A2.8 2.8 0 0 1 4 17.2v-6.4Z" />
-          </svg>
-          <span data-copy-label>Copy</span>
-        </button>
-      </div>
-      <pre><code data-citation-code>{bibtexCitation}</code></pre>
-    </section>
+    {
+      showCitation && (
+        <section class="citation-section" aria-labelledby="citation-heading">
+          <div class="citation-header">
+            <h2 id="citation-heading">Citation</h2>
+            <button class="citation-copy-button" type="button" data-copy-citation title="Copy BibTeX">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 8.5V6.8A2.8 2.8 0 0 1 10.8 4h6.4A2.8 2.8 0 0 1 20 6.8v6.4a2.8 2.8 0 0 1-2.8 2.8h-1.7" />
+                <path d="M4 10.8A2.8 2.8 0 0 1 6.8 8h6.4a2.8 2.8 0 0 1 2.8 2.8v6.4a2.8 2.8 0 0 1-2.8 2.8H6.8A2.8 2.8 0 0 1 4 17.2v-6.4Z" />
+              </svg>
+              <span data-copy-label>Copy</span>
+            </button>
+          </div>
+          <pre><code data-citation-code>{bibtexCitation}</code></pre>
+        </section>
+      )
+    }
     <section class="site-acknowledgements" aria-labelledby="acknowledgements-heading">
       <div class="acknowledgements-header">
         <h2 id="acknowledgements-heading">Acknowledgements</h2>
