@@ -282,6 +282,10 @@ const snapshotDateTime = "2026-05-01";
     if (element) element.textContent = value || "-";
   }
 
+  function isInteractiveTarget(target) {
+    return target instanceof Element && Boolean(target.closest("a, button"));
+  }
+
   function openDatasetModal(row) {
     if (!datasetModal || !datasetDialog) return;
 
@@ -322,7 +326,7 @@ const snapshotDateTime = "2026-05-01";
 
   document.querySelectorAll("[data-dataset-row]").forEach((row) => {
     row.addEventListener("click", (event) => {
-      if (event.target.closest("a, button")) return;
+      if (isInteractiveTarget(event.target)) return;
       openDatasetModal(row);
     });
 

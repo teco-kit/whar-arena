@@ -16,6 +16,10 @@ type ModelDetail = {
   params: string | null;
   flops: string | null;
   institutions?: string[];
+  authors?: Array<{
+    name: string;
+    affiliation: string;
+  }>;
 };
 
 type PaperLink = {
@@ -23,7 +27,14 @@ type PaperLink = {
   url: string;
 };
 
-const modelDetails = modelDetailsData as { models: Record<string, ModelDetail> };
+const modelDetails = modelDetailsData as {
+  source: {
+    table: string;
+    input_assumption: string;
+    note: string;
+  };
+  models: Record<string, ModelDetail>;
+};
 const benchmark = paperBenchmark as { catalog: { models: Model[] } };
 const links = paperLinks as { models: Record<string, PaperLink> };
 const familyPartsById: Record<string, string[]> = {
@@ -379,10 +390,18 @@ function formatScaledMetric(value: number) {
             {models.map((model) => (
               <tr
                 data-model-row
+                data-model-name={model.name}
+                data-model-paper-title={model.paperLink?.title ?? model.name}
+                data-model-paper-url={model.paperLink?.url ?? ""}
+                data-model-params={model.detail.params ?? ""}
+                data-model-flops={model.detail.flops ?? ""}
+                data-model-authors={JSON.stringify(model.detail.authors ?? [])}
                 data-architecture-parts={model.architectureIds.join(" ")}
                 data-framework={model.framework}
                 data-params-value={model.paramsValue ?? ""}
                 data-flops-value={model.flopsValue ?? ""}
+                tabindex="0"
+                aria-label={`Open model details: ${model.name}`}
               >
                 <td class="name-cell">
                   <strong>{model.name}</strong>
@@ -425,12 +444,88 @@ function formatScaledMetric(value: number) {
         </table>
       </div>
     </section>
+
+    <div class="modal-layer" data-model-modal hidden role="presentation">
+      <button
+        class="modal-backdrop"
+        type="button"
+        aria-label="Close model details"
+        data-model-modal-close
+      ></button>
+      <section
+        class="model-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="model-detail-title"
+        tabindex="-1"
+      >
+        <div class="model-modal-header">
+          <div>
+            <h2 id="model-detail-title" data-model-modal-title></h2>
+            <p data-model-modal-subtitle></p>
+          </div>
+          <button
+            class="modal-close"
+            type="button"
+            aria-label="Close model details"
+            data-model-modal-close
+          ></button>
+        </div>
+
+        <div class="detail-metrics" aria-label="Model size and compute">
+          <div>
+            <span>Params</span>
+            <strong data-model-modal-field="params"></strong>
+          </div>
+          <div>
+            <span>FLOPs</span>
+            <strong data-model-modal-field="flops"></strong>
+          </div>
+        </div>
+
+        <div class="detail-info-card">
+          <strong>{modelDetails.source.table} setup</strong>
+          <p>{modelDetails.source.note} Counts use {modelDetails.source.input_assumption}.</p>
+        </div>
+
+        <div class="detail-section">
+          <h3>Paper</h3>
+          <a
+            class="paper-link detail-paper-link"
+            href=""
+            target="_blank"
+            rel="noreferrer"
+            data-model-modal-paper
+          >
+            Open model paper PDF
+          </a>
+          <p class="muted" data-model-modal-paper-pending hidden>Paper link pending</p>
+        </div>
+
+        <div class="detail-section">
+          <h3>Authors And Affiliations</h3>
+          <ul class="author-list" data-model-modal-authors></ul>
+        </div>
+      </section>
+    </div>
   </main>
 </BaseLayout>
 
 <script is:inline>
   const modelRows = Array.from(document.querySelectorAll("[data-model-row]"));
+  const modelModal = document.querySelector("[data-model-modal]");
+  const modelDialog = modelModal?.querySelector(".model-modal");
+  const modelModalTitle = modelModal?.querySelector("[data-model-modal-title]");
+  const modelModalSubtitle = modelModal?.querySelector("[data-model-modal-subtitle]");
+  const modelModalPaper = modelModal?.querySelector("[data-model-modal-paper]");
+  const modelModalPaperPending = modelModal?.querySelector("[data-model-modal-paper-pending]");
+  const modelModalAuthors = modelModal?.querySelector("[data-model-modal-authors]");
+  const modelModalFields = {
+    params: modelModal?.querySelector('[data-model-modal-field="params"]'),
+    flops: modelModal?.querySelector('[data-model-modal-field="flops"]'),
+  };
   const visibleModelCount = document.querySelector("[data-visible-model-count]");
+  let lastModelTrigger = null;
   const groups = {
     architecture: {
       allLabel: "All architectures",
@@ -463,6 +558,80 @@ function formatScaledMetric(value: number) {
       count: document.querySelector('[data-range-count="flops"]'),
     },
   };
+
+  function isInteractiveTarget(target) {
+    return target instanceof Element && Boolean(target.closest("a, button"));
+  }
+
+  function setModelModalText(element, value) {
+    if (element) element.textContent = value || "-";
+  }
+
+  function modelAuthors(row) {
+    try {
+      const authors = JSON.parse(row.dataset.modelAuthors || "[]");
+      return Array.isArray(authors) ? authors : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function renderModelAuthors(authors) {
+    if (!modelModalAuthors) return;
+
+    modelModalAuthors.replaceChildren();
+    if (authors.length === 0) {
+      const item = document.createElement("li");
+      const pending = document.createElement("span");
+      pending.textContent = "Author information pending";
+      item.append(pending);
+      modelModalAuthors.append(item);
+      return;
+    }
+
+    authors.forEach((author) => {
+      const item = document.createElement("li");
+      const name = document.createElement("strong");
+      const affiliation = document.createElement("span");
+      name.textContent = author.name || "Author pending";
+      affiliation.textContent = author.affiliation || "Affiliation pending";
+      item.append(name, affiliation);
+      modelModalAuthors.append(item);
+    });
+  }
+
+  function openModelModal(row) {
+    if (!modelModal || !modelDialog) return;
+
+    lastModelTrigger = row;
+    setModelModalText(modelModalTitle, row.dataset.modelName);
+    setModelModalText(modelModalSubtitle, row.dataset.modelPaperTitle);
+    setModelModalText(modelModalFields.params, row.dataset.modelParams);
+    setModelModalText(modelModalFields.flops, row.dataset.modelFlops);
+    renderModelAuthors(modelAuthors(row));
+
+    const paperUrl = row.dataset.modelPaperUrl || "";
+    if (modelModalPaper && modelModalPaperPending) {
+      modelModalPaper.hidden = !paperUrl;
+      modelModalPaperPending.hidden = Boolean(paperUrl);
+      modelModalPaper.setAttribute("href", paperUrl);
+      modelModalPaper.setAttribute(
+        "title",
+        `Open paper: ${row.dataset.modelPaperTitle || row.dataset.modelName || "Model"}`,
+      );
+    }
+
+    modelModal.hidden = false;
+    modelDialog.focus();
+  }
+
+  function closeModelModal() {
+    if (!modelModal) return;
+
+    modelModal.hidden = true;
+    if (lastModelTrigger) lastModelTrigger.focus();
+    lastModelTrigger = null;
+  }
 
   function selectedValues(kind) {
     return new Set(groups[kind].inputs.filter((input) => input.checked).map((input) => input.value));
@@ -624,6 +793,29 @@ function formatScaledMetric(value: number) {
       input.addEventListener("input", updateModelFilters);
       input.addEventListener("change", updateModelFilters);
     });
+  });
+
+  modelRows.forEach((row) => {
+    row.addEventListener("click", (event) => {
+      if (isInteractiveTarget(event.target)) return;
+      openModelModal(row);
+    });
+
+    row.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      openModelModal(row);
+    });
+  });
+
+  document.querySelectorAll("[data-model-modal-close]").forEach((button) => {
+    button.addEventListener("click", closeModelModal);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && modelModal && !modelModal.hidden) {
+      closeModelModal();
+    }
   });
 
   updateModelFilters();
@@ -1034,6 +1226,15 @@ function formatScaledMetric(value: number) {
     background: hsl(33 31% 94% / 0.72);
   }
 
+  .catalog-table tbody tr[data-model-row] {
+    cursor: pointer;
+  }
+
+  .catalog-table tbody tr[data-model-row]:focus-visible {
+    outline: 2px solid hsl(24 6% 17% / 0.28);
+    outline-offset: -2px;
+  }
+
   .name-cell strong,
   .name-cell span {
     display: block;
@@ -1101,6 +1302,206 @@ function formatScaledMetric(value: number) {
     color: var(--muted);
   }
 
+  .modal-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+  }
+
+  .modal-layer[hidden] {
+    display: none;
+  }
+
+  .modal-backdrop {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    background: hsl(24 6% 17% / 0.28);
+    cursor: pointer;
+  }
+
+  .model-modal {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    width: min(760px, calc(100vw - 32px));
+    max-height: min(760px, calc(100vh - 32px));
+    gap: 16px;
+    overflow: auto;
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    background: var(--panel);
+    box-shadow: none;
+    padding: 18px;
+  }
+
+  .model-modal:focus {
+    outline: none;
+  }
+
+  .model-modal-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    align-items: start;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .model-modal-header h2 {
+    margin: 0;
+    font-family: var(--display-serif);
+    font-size: 1.3rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.05;
+  }
+
+  .model-modal-header p {
+    margin: 6px 0 0;
+    color: var(--muted-strong);
+    font-size: 0.88rem;
+    line-height: 1.35;
+  }
+
+  .modal-close {
+    position: relative;
+    display: grid;
+    width: 32px;
+    height: 32px;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid lightgray;
+    border-radius: 999px;
+    background: var(--panel-soft);
+    color: var(--ink);
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .modal-close::before,
+  .modal-close::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 13px;
+    height: 1.5px;
+    border-radius: 999px;
+    background: currentColor;
+    content: "";
+    transform-origin: center;
+  }
+
+  .modal-close::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  .modal-close::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
+
+  .modal-close:hover,
+  .modal-close:focus-visible {
+    background: var(--panel);
+    outline: 2px solid hsl(24 6% 17% / 0.2);
+    outline-offset: 2px;
+  }
+
+  .detail-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .detail-metrics div,
+  .detail-info-card {
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    background: var(--panel-soft);
+    padding: 12px;
+  }
+
+  .detail-metrics span {
+    display: block;
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .detail-metrics strong {
+    display: block;
+    margin-top: 8px;
+    color: var(--ink);
+    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .detail-info-card strong,
+  .detail-section h3 {
+    color: var(--ink);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .detail-info-card p {
+    margin: 6px 0 0;
+    color: var(--muted-strong);
+    font-size: 0.86rem;
+    line-height: 1.4;
+  }
+
+  .detail-section {
+    display: grid;
+    gap: 10px;
+  }
+
+  .detail-section h3 {
+    margin: 0;
+  }
+
+  .detail-paper-link {
+    width: fit-content;
+    font-size: 0.9rem;
+  }
+
+  .author-list {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .author-list li {
+    display: grid;
+    gap: 3px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 8px;
+  }
+
+  .author-list li:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .author-list strong {
+    color: var(--ink);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .author-list span {
+    color: var(--muted-strong);
+    font-size: 0.82rem;
+    line-height: 1.35;
+  }
+
   @media (max-width: 720px) {
     .panel-header {
       display: grid;
@@ -1116,6 +1517,20 @@ function formatScaledMetric(value: number) {
       width: 100%;
       max-height: 340px;
       margin-top: 6px;
+    }
+
+    .modal-layer {
+      padding: 12px;
+    }
+
+    .model-modal {
+      width: calc(100vw - 24px);
+      max-height: calc(100vh - 24px);
+      padding: 14px;
+    }
+
+    .detail-metrics {
+      grid-template-columns: 1fr;
     }
   }
 </style>
