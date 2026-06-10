@@ -34,6 +34,11 @@ type DatasetPaperDetail = {
   }>;
 };
 
+type LabelPart = {
+  id: string;
+  name: string;
+};
+
 const datasetDetails = datasetDetailsData as {
   source: {
     table: string;
@@ -51,20 +56,65 @@ const datasetPaperDetails = datasetPaperDetailsData as {
 const benchmark = paperBenchmark as { catalog: { datasets: Dataset[] } };
 const links = paperLinks as { datasets: Record<string, PaperLink> };
 const datasetNames = new Map(benchmark.catalog.datasets.map((dataset) => [dataset.id, dataset.name]));
+const settingLabels: Record<string, string> = {
+  ADL: "Activities of Daily Living",
+  Fall: "Fall Detection",
+  Fit: "Fitness",
+  Health: "Health",
+  Loc: "Locomotion",
+  Sports: "Sports",
+};
+const deviceTypeLabels: Record<string, string> = {
+  ActivityTracker: "Activity Tracker",
+  Belt: "Belt",
+  Glasses: "Smart Glasses",
+  Helmet: "Helmet",
+  LifeMonitor: "Life Monitor",
+  Mask: "Mask",
+  Node: "Sensor Node",
+  Phone: "Phone",
+  Watch: "Watch",
+};
+const sensorModalityLabels: Record<string, string> = {
+  Acc: "Accelerometer",
+  ALS: "ALS",
+  Baro: "Barometer",
+  ECG: "ECG",
+  EEG: "EEG",
+  EMG: "EMG",
+  Flow: "Flow Sensor",
+  Gas: "Gas Sensor",
+  GPS: "GPS",
+  Gyr: "Gyroscope",
+  HR: "HR",
+  Mag: "Magnetometer",
+  Resp: "Respiration Sensor",
+  Stretch: "Stretch Sensor",
+};
 const datasets = Object.entries(datasetDetails.datasets)
   .map(([id, detail]) => {
     const paperDetail = datasetPaperDetails.datasets[id] ?? { institutions: [], authors: [] };
+    const settingParts = labelParts(detail.settings, formatSetting);
+    const deviceTypeParts = labelParts(detail.deviceTypes, formatDeviceType);
+    const sensorModalityParts = labelParts(detail.sensorModalities, formatSensorModality);
 
     return {
       id,
       name: datasetNames.get(id) ?? id,
       detail,
+      settingParts,
+      deviceTypeParts,
+      sensorModalityParts,
+      settingsLabel: labelText(settingParts),
+      deviceTypesLabel: labelText(deviceTypeParts),
+      sensorModalitiesLabel: labelText(sensorModalityParts),
       paperDetail,
       institutionSummary: formatInstitutionSummary(paperDetail.institutions ?? []),
       paperLink: links.datasets[id] ?? null,
     };
   })
   .sort((a, b) => b.detail.year - a.detail.year || a.name.localeCompare(b.name));
+const settingOptions = uniqueParts(datasets.flatMap((dataset) => splitList(dataset.detail.settings)));
 const sensorModalityOptions = uniqueParts(
   datasets.flatMap((dataset) => splitList(dataset.detail.sensorModalities)),
 );
@@ -86,6 +136,30 @@ function splitList(value: string) {
 
 function uniqueParts(parts: string[]) {
   return [...new Set(parts)].sort((a, b) => a.localeCompare(b));
+}
+
+function labelParts(value: string, formatter: (part: string) => string): LabelPart[] {
+  return splitList(value).map((part) => ({ id: part, name: formatter(part) }));
+}
+
+function labelText(parts: LabelPart[]) {
+  return parts.map((part) => part.name).join(", ");
+}
+
+function labelData(parts: LabelPart[]) {
+  return parts.map((part) => part.name).join("|");
+}
+
+function formatSetting(part: string) {
+  return settingLabels[part] ?? part;
+}
+
+function formatDeviceType(part: string) {
+  return deviceTypeLabels[part] ?? part;
+}
+
+function formatSensorModality(part: string) {
+  return sensorModalityLabels[part] ?? part;
 }
 
 function optionId(kind: string, value: string) {
@@ -282,40 +356,40 @@ function formatInstitutionSummary(institutions: string[]) {
         </div>
 
         <div class="dataset-filter">
-          <span class="filter-label">Sensor Modalities</span>
+          <span class="filter-label">Settings</span>
           <details>
-            <summary aria-label="Sensor Modalities">
-              <span data-filter-summary="sensorModalities">All sensor modalities</span>
-              <span class="filter-count" data-filter-count="sensorModalities">
-                {sensorModalityOptions.length}/{sensorModalityOptions.length}
+            <summary aria-label="Settings">
+              <span data-filter-summary="settings">All settings</span>
+              <span class="filter-count" data-filter-count="settings">
+                {settingOptions.length}/{settingOptions.length}
               </span>
             </summary>
             <div class="filter-menu">
-              <div class="filter-actions" aria-label="Sensor modality selection actions">
-                <button type="button" data-filter-action="all" data-filter-target="sensorModalities">
+              <div class="filter-actions" aria-label="Settings selection actions">
+                <button type="button" data-filter-action="all" data-filter-target="settings">
                   All
                 </button>
-                <button type="button" data-filter-action="none" data-filter-target="sensorModalities">
+                <button type="button" data-filter-action="none" data-filter-target="settings">
                   None
                 </button>
               </div>
               <div class="filter-options">
-                {sensorModalityOptions.map((item) => (
-                  <div class="filter-option" data-filter-option="sensorModalities">
+                {settingOptions.map((item) => (
+                  <div class="filter-option" data-filter-option="settings">
                     <input
-                      id={optionId("sensor-modality", item)}
+                      id={optionId("setting", item)}
                       type="checkbox"
                       value={item}
-                      data-filter-kind="sensorModalities"
+                      data-filter-kind="settings"
                       checked
                     />
                     <label
                       class="filter-check"
-                      for={optionId("sensor-modality", item)}
-                      aria-label={`Toggle ${item}`}
+                      for={optionId("setting", item)}
+                      aria-label={`Toggle ${formatSetting(item)}`}
                     ></label>
-                    <label class="filter-name-toggle" for={optionId("sensor-modality", item)}>
-                      {item}
+                    <label class="filter-name-toggle" for={optionId("setting", item)}>
+                      <span class="pill">{formatSetting(item)}</span>
                     </label>
                   </div>
                 ))}
@@ -355,10 +429,53 @@ function formatInstitutionSummary(institutions: string[]) {
                     <label
                       class="filter-check"
                       for={optionId("device-type", item)}
-                      aria-label={`Toggle ${item}`}
+                      aria-label={`Toggle ${formatDeviceType(item)}`}
                     ></label>
                     <label class="filter-name-toggle" for={optionId("device-type", item)}>
-                      {item}
+                      <span class="pill">{formatDeviceType(item)}</span>
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <div class="dataset-filter">
+          <span class="filter-label">Sensor Modalities</span>
+          <details>
+            <summary aria-label="Sensor Modalities">
+              <span data-filter-summary="sensorModalities">All sensor modalities</span>
+              <span class="filter-count" data-filter-count="sensorModalities">
+                {sensorModalityOptions.length}/{sensorModalityOptions.length}
+              </span>
+            </summary>
+            <div class="filter-menu">
+              <div class="filter-actions" aria-label="Sensor modality selection actions">
+                <button type="button" data-filter-action="all" data-filter-target="sensorModalities">
+                  All
+                </button>
+                <button type="button" data-filter-action="none" data-filter-target="sensorModalities">
+                  None
+                </button>
+              </div>
+              <div class="filter-options">
+                {sensorModalityOptions.map((item) => (
+                  <div class="filter-option" data-filter-option="sensorModalities">
+                    <input
+                      id={optionId("sensor-modality", item)}
+                      type="checkbox"
+                      value={item}
+                      data-filter-kind="sensorModalities"
+                      checked
+                    />
+                    <label
+                      class="filter-check"
+                      for={optionId("sensor-modality", item)}
+                      aria-label={`Toggle ${formatSensorModality(item)}`}
+                    ></label>
+                    <label class="filter-name-toggle" for={optionId("sensor-modality", item)}>
+                      <span class="pill">{formatSensorModality(item)}</span>
                     </label>
                   </div>
                 ))}
@@ -456,7 +573,6 @@ function formatInstitutionSummary(institutions: string[]) {
                 </button>
               </th>
               <th>Sensor Modalities</th>
-              <th>Paper</th>
             </tr>
           </thead>
           <tbody data-dataset-table-body>
@@ -471,12 +587,16 @@ function formatInstitutionSummary(institutions: string[]) {
                 data-dataset-subjects={dataset.detail.subjects.toLocaleString("en-US")}
                 data-dataset-activities={dataset.detail.activities.toLocaleString("en-US")}
                 data-dataset-channels={dataset.detail.channels.toLocaleString("en-US")}
-                data-dataset-settings={dataset.detail.settings}
-                data-dataset-device-types={dataset.detail.deviceTypes}
-                data-dataset-sensor-modalities={dataset.detail.sensorModalities}
+                data-dataset-settings={dataset.settingsLabel}
+                data-dataset-device-types={dataset.deviceTypesLabel}
+                data-dataset-sensor-modalities={dataset.sensorModalitiesLabel}
+                data-dataset-settings-pills={labelData(dataset.settingParts)}
+                data-dataset-device-type-pills={labelData(dataset.deviceTypeParts)}
+                data-dataset-sensor-modality-pills={labelData(dataset.sensorModalityParts)}
                 data-subjects-value={dataset.detail.subjects}
                 data-activities-value={dataset.detail.activities}
                 data-channels-value={dataset.detail.channels}
+                data-setting-parts={splitList(dataset.detail.settings).join("|")}
                 data-device-type-parts={splitList(dataset.detail.deviceTypes).join("|")}
                 data-sensor-modality-parts={splitList(dataset.detail.sensorModalities).join("|")}
                 data-sort-index={index}
@@ -484,7 +604,7 @@ function formatInstitutionSummary(institutions: string[]) {
                 data-sort-subjects={dataset.detail.subjects}
                 data-sort-activities={dataset.detail.activities}
                 data-sort-channels={dataset.detail.channels}
-                data-sort-device-types={dataset.detail.deviceTypes}
+                data-sort-device-types={dataset.deviceTypesLabel}
                 tabindex="0"
                 aria-label={`Open dataset details: ${dataset.name}`}
               >
@@ -504,23 +624,29 @@ function formatInstitutionSummary(institutions: string[]) {
                 <td>
                   <strong class="metric">{dataset.detail.channels}</strong>
                 </td>
-                <td>{dataset.detail.settings}</td>
-                <td>{dataset.detail.deviceTypes}</td>
-                <td>{dataset.detail.sensorModalities}</td>
                 <td>
-                  {dataset.paperLink ? (
-                    <a
-                      class="paper-link"
-                      href={dataset.paperLink.url}
-                      title={`Open paper: ${dataset.paperLink.title}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Open PDF
-                    </a>
-                  ) : (
-                    <span class="muted">pending</span>
-                  )}
+                  <div class="pill-list" aria-label={`Settings: ${dataset.settingsLabel}`}>
+                    {dataset.settingParts.map((part) => (
+                      <span class="pill">{part.name}</span>
+                    ))}
+                  </div>
+                </td>
+                <td>
+                  <div class="pill-list" aria-label={`Device Types: ${dataset.deviceTypesLabel}`}>
+                    {dataset.deviceTypeParts.map((part) => (
+                      <span class="pill">{part.name}</span>
+                    ))}
+                  </div>
+                </td>
+                <td>
+                  <div
+                    class="pill-list"
+                    aria-label={`Sensor Modalities: ${dataset.sensorModalitiesLabel}`}
+                  >
+                    {dataset.sensorModalityParts.map((part) => (
+                      <span class="pill">{part.name}</span>
+                    ))}
+                  </div>
                 </td>
               </tr>
             ))}
@@ -580,15 +706,15 @@ function formatInstitutionSummary(institutions: string[]) {
           </div>
           <div>
             <span>Settings</span>
-            <strong data-dataset-modal-field="settings"></strong>
+            <div class="detail-pill-list" data-dataset-modal-pill-field="settings"></div>
           </div>
           <div>
             <span>Device Types</span>
-            <strong data-dataset-modal-field="deviceTypes"></strong>
+            <div class="detail-pill-list" data-dataset-modal-pill-field="deviceTypes"></div>
           </div>
           <div>
             <span>Sensor Modalities</span>
-            <strong data-dataset-modal-field="sensorModalities"></strong>
+            <div class="detail-pill-list" data-dataset-modal-pill-field="sensorModalities"></div>
           </div>
         </div>
 
@@ -649,20 +775,22 @@ function formatInstitutionSummary(institutions: string[]) {
     subjects: datasetModal?.querySelector('[data-dataset-modal-field="subjects"]'),
     activities: datasetModal?.querySelector('[data-dataset-modal-field="activities"]'),
     channels: datasetModal?.querySelector('[data-dataset-modal-field="channels"]'),
-    settings: datasetModal?.querySelector('[data-dataset-modal-field="settings"]'),
-    deviceTypes: datasetModal?.querySelector('[data-dataset-modal-field="deviceTypes"]'),
+  };
+  const modalPillFields = {
+    settings: datasetModal?.querySelector('[data-dataset-modal-pill-field="settings"]'),
+    deviceTypes: datasetModal?.querySelector('[data-dataset-modal-pill-field="deviceTypes"]'),
     sensorModalities: datasetModal?.querySelector(
-      '[data-dataset-modal-field="sensorModalities"]',
+      '[data-dataset-modal-pill-field="sensorModalities"]',
     ),
   };
   const groups = {
-    sensorModalities: {
-      allLabel: "All sensor modalities",
-      noneLabel: "No sensor modalities",
-      plural: "sensor modalities",
-      inputs: Array.from(document.querySelectorAll('[data-filter-kind="sensorModalities"]')),
-      summary: document.querySelector('[data-filter-summary="sensorModalities"]'),
-      count: document.querySelector('[data-filter-count="sensorModalities"]'),
+    settings: {
+      allLabel: "All settings",
+      noneLabel: "No settings",
+      plural: "settings",
+      inputs: Array.from(document.querySelectorAll('[data-filter-kind="settings"]')),
+      summary: document.querySelector('[data-filter-summary="settings"]'),
+      count: document.querySelector('[data-filter-count="settings"]'),
     },
     deviceTypes: {
       allLabel: "All device types",
@@ -671,6 +799,14 @@ function formatInstitutionSummary(institutions: string[]) {
       inputs: Array.from(document.querySelectorAll('[data-filter-kind="deviceTypes"]')),
       summary: document.querySelector('[data-filter-summary="deviceTypes"]'),
       count: document.querySelector('[data-filter-count="deviceTypes"]'),
+    },
+    sensorModalities: {
+      allLabel: "All sensor modalities",
+      noneLabel: "No sensor modalities",
+      plural: "sensor modalities",
+      inputs: Array.from(document.querySelectorAll('[data-filter-kind="sensorModalities"]')),
+      summary: document.querySelector('[data-filter-summary="sensorModalities"]'),
+      count: document.querySelector('[data-filter-count="sensorModalities"]'),
     },
   };
   const ranges = {
@@ -696,6 +832,25 @@ function formatInstitutionSummary(institutions: string[]) {
 
   function setModalText(element, value) {
     if (element) element.textContent = value || "-";
+  }
+
+  function renderModalPills(element, value) {
+    if (!element) return;
+
+    const labels = (value || "").split("|").filter(Boolean);
+    if (labels.length === 0) {
+      element.textContent = "-";
+      return;
+    }
+
+    element.replaceChildren(
+      ...labels.map((label) => {
+        const pill = document.createElement("span");
+        pill.className = "pill";
+        pill.textContent = label;
+        return pill;
+      }),
+    );
   }
 
   function isInteractiveTarget(target) {
@@ -745,9 +900,9 @@ function formatInstitutionSummary(institutions: string[]) {
     setModalText(modalFields.subjects, row.dataset.datasetSubjects);
     setModalText(modalFields.activities, row.dataset.datasetActivities);
     setModalText(modalFields.channels, row.dataset.datasetChannels);
-    setModalText(modalFields.settings, row.dataset.datasetSettings);
-    setModalText(modalFields.deviceTypes, row.dataset.datasetDeviceTypes);
-    setModalText(modalFields.sensorModalities, row.dataset.datasetSensorModalities);
+    renderModalPills(modalPillFields.settings, row.dataset.datasetSettingsPills);
+    renderModalPills(modalPillFields.deviceTypes, row.dataset.datasetDeviceTypePills);
+    renderModalPills(modalPillFields.sensorModalities, row.dataset.datasetSensorModalityPills);
     renderDatasetAuthors(datasetAuthors(row));
 
     const paperUrl = row.dataset.datasetPaperUrl || "";
@@ -918,7 +1073,13 @@ function formatInstitutionSummary(institutions: string[]) {
     return (row.getAttribute(attributeName) ?? "").split("|").filter(Boolean);
   }
 
+  function hasAnySelectedPart(row, attributeName, selectedParts) {
+    const parts = rowParts(row, attributeName);
+    return parts.length === 0 || parts.some((part) => selectedParts.has(part));
+  }
+
   function updateDatasetFilters() {
+    const selectedSettings = selectedValues("settings");
     const selectedSensorModalities = selectedValues("sensorModalities");
     const selectedDeviceTypes = selectedValues("deviceTypes");
     const subjectsRange = rangeState("subjects");
@@ -927,16 +1088,18 @@ function formatInstitutionSummary(institutions: string[]) {
     let visibleCount = 0;
 
     datasetRows.forEach((row) => {
-      const isSensorVisible = rowParts(row, "data-sensor-modality-parts").every((part) =>
-        selectedSensorModalities.has(part),
+      const isSettingVisible = hasAnySelectedPart(row, "data-setting-parts", selectedSettings);
+      const isSensorVisible = hasAnySelectedPart(
+        row,
+        "data-sensor-modality-parts",
+        selectedSensorModalities,
       );
-      const isDeviceVisible = rowParts(row, "data-device-type-parts").every((part) =>
-        selectedDeviceTypes.has(part),
-      );
+      const isDeviceVisible = hasAnySelectedPart(row, "data-device-type-parts", selectedDeviceTypes);
       const isSubjectsVisible = isMetricInRange(row.dataset.subjectsValue, subjectsRange);
       const isActivitiesVisible = isMetricInRange(row.dataset.activitiesValue, activitiesRange);
       const isChannelsVisible = isMetricInRange(row.dataset.channelsValue, channelsRange);
       const isVisible =
+        isSettingVisible &&
         isSensorVisible &&
         isDeviceVisible &&
         isSubjectsVisible &&
@@ -948,8 +1111,9 @@ function formatInstitutionSummary(institutions: string[]) {
     });
 
     if (visibleDatasetCount) visibleDatasetCount.textContent = String(visibleCount);
-    updateSummary("sensorModalities");
+    updateSummary("settings");
     updateSummary("deviceTypes");
+    updateSummary("sensorModalities");
     updateRangeSummary("subjects", subjectsRange);
     updateRangeSummary("activities", activitiesRange);
     updateRangeSummary("channels", channelsRange);
@@ -1142,8 +1306,8 @@ function formatInstitutionSummary(institutions: string[]) {
   }
 
   .filter-content {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 14px;
     padding: 14px 16px 16px;
   }
@@ -1159,11 +1323,12 @@ function formatInstitutionSummary(institutions: string[]) {
     position: relative;
     display: grid;
     gap: 6px;
-    width: min(320px, 100%);
+    min-width: 0;
+    width: 100%;
   }
 
   .range-dataset-filter {
-    width: min(240px, 100%);
+    width: 100%;
   }
 
   .dataset-filter details {
@@ -1382,11 +1547,9 @@ function formatInstitutionSummary(institutions: string[]) {
   }
 
   .filter-name-toggle {
-    overflow: hidden;
     color: var(--muted-strong);
-    text-overflow: ellipsis;
-    white-space: nowrap;
     cursor: pointer;
+    min-width: 0;
   }
 
   .arena-panel,
@@ -1430,7 +1593,7 @@ function formatInstitutionSummary(institutions: string[]) {
 
   .catalog-table {
     width: 100%;
-    min-width: 1080px;
+    min-width: 980px;
     border-collapse: collapse;
   }
 
@@ -1532,6 +1695,17 @@ function formatInstitutionSummary(institutions: string[]) {
     font-size: 0.94rem;
     font-weight: 500;
     line-height: 1.2;
+    text-decoration: underline;
+    text-decoration-color: hsl(24 6% 17% / 0.5);
+    text-decoration-style: dotted;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+
+  .catalog-table tbody tr[data-dataset-row]:hover .name-cell strong,
+  .catalog-table tbody tr[data-dataset-row]:focus-visible .name-cell strong {
+    text-decoration-color: currentColor;
+    text-decoration-style: solid;
   }
 
   .name-cell span {
@@ -1539,6 +1713,40 @@ function formatInstitutionSummary(institutions: string[]) {
     color: var(--muted);
     font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 0.72rem;
+  }
+
+  .pill-list,
+  .detail-pill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px 6px;
+  }
+
+  .detail-pill-list {
+    margin-top: 8px;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 20px;
+    border: 1px solid lightgray;
+    border-radius: 999px;
+    background: var(--panel-soft);
+    color: var(--ink);
+    padding: 3px 8px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1.05;
+    text-align: center;
+    white-space: normal;
+  }
+
+  .filter-name-toggle .pill {
+    justify-content: flex-start;
+    max-width: 100%;
+    text-align: left;
   }
 
   .metric {
@@ -1704,7 +1912,7 @@ function formatInstitutionSummary(institutions: string[]) {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  .detail-metrics div,
+  .detail-metrics > div,
   .detail-info-card {
     border: 1px solid lightgray;
     border-radius: 8px;
@@ -1712,7 +1920,7 @@ function formatInstitutionSummary(institutions: string[]) {
     padding: 12px;
   }
 
-  .detail-metrics span {
+  .detail-metrics > div > span {
     display: block;
     color: var(--muted);
     font-size: 0.68rem;
@@ -1720,7 +1928,7 @@ function formatInstitutionSummary(institutions: string[]) {
     text-transform: uppercase;
   }
 
-  .detail-metrics strong {
+  .detail-metrics > div > strong {
     display: block;
     margin-top: 8px;
     color: var(--ink);
@@ -1794,10 +2002,26 @@ function formatInstitutionSummary(institutions: string[]) {
     line-height: 1.35;
   }
 
+  @media (max-width: 1180px) {
+    .filter-content {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 980px) {
+    .filter-content {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
   @media (max-width: 760px) {
     .panel-header {
       display: grid;
       align-items: start;
+    }
+
+    .filter-content {
+      grid-template-columns: 1fr;
     }
 
     .dataset-filter,

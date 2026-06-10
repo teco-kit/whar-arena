@@ -1786,8 +1786,8 @@
   }
 
   .filter-content {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 14px;
     padding: 14px 16px 16px;
   }
@@ -1803,7 +1803,8 @@
     position: relative;
     display: grid;
     gap: 6px;
-    width: min(320px, 100%);
+    min-width: 0;
+    width: 100%;
   }
 
   .dataset-filter details {
@@ -2259,14 +2260,16 @@
     font-weight: 500;
     line-height: 1.2;
     text-decoration: underline;
-    text-decoration-color: transparent;
+    text-decoration-color: hsl(24 6% 17% / 0.5);
+    text-decoration-style: dotted;
     text-decoration-thickness: 1px;
-    text-underline-offset: 3px;
+    text-underline-offset: 4px;
   }
 
   .clickable-row:hover .model-title-button,
   .clickable-row:focus-visible .model-title-button {
-    text-decoration-color: hsl(24 6% 17% / 0.45);
+    text-decoration-color: currentColor;
+    text-decoration-style: solid;
   }
 
   .institution-list {
@@ -2485,16 +2488,19 @@
     font: inherit;
     text-align: inherit;
     text-decoration: underline;
-    text-decoration-color: transparent;
+    text-decoration-color: hsl(24 6% 17% / 0.5);
+    text-decoration-style: dotted;
     text-decoration-thickness: 1px;
-    text-underline-offset: 3px;
+    text-underline-offset: 4px;
     cursor: pointer;
   }
 
+  .matrix-model-heading:hover .matrix-model-button,
   .matrix-model-button:hover,
   .matrix-model-button:focus-visible {
     color: var(--ink);
-    text-decoration-color: hsl(24 6% 17% / 0.4);
+    text-decoration-color: currentColor;
+    text-decoration-style: solid;
   }
 
   .matrix-model-button:focus-visible {
@@ -2563,18 +2569,22 @@
     font-family: inherit;
     line-height: 30px;
     text-align: left;
+    text-decoration: underline;
+    text-decoration-color: hsl(24 6% 17% / 0.5);
+    text-decoration-style: dotted;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
     text-overflow: ellipsis;
     text-transform: none;
     white-space: nowrap;
     cursor: pointer;
   }
 
+  .dataset-cell:hover .dataset-title-button,
   .dataset-title-button:hover,
   .dataset-title-button:focus-visible {
-    text-decoration: underline;
-    text-decoration-color: hsl(24 6% 17% / 0.45);
-    text-decoration-thickness: 1px;
-    text-underline-offset: 3px;
+    text-decoration-color: currentColor;
+    text-decoration-style: solid;
   }
 
   .dataset-title-button:focus-visible {
@@ -2867,10 +2877,20 @@
     }
   }
 
+  @media (max-width: 900px) {
+    .filter-content {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
   @media (max-width: 760px) {
     .panel-header {
       display: grid;
       align-items: start;
+    }
+
+    .filter-content {
+      grid-template-columns: 1fr;
     }
 
     .dataset-filter {

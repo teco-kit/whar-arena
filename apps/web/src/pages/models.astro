@@ -464,7 +464,6 @@ function formatScaledMetric(value: number) {
                   </span>
                 </button>
               </th>
-              <th>Paper</th>
             </tr>
           </thead>
           <tbody data-model-table-body>
@@ -512,21 +511,6 @@ function formatScaledMetric(value: number) {
                 </td>
                 <td>
                   <strong class="metric">{model.detail.flops ?? "-"}</strong>
-                </td>
-                <td>
-                  {model.paperLink ? (
-                    <a
-                      class="paper-link"
-                      href={model.paperLink.url}
-                      title={`Open paper: ${model.paperLink.title}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Open PDF
-                    </a>
-                  ) : (
-                    <span class="muted">pending</span>
-                  )}
                 </td>
               </tr>
             ))}
@@ -1100,8 +1084,8 @@ function formatScaledMetric(value: number) {
   }
 
   .filter-content {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 14px;
     padding: 14px 16px 16px;
   }
@@ -1117,7 +1101,8 @@ function formatScaledMetric(value: number) {
     position: relative;
     display: grid;
     gap: 6px;
-    width: min(320px, 100%);
+    min-width: 0;
+    width: 100%;
   }
 
   .model-filter details {
@@ -1383,7 +1368,7 @@ function formatScaledMetric(value: number) {
 
   .catalog-table {
     width: 100%;
-    min-width: 980px;
+    min-width: 860px;
     border-collapse: collapse;
   }
 
@@ -1485,6 +1470,17 @@ function formatScaledMetric(value: number) {
     font-size: 0.94rem;
     font-weight: 500;
     line-height: 1.2;
+    text-decoration: underline;
+    text-decoration-color: hsl(24 6% 17% / 0.5);
+    text-decoration-style: dotted;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+
+  .catalog-table tbody tr[data-model-row]:hover .name-cell strong,
+  .catalog-table tbody tr[data-model-row]:focus-visible .name-cell strong {
+    text-decoration-color: currentColor;
+    text-decoration-style: solid;
   }
 
   .name-cell span {
@@ -1742,10 +1738,20 @@ function formatScaledMetric(value: number) {
     line-height: 1.35;
   }
 
+  @media (max-width: 900px) {
+    .filter-content {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
   @media (max-width: 720px) {
     .panel-header {
       display: grid;
       align-items: start;
+    }
+
+    .filter-content {
+      grid-template-columns: 1fr;
     }
 
     .model-filter {
