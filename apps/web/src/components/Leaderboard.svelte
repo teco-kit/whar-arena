@@ -892,14 +892,14 @@
 
   function describeFamily(family: string) {
     const definitions: Record<string, string> = {
-      attn: "Learns weights that emphasize the most relevant parts of an input sequence or feature set.",
-      cnn: "Uses convolutional filters to detect local patterns in structured data.",
-      dense: "Uses fully connected layers where each output unit combines information from all input units.",
-      fe: "Uses handcrafted or engineered variables derived from raw data before modeling.",
-      graph: "Represents entities and their relationships as nodes and edges.",
-      neural: "Uses trainable layers of artificial neurons to learn representations from data.",
-      rnn: "Processes sequences step by step while carrying information across timesteps.",
-      spec: "Transforms signals into frequency-domain representations.",
+      attn: "Weights relevant timesteps, channels, or feature interactions; transformer-style mechanisms are included here.",
+      cnn: "Convolutional filters learn local temporal or channel patterns in multivariate sensor windows.",
+      dense: "Fully connected layers combine information across all input units.",
+      fe: "Handcrafted or engineered variables are derived from raw sensor windows before classification.",
+      graph: "Node-and-edge interactions model relationships between sensors, channels, or learned components.",
+      neural: "Trainable layers learn representations directly from data.",
+      rnn: "Sequence layers carry hidden state across timesteps to model temporal context.",
+      spec: "Frequency-domain preprocessing or representations are used before classification.",
     };
 
     return definitions[family] ?? "Architecture category used to group related model designs.";
@@ -1929,22 +1929,19 @@
 
         <div class="detail-metrics" aria-label="Model size and compute">
           <div>
-            <span>Params</span>
+            <span>Params*</span>
             <strong>{formatDetailMetric(selectedDetail.params)}</strong>
           </div>
           <div>
-            <span>FLOPs</span>
+            <span>FLOPs*</span>
             <strong>{formatDetailMetric(selectedDetail.flops)}</strong>
           </div>
         </div>
 
-        <div class="detail-info-card">
-          <strong>Model size setup</strong>
-          <p>
-            These counts are reported for 6 sensors, 5 classes, and 128
-            timesteps.
-          </p>
-        </div>
+        <p class="model-size-note">
+          * <strong>Model size setup.</strong> These counts are reported for 6
+          sensors, 5 classes, and 128 timesteps.
+        </p>
       </section>
     </div>
   {/if}
@@ -2375,12 +2372,12 @@
 
   .leaderboard-table th:nth-child(2),
   .leaderboard-table td:nth-child(2) {
-    width: 25%;
+    width: 26%;
   }
 
   .leaderboard-table th:nth-child(3),
   .leaderboard-table td:nth-child(3) {
-    width: 17%;
+    width: 18%;
   }
 
   .leaderboard-table th:nth-child(4),
@@ -2395,6 +2392,7 @@
 
   .leaderboard-table th:last-child,
   .leaderboard-table td:last-child {
+    width: 6%;
     text-align: left;
   }
 
@@ -2770,15 +2768,16 @@
     grid-template-columns: repeat(2, max-content);
     gap: 5px 6px;
     align-items: center;
+    justify-items: start;
   }
 
   .family-pill {
     display: inline-flex;
+    flex: 0 0 auto;
     align-items: center;
     justify-content: center;
     gap: 5px;
     min-height: 20px;
-    max-width: 5rem;
     border: 1px solid lightgray;
     border-radius: 999px;
     background: var(--panel-soft);
@@ -2787,9 +2786,9 @@
     font-size: 0.7rem;
     font-weight: 600;
     line-height: 1.05;
-    overflow-wrap: anywhere;
+    overflow-wrap: normal;
     text-align: center;
-    white-space: normal;
+    white-space: nowrap;
   }
 
   .family-pill-info {
@@ -3186,8 +3185,7 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  .detail-metrics div,
-  .detail-info-card {
+  .detail-metrics div {
     border: 1px solid lightgray;
     border-radius: 8px;
     background: var(--panel-soft);
@@ -3211,25 +3209,28 @@
     font-weight: 600;
   }
 
+  .model-size-note {
+    margin: 2px 0 0;
+    color: hsl(35 6% 38%);
+    font-size: 0.8rem;
+    line-height: 1.35;
+  }
+
+  .model-size-note strong {
+    font-weight: 600;
+  }
+
   .dataset-detail-metrics strong {
     font-size: 0.98rem;
     line-height: 1.2;
     overflow-wrap: anywhere;
   }
 
-  .detail-info-card strong,
   .detail-section h3 {
     color: var(--ink);
     font-size: 0.82rem;
     font-weight: 700;
     text-transform: uppercase;
-  }
-
-  .detail-info-card p {
-    margin-top: 6px;
-    color: var(--muted-strong);
-    font-size: 0.86rem;
-    line-height: 1.4;
   }
 
   .detail-section {

@@ -2162,6 +2162,10 @@ function formatInstitutionSummary(institutions: string[]) {
     text-underline-offset: 3px;
   }
 
+  .modal-paper-title[hidden] {
+    display: none;
+  }
+
   .modal-paper-title:hover,
   .modal-paper-title:focus-visible {
     text-decoration-color: currentColor;
@@ -2231,8 +2235,28 @@ function formatInstitutionSummary(institutions: string[]) {
     gap: 6px;
   }
 
-  .modal-author-list li {
+  :global(.modal-author-list li) {
+    display: grid;
+    gap: 3px;
+    border-bottom: 1px solid var(--line);
     padding-bottom: 6px;
+  }
+
+  :global(.modal-author-list li:last-child) {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  :global(.modal-author-list strong) {
+    color: var(--ink);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  :global(.modal-author-list span) {
+    color: var(--muted-strong);
+    font-size: 0.82rem;
+    line-height: 1.35;
   }
 
   @media (max-width: 1180px) {

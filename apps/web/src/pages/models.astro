@@ -99,14 +99,14 @@ function formatFamily(family: string): string {
 
 function describeFamily(family: string): string {
   const definitions: Record<string, string> = {
-    attn: "Learns weights that emphasize the most relevant parts of an input sequence or feature set.",
-    cnn: "Uses convolutional filters to detect local patterns in structured data.",
-    dense: "Uses fully connected layers where each output unit combines information from all input units.",
-    fe: "Uses handcrafted or engineered variables derived from raw data before modeling.",
-    graph: "Represents entities and their relationships as nodes and edges.",
-    neural: "Uses trainable layers of artificial neurons to learn representations from data.",
-    rnn: "Processes sequences step by step while carrying information across timesteps.",
-    spec: "Transforms signals into frequency-domain representations.",
+    attn: "Weights relevant timesteps, channels, or feature interactions; transformer-style mechanisms are included here.",
+    cnn: "Convolutional filters learn local temporal or channel patterns in multivariate sensor windows.",
+    dense: "Fully connected layers combine information across all input units.",
+    fe: "Handcrafted or engineered variables are derived from raw sensor windows before classification.",
+    graph: "Node-and-edge interactions model relationships between sensors, channels, or learned components.",
+    neural: "Trainable layers learn representations directly from data.",
+    rnn: "Sequence layers carry hidden state across timesteps to model temporal context.",
+    spec: "Frequency-domain preprocessing or representations are used before classification.",
   };
 
   return definitions[family] ?? "Architecture category used to group related model designs.";
@@ -262,6 +262,7 @@ function formatScaledMetric(value: number) {
                           class="pill-info"
                           tabindex="0"
                           title={item.definition}
+                          data-tip={item.definition}
                           aria-label={`Definition: ${item.definition}`}
                         >
                           ⓘ
@@ -521,6 +522,7 @@ function formatScaledMetric(value: number) {
                           class="pill-info"
                           tabindex="0"
                           title={part.definition}
+                          data-tip={part.definition}
                           aria-label={`Definition: ${part.definition}`}
                         >
                           ⓘ
@@ -604,22 +606,19 @@ function formatScaledMetric(value: number) {
             <strong data-model-modal-field="year"></strong>
           </div>
           <div>
-            <span>Params</span>
+            <span>Params*</span>
             <strong data-model-modal-field="params"></strong>
           </div>
           <div>
-            <span>FLOPs</span>
+            <span>FLOPs*</span>
             <strong data-model-modal-field="flops"></strong>
           </div>
         </div>
 
-        <div class="detail-info-card">
-          <strong>Model size setup</strong>
-          <p>
-            Trainable parameter counts and approximate forward-pass FLOPs use
-            {modelDetails.source.input_assumption}.
-          </p>
-        </div>
+        <p class="model-size-note">
+          * <strong>Model size setup.</strong> These counts are reported for 6
+          sensors, 5 classes, and 128 timesteps.
+        </p>
       </section>
     </div>
   </BenchmarkPage>
@@ -645,6 +644,30 @@ function formatScaledMetric(value: number) {
     flops: modelModal?.querySelector('[data-model-modal-field="flops"]'),
   };
   const visibleModelCount = document.querySelector("[data-visible-model-count]");
+  const architectureTooltip = document.createElement("div");
+  architectureTooltip.className = "architecture-pill-tooltip";
+  architectureTooltip.id = "architecture-pill-tooltip";
+  architectureTooltip.setAttribute("role", "tooltip");
+  Object.assign(architectureTooltip.style, {
+    position: "fixed",
+    zIndex: "120",
+    maxWidth: "min(280px, calc(100vw - 24px))",
+    padding: "8px 10px",
+    border: "1px solid lightgray",
+    borderRadius: "7px",
+    background: "var(--ink)",
+    color: "var(--panel)",
+    fontFamily:
+      '"baselGrotesk", "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    fontSize: "0.74rem",
+    fontWeight: "500",
+    lineHeight: "1.35",
+    pointerEvents: "none",
+    textAlign: "left",
+    whiteSpace: "normal",
+  });
+  architectureTooltip.hidden = true;
+  document.body.append(architectureTooltip);
   let lastModelTrigger = null;
   const modelSortState = {
     key: "year",
@@ -685,11 +708,84 @@ function formatScaledMetric(value: number) {
   };
 
   function isInteractiveTarget(target) {
-    return target instanceof Element && Boolean(target.closest("a, button"));
+    return target instanceof Element && Boolean(target.closest("a, button, .pill-info"));
   }
 
   function setModelModalText(element, value) {
     if (element) element.textContent = value || "-";
+  }
+
+  function clampNumber(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+  }
+
+  function positionArchitectureTooltip(trigger) {
+    const triggerRect = trigger.getBoundingClientRect();
+    const tooltipRect = architectureTooltip.getBoundingClientRect();
+    const left = clampNumber(
+      triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2,
+      8,
+      window.innerWidth - tooltipRect.width - 8,
+    );
+    const belowTop = triggerRect.bottom + 8;
+    const aboveTop = triggerRect.top - tooltipRect.height - 8;
+    const top =
+      belowTop + tooltipRect.height <= window.innerHeight - 8
+        ? belowTop
+        : Math.max(8, aboveTop);
+
+    architectureTooltip.style.left = `${left}px`;
+    architectureTooltip.style.top = `${top}px`;
+  }
+
+  function showArchitectureTooltip(trigger) {
+    const definition = trigger.dataset.tip || trigger.getAttribute("title") || "";
+    if (!definition) return;
+
+    architectureTooltip.textContent = definition;
+    architectureTooltip.hidden = false;
+    trigger.setAttribute("aria-describedby", architectureTooltip.id);
+    positionArchitectureTooltip(trigger);
+  }
+
+  function hideArchitectureTooltip(trigger) {
+    architectureTooltip.hidden = true;
+    trigger.removeAttribute("aria-describedby");
+  }
+
+  function bindArchitectureTooltips(root = document) {
+    root.querySelectorAll(".pill-info").forEach((info) => {
+      if (info.dataset.tooltipBound === "true") return;
+      info.dataset.tooltipBound = "true";
+      if (!info.dataset.tip && info.title) info.dataset.tip = info.title;
+      if (info.title) {
+        info.dataset.nativeTitle = info.title;
+        info.removeAttribute("title");
+      }
+
+      info.addEventListener("mouseenter", () => showArchitectureTooltip(info));
+      info.addEventListener("mousemove", () => positionArchitectureTooltip(info));
+      info.addEventListener("mouseleave", () => hideArchitectureTooltip(info));
+      info.addEventListener("focus", () => showArchitectureTooltip(info));
+      info.addEventListener("blur", () => hideArchitectureTooltip(info));
+      info.addEventListener("pointerdown", (event) => {
+        event.stopPropagation();
+      });
+      info.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        showArchitectureTooltip(info);
+      });
+      info.addEventListener("keydown", (event) => {
+        event.stopPropagation();
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          showArchitectureTooltip(info);
+        } else if (event.key === "Escape") {
+          hideArchitectureTooltip(info);
+        }
+      });
+    });
   }
 
   function modelAuthors(row) {
@@ -1026,6 +1122,7 @@ function formatScaledMetric(value: number) {
     }
   });
 
+  bindArchitectureTooltips();
   applyModelSort();
   updateModelFilters();
 </script>
@@ -1457,6 +1554,7 @@ function formatScaledMetric(value: number) {
 
   .pill {
     display: inline-flex;
+    flex: 0 0 auto;
     align-items: center;
     justify-content: center;
     gap: 5px;
@@ -1469,6 +1567,8 @@ function formatScaledMetric(value: number) {
     font-size: 0.7rem;
     font-weight: 600;
     line-height: 1.05;
+    overflow-wrap: normal;
+    white-space: nowrap;
   }
 
   .pill-info {
@@ -1491,6 +1591,30 @@ function formatScaledMetric(value: number) {
   .pill-info:focus-visible {
     color: var(--ink);
     outline: none;
+  }
+
+  :global(.architecture-pill-tooltip) {
+    position: fixed;
+    z-index: 120;
+    max-width: min(280px, calc(100vw - 24px));
+    padding: 8px 10px;
+    border: 1px solid lightgray;
+    border-radius: 7px;
+    background: var(--ink);
+    color: var(--panel);
+    font-family:
+      "baselGrotesk", "Inter", ui-sans-serif, system-ui, -apple-system,
+      BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 0.74rem;
+    font-weight: 500;
+    line-height: 1.35;
+    pointer-events: none;
+    text-align: left;
+    white-space: normal;
+  }
+
+  :global(.architecture-pill-tooltip[hidden]) {
+    display: none;
   }
 
   .metric,
@@ -1627,8 +1751,7 @@ function formatScaledMetric(value: number) {
     gap: 10px;
   }
 
-  .detail-metrics div,
-  .detail-info-card {
+  .detail-metrics div {
     border: 1px solid lightgray;
     border-radius: 8px;
     background: var(--panel-soft);
@@ -1652,7 +1775,6 @@ function formatScaledMetric(value: number) {
     font-weight: 600;
   }
 
-  .detail-info-card strong,
   .detail-section h3 {
     color: var(--ink);
     font-size: 0.82rem;
@@ -1660,11 +1782,15 @@ function formatScaledMetric(value: number) {
     text-transform: uppercase;
   }
 
-  .detail-info-card p {
-    margin: 6px 0 0;
-    color: var(--muted-strong);
-    font-size: 0.86rem;
-    line-height: 1.4;
+  .model-size-note {
+    margin: 2px 0 0;
+    color: hsl(35 6% 38%);
+    font-size: 0.8rem;
+    line-height: 1.35;
+  }
+
+  .model-size-note strong {
+    font-weight: 600;
   }
 
   .detail-section {
@@ -1691,6 +1817,10 @@ function formatScaledMetric(value: number) {
     text-decoration-color: hsl(24 6% 17% / 0.3);
     text-decoration-thickness: 1px;
     text-underline-offset: 3px;
+  }
+
+  .modal-paper-title[hidden] {
+    display: none;
   }
 
   .modal-paper-title:hover,
@@ -1762,8 +1892,28 @@ function formatScaledMetric(value: number) {
     gap: 6px;
   }
 
-  .modal-author-list li {
+  :global(.modal-author-list li) {
+    display: grid;
+    gap: 3px;
+    border-bottom: 1px solid var(--line);
     padding-bottom: 6px;
+  }
+
+  :global(.modal-author-list li:last-child) {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  :global(.modal-author-list strong) {
+    color: var(--ink);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  :global(.modal-author-list span) {
+    color: var(--muted-strong);
+    font-size: 0.82rem;
+    line-height: 1.35;
   }
 
   @media (max-width: 900px) {
