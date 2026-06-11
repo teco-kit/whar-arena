@@ -77,10 +77,10 @@ const deviceTypeLabels: Record<string, string> = {
   Belt: "Belt",
   Glasses: "Smart Glasses",
   Helmet: "Helmet",
-  LifeMonitor: "West",
   Mask: "Mask",
   Node: "Sensor Node",
   Phone: "Phone",
+  Vest: "Vest",
   Watch: "Watch",
 };
 const deviceTypeDefinitions: Record<string, string> = {
@@ -92,6 +92,7 @@ const deviceTypeDefinitions: Record<string, string> = {
   Mask: "A face-worn covering or device positioned around the mouth, nose, or both.",
   Node: "A standalone sensor unit that can be attached to the body, clothing, or equipment.",
   Phone: "A handheld mobile computing device with built-in sensors and wireless connectivity.",
+  Vest: "An upper-body garment or device that can carry physiological sensing hardware.",
   Watch: "A wrist-worn computing device with built-in sensors and wireless connectivity.",
 };
 const sensorModalityLabels: Record<string, string> = {
@@ -104,6 +105,7 @@ const sensorModalityLabels: Record<string, string> = {
   Gas: "Gas Sensor",
   GPS: "GPS",
   Gyr: "Gyroscope",
+  Light: "Light Sensor",
   "Light Sensor": "Light Sensor",
   Mag: "Magnetometer",
   Stretch: "Stretch Sensor",
@@ -118,6 +120,7 @@ const sensorModalityDefinitions: Record<string, string> = {
   Gas: "Measures the concentration or presence of specific gases.",
   GPS: "Provides geographic position using satellite navigation signals.",
   Gyr: "Measures angular velocity and rotation of the device or body segment.",
+  Light: "Measures surrounding light intensity.",
   "Light Sensor": "Measures surrounding light intensity.",
   Mag: "Measures magnetic field strength or direction.",
   Stretch: "Measures deformation, strain, or elongation.",
@@ -773,6 +776,10 @@ function formatInstitutionSummary(institutions: string[]) {
         </table>
       </div>
     </section>
+
+    <p class="dataset-source-note">
+      <strong>Source.</strong> {datasetDetails.source.note} <strong>Abbreviations.</strong> {datasetDetails.source.abbreviations}
+    </p>
 
     <div class="modal-layer" data-dataset-modal hidden role="presentation">
       <button
@@ -1472,6 +1479,19 @@ function formatInstitutionSummary(institutions: string[]) {
     grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 14px;
     padding: 14px 16px 16px;
+  }
+
+  .dataset-source-note {
+    margin: 0 0 18px;
+    padding: 0 4px;
+    color: hsl(35 6% 38%);
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+
+  .dataset-source-note strong {
+    color: var(--ink);
+    font-weight: 600;
   }
 
   .filter-label {
