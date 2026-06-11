@@ -2484,12 +2484,14 @@
 
   .matrix-wrap {
     max-height: none;
-    overflow: visible;
+    overflow-x: auto;
+    overflow-y: visible;
+    overscroll-behavior-x: contain;
   }
 
   .matrix-table {
-    width: 100%;
-    min-width: 0;
+    width: max-content;
+    min-width: 100%;
     margin: 0;
     table-layout: fixed;
   }
@@ -2507,6 +2509,8 @@
   }
 
   .matrix-table thead th:not(.sticky-col) {
+    width: 58px;
+    min-width: 58px;
     height: 148px;
     vertical-align: middle;
   }
@@ -2557,6 +2561,8 @@
   }
 
   .matrix-table td {
+    width: 58px;
+    min-width: 58px;
     background: var(--score-bg, transparent);
     font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   }
@@ -2591,9 +2597,16 @@
   }
 
   .sticky-col {
+    position: sticky;
+    left: 0;
+    z-index: 2;
     width: 204px !important;
     min-width: 204px !important;
     background: var(--panel-strong);
+  }
+
+  .matrix-table thead .sticky-col {
+    z-index: 3;
   }
 
   .dataset-cell {
