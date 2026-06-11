@@ -27,6 +27,12 @@ type PaperLink = {
   url: string;
 };
 
+type ArchitecturePart = {
+  id: string;
+  name: string;
+  definition: string;
+};
+
 const modelDetails = modelDetailsData as {
   source: {
     table: string;
@@ -51,7 +57,6 @@ const familyPartsById: Record<string, string[]> = {
   fe: ["fe"],
   neural: ["neural"],
 };
-const familyOrder = ["attn", "cnn", "dense", "rnn", "graph", "spec", "fe"];
 const modelYearById: Record<string, number> = {
   attend_discriminate: 2021,
   cnn_har: 2015,
@@ -91,13 +96,35 @@ function formatFamily(family: string): string {
   return family.replaceAll("_", " ");
 }
 
+function describeFamily(family: string): string {
+  const definitions: Record<string, string> = {
+    attn: "Learns weights that emphasize the most relevant parts of an input sequence or feature set.",
+    cnn: "Uses convolutional filters to detect local patterns in structured data.",
+    dense: "Uses fully connected layers where each output unit combines information from all input units.",
+    fe: "Uses handcrafted or engineered variables derived from raw data before modeling.",
+    graph: "Represents entities and their relationships as nodes and edges.",
+    neural: "Uses trainable layers of artificial neurons to learn representations from data.",
+    rnn: "Processes sequences step by step while carrying information across timesteps.",
+    spec: "Transforms signals into frequency-domain representations.",
+  };
+
+  return definitions[family] ?? "Architecture category used to group related model designs.";
+}
+
 const models = benchmark.catalog.models.map((model) => {
   const detail = modelDetails.models[model.id] ?? { params: null, flops: null };
+  const architectureIds = getFamilyParts(model.family);
+  const architectureParts: ArchitecturePart[] = architectureIds.map((id) => ({
+    id,
+    name: formatFamily(id),
+    definition: describeFamily(id),
+  }));
 
   return {
     ...model,
-    architecture: getFamilyParts(model.family).map(formatFamily),
-    architectureIds: getFamilyParts(model.family),
+    architecture: architectureParts.map((part) => part.name),
+    architectureIds,
+    architectureParts,
     detail,
     year: modelYearById[model.id] ?? null,
     paramsValue: parseMetricValue(detail.params),
@@ -113,18 +140,10 @@ const models = benchmark.catalog.models.map((model) => {
   return a.name.localeCompare(b.name);
 });
 const architectureOptions = [...new Set(models.flatMap((model) => model.architectureIds))]
-  .sort((a, b) => {
-    const aIndex = familyOrder.indexOf(a);
-    const bIndex = familyOrder.indexOf(b);
-    const aRank = aIndex === -1 ? Number.POSITIVE_INFINITY : aIndex;
-    const bRank = bIndex === -1 ? Number.POSITIVE_INFINITY : bIndex;
-
-    if (aRank !== bRank) return aRank - bRank;
-    return formatFamily(a).localeCompare(formatFamily(b));
-  })
-  .map((id) => ({ id, name: formatFamily(id) }));
+  .sort((a, b) => compareLabels(formatFamily(a), formatFamily(b)))
+  .map((id) => ({ id, name: formatFamily(id), definition: describeFamily(id) }));
 const frameworkOptions = [...new Set(models.map((model) => model.framework))]
-  .sort()
+  .sort((a, b) => compareLabels(formatFramework(a), formatFramework(b)))
   .map((id) => ({ id, name: formatFramework(id) }));
 const paramsMax = roundMetricMax(models.map((model) => model.paramsValue));
 const flopsMax = roundMetricMax(models.map((model) => model.flopsValue));
@@ -138,6 +157,10 @@ function formatFramework(framework: string) {
   };
 
   return labels[framework] ?? framework;
+}
+
+function compareLabels(a: string, b: string) {
+  return a.localeCompare(b, "en", { sensitivity: "base" });
 }
 
 function formatInstitutionSummary(institutions: string[]) {
@@ -250,7 +273,17 @@ function formatScaledMetric(value: number) {
                       class="filter-name-toggle"
                       for={`model-architecture-filter-${item.id}`}
                     >
-                      <span class="pill">{item.name}</span>
+                      <span class="pill">
+                        {item.name}
+                        <span
+                          class="pill-info"
+                          tabindex="0"
+                          title={item.definition}
+                          aria-label={`Definition: ${item.definition}`}
+                        >
+                          i
+                        </span>
+                      </span>
                     </label>
                   </div>
                 ))}
@@ -498,8 +531,18 @@ function formatScaledMetric(value: number) {
                 </td>
                 <td>
                   <div class="pill-list" aria-label={`Architecture: ${model.architecture.join(" ")}`}>
-                    {model.architecture.map((part) => (
-                      <span class="pill">{part}</span>
+                    {model.architectureParts.map((part) => (
+                      <span class="pill">
+                        {part.name}
+                        <span
+                          class="pill-info"
+                          tabindex="0"
+                          title={part.definition}
+                          aria-label={`Definition: ${part.definition}`}
+                        >
+                          i
+                        </span>
+                      </span>
                     ))}
                   </div>
                 </td>
@@ -562,8 +605,11 @@ function formatScaledMetric(value: number) {
         </div>
 
         <div class="detail-info-card">
-          <strong>{modelDetails.source.table} setup</strong>
-          <p>{modelDetails.source.note} Counts use {modelDetails.source.input_assumption}.</p>
+          <strong>Model size setup</strong>
+          <p>
+            Trainable parameter counts and approximate forward-pass FLOPs use
+            {modelDetails.source.input_assumption}.
+          </p>
         </div>
 
         <div class="detail-section">
@@ -1500,6 +1546,7 @@ function formatScaledMetric(value: number) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 5px;
     min-height: 20px;
     border: 1px solid lightgray;
     border-radius: 999px;
@@ -1509,6 +1556,29 @@ function formatScaledMetric(value: number) {
     font-size: 0.7rem;
     font-weight: 600;
     line-height: 1.05;
+  }
+
+  .pill-info {
+    display: inline-flex;
+    width: 13px;
+    height: 13px;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid hsl(24 6% 17% / 0.28);
+    border-radius: 999px;
+    color: var(--muted-strong);
+    font-size: 0.58rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: help;
+  }
+
+  .pill-info:hover,
+  .pill-info:focus-visible {
+    border-color: currentColor;
+    color: var(--ink);
+    outline: none;
   }
 
   .metric,

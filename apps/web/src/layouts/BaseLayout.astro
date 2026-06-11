@@ -46,6 +46,9 @@ const bibtexCitation = `@misc{whar_arena_2026,
   year = {2026},
   note = {arXiv preprint, forthcoming}
 }`;
+const paperPdfFilename =
+  "WHAR_Arena-Benchmarking_the_State_of_the_Art_in_Efficient_Wearable_Human_Activity_Recognition.pdf";
+const paperPdfHref = withBase(`/${paperPdfFilename}`);
 const acknowledgementsText =
   "This work was partially funded by IPAI Foundation gGmbH through the Science Residency Program and by the HammerHAI project, an EU co-funded AI Factory initiative operated by the High-Performance Computing Center Stuttgart and funded by the European High Performance Computing Joint Undertaking under Grant Agreement No. 101234027. Additional support was provided by the Helmholtz Association Initiative and Networking Fund through the HAICORE@KIT partition.";
 const acknowledgementLogos = [
@@ -148,13 +151,28 @@ const acknowledgementLogos = [
         <section class="citation-section" aria-labelledby="citation-heading">
           <div class="citation-header">
             <h2 id="citation-heading">Citation</h2>
-            <button class="citation-copy-button" type="button" data-copy-citation title="Copy BibTeX">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M8 8.5V6.8A2.8 2.8 0 0 1 10.8 4h6.4A2.8 2.8 0 0 1 20 6.8v6.4a2.8 2.8 0 0 1-2.8 2.8h-1.7" />
-                <path d="M4 10.8A2.8 2.8 0 0 1 6.8 8h6.4a2.8 2.8 0 0 1 2.8 2.8v6.4a2.8 2.8 0 0 1-2.8 2.8H6.8A2.8 2.8 0 0 1 4 17.2v-6.4Z" />
-              </svg>
-              <span data-copy-label>Copy</span>
-            </button>
+            <div class="citation-actions">
+              <a
+                class="citation-download-link"
+                href={paperPdfHref}
+                download={paperPdfFilename}
+                title="Download WHAR Arena paper PDF"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 4v10" />
+                  <path d="m7.5 9.5 4.5 4.5 4.5-4.5" />
+                  <path d="M5 19h14" />
+                </svg>
+                <span>Download PDF</span>
+              </a>
+              <button class="citation-copy-button" type="button" data-copy-citation title="Copy BibTeX">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M8 8.5V6.8A2.8 2.8 0 0 1 10.8 4h6.4A2.8 2.8 0 0 1 20 6.8v6.4a2.8 2.8 0 0 1-2.8 2.8h-1.7" />
+                  <path d="M4 10.8A2.8 2.8 0 0 1 6.8 8h6.4a2.8 2.8 0 0 1 2.8 2.8v6.4a2.8 2.8 0 0 1-2.8 2.8H6.8A2.8 2.8 0 0 1 4 17.2v-6.4Z" />
+                </svg>
+                <span data-copy-label>Copy</span>
+              </button>
+            </div>
           </div>
           <pre><code data-citation-code>{bibtexCitation}</code></pre>
         </section>
@@ -461,7 +479,15 @@ const acknowledgementLogos = [
     letter-spacing: 0;
   }
 
-  .citation-copy-button {
+  .citation-actions {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  .citation-copy-button,
+  .citation-download-link {
     display: inline-flex;
     min-height: 32px;
     align-items: center;
@@ -476,10 +502,13 @@ const acknowledgementLogos = [
     font-weight: 600;
     line-height: 1;
     cursor: pointer;
+    text-decoration: none;
   }
 
   .citation-copy-button:hover,
-  .citation-copy-button:focus-visible {
+  .citation-copy-button:focus-visible,
+  .citation-download-link:hover,
+  .citation-download-link:focus-visible {
     background: var(--panel-soft);
     outline: none;
   }
@@ -499,7 +528,8 @@ const acknowledgementLogos = [
     color: var(--danger);
   }
 
-  .citation-copy-button svg {
+  .citation-copy-button svg,
+  .citation-download-link svg {
     display: block;
     width: 15px;
     height: 15px;
@@ -584,14 +614,14 @@ const acknowledgementLogos = [
   .acknowledgements-logo img {
     display: block;
     width: auto;
-    max-width: 178px;
-    max-height: 42px;
+    max-width: 125px;
+    max-height: 29px;
     object-fit: contain;
   }
 
   .acknowledgements-logo.is-teco img {
-    max-width: 142px;
-    max-height: 34px;
+    max-width: 99px;
+    max-height: 24px;
   }
 
   .acknowledgements-logo:hover,
@@ -630,7 +660,12 @@ const acknowledgementLogos = [
       padding: 13px 14px;
     }
 
-    .citation-copy-button {
+    .citation-actions {
+      justify-content: flex-start;
+    }
+
+    .citation-copy-button,
+    .citation-download-link {
       flex: 0 0 auto;
     }
 
@@ -648,13 +683,13 @@ const acknowledgementLogos = [
     }
 
     .acknowledgements-logo img {
-      max-width: 148px;
-      max-height: 38px;
+      max-width: 104px;
+      max-height: 27px;
     }
 
     .acknowledgements-logo.is-teco img {
-      max-width: 118px;
-      max-height: 30px;
+      max-width: 83px;
+      max-height: 21px;
     }
   }
 

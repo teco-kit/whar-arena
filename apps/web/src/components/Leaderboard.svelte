@@ -124,6 +124,7 @@
   type FilterOption = {
     id: string;
     name: string;
+    definition?: string;
   };
 
   let {
@@ -136,7 +137,6 @@
     results: Result[];
   } = $props();
 
-  const familyOrder = ["attn", "cnn", "dense", "rnn", "graph", "spec", "fe"];
   const familyPartsById: Record<string, string[]> = {
     attn_cnn_dense: ["attn", "cnn", "dense"],
     attn_cnn_dense_rnn: ["attn", "cnn", "dense", "rnn"],
@@ -158,6 +158,7 @@
   let selectedModelIds = $state(catalog.models.map((item) => item.id));
   let selectedDetailModelId = $state<string | null>(null);
   let selectedDetailDatasetId = $state<string | null>(null);
+  let scatterTooltip = $state<{ name: string; x: number; y: number } | null>(null);
   let sortKey = $state<SortKey>("rank");
   let sortDirection = $state<SortDirection>("asc");
 
@@ -194,14 +195,6 @@
       xLabel: "Exported model size (MB)",
     },
   ];
-  const highlightedScatterIds = new Set([
-    "cnn_har",
-    "tinyhar",
-    "tinierhar",
-    "random_forest",
-    "dana",
-    "triple_cross_domain_attention",
-  ]);
   const numberFormatter = new Intl.NumberFormat("en-US");
   const metricInfo = {
     rank:
@@ -211,7 +204,7 @@
     macroF1:
       "Macro-F1 is the unweighted mean of per-class F1 scores. The leaderboard averages Macro-F1 over the selected datasets.",
     modelSize:
-      "Efficiency Score is the paper's model-size efficiency index: Macro-F1 and log model size are normalized across models, then combined so higher is better.",
+      "Combines normalized Macro-F1 and normalized log model size so higher-scoring models are both accurate and compact.",
   };
 
   const validResults = $derived(
@@ -220,6 +213,12 @@
   const selectedDatasetSet = $derived(new Set(selectedDatasetIds));
   const selectedModelFamilySet = $derived(new Set(selectedModelFamilyIds));
   const selectedModelSet = $derived(new Set(selectedModelIds));
+  const datasetFilterOptions = $derived(
+    [...catalog.datasets].sort((a, b) => compareLabels(a.name, b.name)),
+  );
+  const modelFilterOptions = $derived(
+    [...catalog.models].sort((a, b) => compareLabels(a.name, b.name)),
+  );
   const modelFamilyOptions = $derived(getModelFamilyOptions(catalog.models));
   const selectedDatasetSummary = $derived(formatSelectedDatasetSummary());
   const selectedModelFamilySummary = $derived(formatSelectedModelFamilySummary());
@@ -278,13 +277,6 @@
     ) ?? [],
   );
   const scatterPlots = $derived(scatterConfigs.map((config) => createScatterPlot(config)));
-  const missingModelSizeNames = $derived(
-    deploymentPoints
-      .filter((point) => point.exported_model_size_mb === null)
-      .map((point) => point.name)
-      .join(", "),
-  );
-
   const matrixRows = $derived(
     catalog.datasets
       .filter((item) => selectedDatasetSet.has(item.id))
@@ -365,6 +357,10 @@
   function compareString(a: string, b: string, direction: SortDirection) {
     const comparison = a.localeCompare(b);
     return direction === "asc" ? comparison : -comparison;
+  }
+
+  function compareLabels(a: string, b: string) {
+    return a.localeCompare(b, "en", { sensitivity: "base" });
   }
 
   function setSort(nextKey: SortKey) {
@@ -714,6 +710,21 @@
     return family.replaceAll("_", " ");
   }
 
+  function describeFamily(family: string) {
+    const definitions: Record<string, string> = {
+      attn: "Learns weights that emphasize the most relevant parts of an input sequence or feature set.",
+      cnn: "Uses convolutional filters to detect local patterns in structured data.",
+      dense: "Uses fully connected layers where each output unit combines information from all input units.",
+      fe: "Uses handcrafted or engineered variables derived from raw data before modeling.",
+      graph: "Represents entities and their relationships as nodes and edges.",
+      neural: "Uses trainable layers of artificial neurons to learn representations from data.",
+      rnn: "Processes sequences step by step while carrying information across timesteps.",
+      spec: "Transforms signals into frequency-domain representations.",
+    };
+
+    return definitions[family] ?? "Architecture category used to group related model designs.";
+  }
+
   function getModelFamilyIds(models: Model[]) {
     return getModelFamilyOptions(models).map((item) => item.id);
   }
@@ -721,16 +732,8 @@
   function getModelFamilyOptions(models: Model[]): FilterOption[] {
     const ids = [...new Set(models.flatMap((model) => getFamilyParts(model.family)))];
     return ids
-      .sort((a, b) => {
-        const aIndex = familyOrder.indexOf(a);
-        const bIndex = familyOrder.indexOf(b);
-        const aRank = aIndex === -1 ? Number.POSITIVE_INFINITY : aIndex;
-        const bRank = bIndex === -1 ? Number.POSITIVE_INFINITY : bIndex;
-
-        if (aRank !== bRank) return aRank - bRank;
-        return formatFamily(a).localeCompare(formatFamily(b));
-      })
-      .map((id) => ({ id, name: formatFamily(id) }));
+      .sort((a, b) => compareLabels(formatFamily(a), formatFamily(b)))
+      .map((id) => ({ id, name: formatFamily(id), definition: describeFamily(id) }));
   }
 
   function scoreStyle(score: number | null) {
@@ -936,18 +939,6 @@
     );
   }
 
-  function pointLabelAnchor(point: ScatterPoint, chart: ScatterPlot) {
-    return plotX(point.x, chart) > plotBox.width - 112 ? "end" : "start";
-  }
-
-  function pointLabelDx(point: ScatterPoint, chart: ScatterPlot) {
-    return pointLabelAnchor(point, chart) === "end" ? -8 : 8;
-  }
-
-  function isHighlightedScatterPoint(id: string) {
-    return highlightedScatterIds.has(id);
-  }
-
   function formatScatterTick(value: number, metric: ScatterMetric) {
     if (metric === "mean_latency_ms") {
       return value >= 10 ? value.toFixed(0) : value.toFixed(1);
@@ -964,17 +955,34 @@
     return `${(value * 100).toFixed(0)}%`;
   }
 
-  function formatScatterMetricValue(value: number, metric: ScatterMetric) {
-    if (metric === "mean_latency_ms") return `${value.toFixed(2)} ms`;
-    if (metric === "mean_peak_pss_delta_mb") return `${value.toFixed(2)} MB`;
-    return `${value.toFixed(2)} MB`;
+  function showScatterTooltip(event: MouseEvent, name: string) {
+    scatterTooltip = {
+      name,
+      x: event.clientX,
+      y: event.clientY,
+    };
   }
 
-  function scatterTitle(point: ScatterPoint, chart: ScatterPlot) {
-    return `${point.name}: ${formatPercent(point.y)} Macro-F1, ${formatScatterMetricValue(
-      point.x,
-      chart.metric,
-    )}`;
+  function moveScatterTooltip(event: MouseEvent) {
+    if (!scatterTooltip) return;
+    scatterTooltip = {
+      ...scatterTooltip,
+      x: event.clientX,
+      y: event.clientY,
+    };
+  }
+
+  function showFocusedScatterTooltip(event: FocusEvent, name: string) {
+    const bounds = (event.currentTarget as SVGGraphicsElement).getBoundingClientRect();
+    scatterTooltip = {
+      name,
+      x: bounds.left + bounds.width / 2,
+      y: bounds.top,
+    };
+  }
+
+  function hideScatterTooltip() {
+    scatterTooltip = null;
   }
 </script>
 
@@ -1011,7 +1019,7 @@
               </button>
             </div>
             <div class="dataset-options">
-              {#each catalog.datasets as item}
+              {#each datasetFilterOptions as item}
                 <div class="dataset-option" data-dataset-id={item.id}>
                   <input
                     id={datasetInputId(item.id)}
@@ -1069,7 +1077,7 @@
               </button>
             </div>
             <div class="dataset-options">
-              {#each catalog.models as item}
+              {#each modelFilterOptions as item}
                 <div class="dataset-option" data-model-id={item.id}>
                   <input
                     id={modelInputId(item.id)}
@@ -1135,7 +1143,17 @@
                     aria-label={`Toggle ${item.name}`}
                   ></label>
                   <label class="dataset-name-toggle" for={modelFamilyInputId(item.id)}>
-                    <span class="family-pill">{item.name}</span>
+                    <span class="family-pill">
+                      {item.name}
+                      <span
+                        class="family-pill-info"
+                        tabindex="0"
+                        title={item.definition ?? ""}
+                        aria-label={`Definition: ${item.definition ?? ""}`}
+                      >
+                        i
+                      </span>
+                    </span>
                   </label>
                 </div>
               {/each}
@@ -1332,7 +1350,17 @@
               <td class="family">
                 <div class="family-pill-list" aria-label={`Architecture: ${familyText(row.family)}`}>
                   {#each getFamilyParts(row.family) as familyPart}
-                    <span class="family-pill">{formatFamily(familyPart)}</span>
+                    <span class="family-pill">
+                      {formatFamily(familyPart)}
+                      <span
+                        class="family-pill-info"
+                        tabindex="0"
+                        title={describeFamily(familyPart)}
+                        aria-label={`Definition: ${describeFamily(familyPart)}`}
+                      >
+                        i
+                      </span>
+                    </span>
                   {/each}
                 </div>
               </td>
@@ -1511,25 +1539,26 @@
               </text>
               <g class="scatter-points">
                 {#each chart.points as point}
-                  <g class="scatter-point">
-                    <title>{scatterTitle(point, chart)}</title>
+                  <g
+                    class="scatter-point"
+                    role="button"
+                    tabindex="0"
+                    aria-label={`Open model details: ${point.name}`}
+                    onclick={() => openModelDetail(point.model_id)}
+                    onkeydown={(event) => handleModelRowKeydown(event, point.model_id)}
+                    onfocus={(event) => showFocusedScatterTooltip(event, point.name)}
+                    onblur={hideScatterTooltip}
+                  >
+                    <title>{point.name}</title>
                     <circle
                       cx={plotX(point.x, chart)}
                       cy={plotY(point.y, chart)}
                       r={5.4}
                       fill={point.color}
+                      onmouseenter={(event) => showScatterTooltip(event, point.name)}
+                      onmousemove={moveScatterTooltip}
+                      onmouseleave={hideScatterTooltip}
                     ></circle>
-                    {#if isHighlightedScatterPoint(point.model_id)}
-                      <text
-                        class="scatter-point-label"
-                        x={plotX(point.x, chart)}
-                        y={plotY(point.y, chart) - 7}
-                        dx={pointLabelDx(point, chart)}
-                        text-anchor={pointLabelAnchor(point, chart)}
-                      >
-                        {point.name}
-                      </text>
-                    {/if}
                   </g>
                 {/each}
               </g>
@@ -1538,13 +1567,16 @@
         {/each}
       </div>
 
-      {#if missingModelSizeNames}
-        <p class="scatter-note">
-          {missingModelSizeNames} is omitted from the exported model-size panel because
-          the static export does not include an exported-size value for that model.
-        </p>
-      {/if}
     </section>
+  {/if}
+
+  {#if scatterTooltip}
+    <div
+      class="scatter-tooltip"
+      style={`left: ${scatterTooltip.x}px; top: ${scatterTooltip.y}px;`}
+    >
+      {scatterTooltip.name}
+    </div>
   {/if}
 
   {#if selectedDetailModel && selectedDetail}
@@ -1586,7 +1618,7 @@
         </div>
 
         <div class="detail-info-card">
-          <strong>Table 2 setup</strong>
+          <strong>Model size setup</strong>
           <p>
             These counts are reported for 6 sensors, 5 classes, and 128
             timesteps.
@@ -1688,14 +1720,6 @@
             <span>Sensor Modalities</span>
             <strong>{formatDatasetMetric(selectedDatasetDetail.sensorModalities)}</strong>
           </div>
-        </div>
-
-        <div class="detail-info-card">
-          <strong>{datasetDetails.source.table} stats</strong>
-          <p>
-            {datasetDetails.source.note} Abbreviations follow the paper:
-            {datasetDetails.source.abbreviations}
-          </p>
         </div>
 
         <div class="detail-section">
@@ -2410,8 +2434,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 5px;
     min-height: 20px;
-    max-width: 5.8rem;
+    max-width: 7rem;
     border: 1px solid lightgray;
     border-radius: 999px;
     background: var(--panel-soft);
@@ -2423,6 +2448,29 @@
     overflow-wrap: anywhere;
     text-align: center;
     white-space: normal;
+  }
+
+  .family-pill-info {
+    display: inline-flex;
+    width: 13px;
+    height: 13px;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid hsl(24 6% 17% / 0.28);
+    border-radius: 999px;
+    color: var(--muted-strong);
+    font-size: 0.58rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: help;
+  }
+
+  .family-pill-info:hover,
+  .family-pill-info:focus-visible {
+    border-color: currentColor;
+    color: var(--ink);
+    outline: none;
   }
 
   .dataset-name-toggle .family-pill {
@@ -2597,6 +2645,7 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 18px;
     padding: 16px;
+    align-items: stretch;
   }
 
   .scatter-plot {
@@ -2604,6 +2653,10 @@
     min-width: 0;
     gap: 8px;
     align-content: start;
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    background: var(--panel-soft);
+    padding: 12px;
   }
 
   .scatter-plot h3 {
@@ -2651,33 +2704,38 @@
     font-size: 9.4px;
   }
 
+  .scatter-point {
+    cursor: pointer;
+    outline: none;
+  }
+
   .scatter-point circle {
     stroke: var(--panel);
     stroke-width: 1.6;
   }
 
-  .scatter-point:hover circle {
+  .scatter-point:hover circle,
+  .scatter-point:focus-visible circle {
     stroke: var(--ink);
     stroke-width: 2;
   }
 
-  .scatter-point-label {
-    fill: var(--ink);
-    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 8px;
+  .scatter-tooltip {
+    position: fixed;
+    z-index: 90;
+    max-width: 14rem;
+    padding: 0.34rem 0.5rem;
+    transform: translate(-50%, calc(-100% - 0.55rem));
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--panel);
+    font-size: 0.72rem;
     font-weight: 600;
-    letter-spacing: 0;
-    paint-order: stroke;
-    stroke: var(--panel);
-    stroke-linejoin: round;
-    stroke-width: 3px;
-  }
-
-  .scatter-note {
-    padding: 0 16px 16px;
-    color: var(--muted-strong);
-    font-size: 0.82rem;
-    line-height: 1.35;
+    line-height: 1.2;
+    pointer-events: none;
+    text-align: center;
+    white-space: nowrap;
   }
 
   .modal-layer {
@@ -2871,7 +2929,7 @@
     line-height: 1.35;
   }
 
-  @media (max-width: 1180px) {
+  @media (max-width: 900px) {
     .scatter-grid {
       grid-template-columns: 1fr;
     }
@@ -2932,15 +2990,6 @@
 
     .scatter-plot h3 {
       font-size: 0.92rem;
-    }
-
-    .scatter-point-label {
-      display: none;
-    }
-
-    .scatter-note {
-      padding: 0 10px 14px;
-      overflow-wrap: anywhere;
     }
 
     .modal-layer {

@@ -37,6 +37,7 @@ type DatasetPaperDetail = {
 type LabelPart = {
   id: string;
   name: string;
+  definition: string;
 };
 
 const datasetDetails = datasetDetailsData as {
@@ -64,6 +65,14 @@ const settingLabels: Record<string, string> = {
   Loc: "Locomotion",
   Sports: "Sports",
 };
+const settingDefinitions: Record<string, string> = {
+  ADL: "Everyday self-care, mobility, and household routines such as eating, dressing, walking, or chores.",
+  Fall: "An event in which a person unintentionally loses balance and comes to rest on a lower surface.",
+  Fit: "Physical exercise performed to improve or maintain health, strength, endurance, flexibility, or skill.",
+  Health: "Conditions, behaviors, or physiological states related to wellbeing, care, rehabilitation, or impairment.",
+  Loc: "Bodily movement or transport from one place, posture, or motion state to another.",
+  Sports: "Structured athletic activities, training drills, or game-related movements.",
+};
 const deviceTypeLabels: Record<string, string> = {
   ActivityTracker: "Activity Tracker",
   Belt: "Belt",
@@ -74,6 +83,17 @@ const deviceTypeLabels: Record<string, string> = {
   Node: "Sensor Node",
   Phone: "Phone",
   Watch: "Watch",
+};
+const deviceTypeDefinitions: Record<string, string> = {
+  ActivityTracker: "A consumer wearable device with sensors for measuring movement or physiological state.",
+  Belt: "A strap or band worn around the waist or torso.",
+  Glasses: "Eyewear with integrated electronics, displays, cameras, or sensors.",
+  Helmet: "Protective or task-specific headgear that can carry electronics or sensors.",
+  LifeMonitor: "A body-worn device for continuous physiological or vital-sign monitoring.",
+  Mask: "A face-worn covering or device positioned around the mouth, nose, or both.",
+  Node: "A standalone sensor unit that can be attached to the body, clothing, or equipment.",
+  Phone: "A handheld mobile computing device with built-in sensors and wireless connectivity.",
+  Watch: "A wrist-worn computing device with built-in sensors and wireless connectivity.",
 };
 const sensorModalityLabels: Record<string, string> = {
   Acc: "Accelerometer",
@@ -91,12 +111,32 @@ const sensorModalityLabels: Record<string, string> = {
   Resp: "Respiration Sensor",
   Stretch: "Stretch Sensor",
 };
+const sensorModalityDefinitions: Record<string, string> = {
+  Acc: "Measures linear acceleration of the device or body segment, usually across three axes.",
+  ALS: "Measures surrounding light intensity.",
+  Baro: "Measures atmospheric pressure.",
+  ECG: "Measures electrical activity of the heart.",
+  EEG: "Measures electrical activity of the brain.",
+  EMG: "Measures electrical activity produced by muscles.",
+  Flow: "Measures the rate or volume of moving air or fluid.",
+  Gas: "Measures the concentration or presence of specific gases.",
+  GPS: "Provides geographic position using satellite navigation signals.",
+  Gyr: "Measures angular velocity and rotation of the device or body segment.",
+  HR: "Measures pulse or beats per minute.",
+  Mag: "Measures magnetic field strength or direction.",
+  Resp: "Measures breathing-related signals such as respiratory movement or rate.",
+  Stretch: "Measures deformation, strain, or elongation.",
+};
 const datasets = Object.entries(datasetDetails.datasets)
   .map(([id, detail]) => {
     const paperDetail = datasetPaperDetails.datasets[id] ?? { institutions: [], authors: [] };
-    const settingParts = labelParts(detail.settings, formatSetting);
-    const deviceTypeParts = labelParts(detail.deviceTypes, formatDeviceType);
-    const sensorModalityParts = labelParts(detail.sensorModalities, formatSensorModality);
+    const settingParts = labelParts(detail.settings, formatSetting, describeSetting);
+    const deviceTypeParts = labelParts(detail.deviceTypes, formatDeviceType, describeDeviceType);
+    const sensorModalityParts = labelParts(
+      detail.sensorModalities,
+      formatSensorModality,
+      describeSensorModality,
+    );
 
     return {
       id,
@@ -114,12 +154,17 @@ const datasets = Object.entries(datasetDetails.datasets)
     };
   })
   .sort((a, b) => b.detail.year - a.detail.year || a.name.localeCompare(b.name));
-const settingOptions = uniqueParts(datasets.flatMap((dataset) => splitList(dataset.detail.settings)));
-const sensorModalityOptions = uniqueParts(
-  datasets.flatMap((dataset) => splitList(dataset.detail.sensorModalities)),
+const settingOptions = uniquePartsByLabel(
+  datasets.flatMap((dataset) => splitList(dataset.detail.settings)),
+  formatSetting,
 );
-const deviceTypeOptions = uniqueParts(
+const sensorModalityOptions = uniquePartsByLabel(
+  datasets.flatMap((dataset) => splitList(dataset.detail.sensorModalities)),
+  formatSensorModality,
+);
+const deviceTypeOptions = uniquePartsByLabel(
   datasets.flatMap((dataset) => splitList(dataset.detail.deviceTypes)),
+  formatDeviceType,
 );
 const subjectsMax = roundMetricMax(datasets.map((dataset) => dataset.detail.subjects));
 const activitiesMax = roundMetricMax(datasets.map((dataset) => dataset.detail.activities));
@@ -134,12 +179,20 @@ function splitList(value: string) {
     .filter(Boolean);
 }
 
-function uniqueParts(parts: string[]) {
-  return [...new Set(parts)].sort((a, b) => a.localeCompare(b));
+function uniquePartsByLabel(parts: string[], formatter: (part: string) => string) {
+  return [...new Set(parts)].sort((a, b) => compareLabels(formatter(a), formatter(b)));
 }
 
-function labelParts(value: string, formatter: (part: string) => string): LabelPart[] {
-  return splitList(value).map((part) => ({ id: part, name: formatter(part) }));
+function labelParts(
+  value: string,
+  formatter: (part: string) => string,
+  definitionFormatter: (part: string) => string,
+): LabelPart[] {
+  return splitList(value).map((part) => ({
+    id: part,
+    name: formatter(part),
+    definition: definitionFormatter(part),
+  }));
 }
 
 function labelText(parts: LabelPart[]) {
@@ -148,6 +201,10 @@ function labelText(parts: LabelPart[]) {
 
 function labelData(parts: LabelPart[]) {
   return parts.map((part) => part.name).join("|");
+}
+
+function definitionData(parts: LabelPart[]) {
+  return parts.map((part) => part.definition).join("|");
 }
 
 function formatSetting(part: string) {
@@ -160,6 +217,22 @@ function formatDeviceType(part: string) {
 
 function formatSensorModality(part: string) {
   return sensorModalityLabels[part] ?? part;
+}
+
+function describeSetting(part: string) {
+  return settingDefinitions[part] ?? `Application setting: ${formatSetting(part)}.`;
+}
+
+function describeDeviceType(part: string) {
+  return deviceTypeDefinitions[part] ?? `Device type: ${formatDeviceType(part)}.`;
+}
+
+function describeSensorModality(part: string) {
+  return sensorModalityDefinitions[part] ?? `Sensor modality: ${formatSensorModality(part)}.`;
+}
+
+function compareLabels(a: string, b: string) {
+  return a.localeCompare(b, "en", { sensitivity: "base" });
 }
 
 function optionId(kind: string, value: string) {
@@ -189,7 +262,7 @@ function formatInstitutionSummary(institutions: string[]) {
   <main class="page-shell">
     <section class="catalog-intro" aria-labelledby="datasets-heading">
       <h1 id="datasets-heading">Datasets</h1>
-      <p>{datasetDetails.source.table} dataset catalog for the static WHAR Arena paper snapshot.</p>
+      <p>Dataset catalog for the static WHAR Arena paper snapshot.</p>
     </section>
     <section class="catalog-meta" aria-label="Datasets summary">
       <dl class="benchmark-meta">
@@ -389,7 +462,18 @@ function formatInstitutionSummary(institutions: string[]) {
                       aria-label={`Toggle ${formatSetting(item)}`}
                     ></label>
                     <label class="filter-name-toggle" for={optionId("setting", item)}>
-                      <span class="pill">{formatSetting(item)}</span>
+                      <span class="pill">
+                        {formatSetting(item)}
+                        <span
+                          class="pill-info"
+                          tabindex="0"
+                          title={describeSetting(item)}
+                          data-tip={describeSetting(item)}
+                          aria-label={`Definition: ${describeSetting(item)}`}
+                        >
+                          i
+                        </span>
+                      </span>
                     </label>
                   </div>
                 ))}
@@ -432,7 +516,18 @@ function formatInstitutionSummary(institutions: string[]) {
                       aria-label={`Toggle ${formatDeviceType(item)}`}
                     ></label>
                     <label class="filter-name-toggle" for={optionId("device-type", item)}>
-                      <span class="pill">{formatDeviceType(item)}</span>
+                      <span class="pill">
+                        {formatDeviceType(item)}
+                        <span
+                          class="pill-info"
+                          tabindex="0"
+                          title={describeDeviceType(item)}
+                          data-tip={describeDeviceType(item)}
+                          aria-label={`Definition: ${describeDeviceType(item)}`}
+                        >
+                          i
+                        </span>
+                      </span>
                     </label>
                   </div>
                 ))}
@@ -475,7 +570,18 @@ function formatInstitutionSummary(institutions: string[]) {
                       aria-label={`Toggle ${formatSensorModality(item)}`}
                     ></label>
                     <label class="filter-name-toggle" for={optionId("sensor-modality", item)}>
-                      <span class="pill">{formatSensorModality(item)}</span>
+                      <span class="pill">
+                        {formatSensorModality(item)}
+                        <span
+                          class="pill-info"
+                          tabindex="0"
+                          title={describeSensorModality(item)}
+                          data-tip={describeSensorModality(item)}
+                          aria-label={`Definition: ${describeSensorModality(item)}`}
+                        >
+                          i
+                        </span>
+                      </span>
                     </label>
                   </div>
                 ))}
@@ -593,6 +699,9 @@ function formatInstitutionSummary(institutions: string[]) {
                 data-dataset-settings-pills={labelData(dataset.settingParts)}
                 data-dataset-device-type-pills={labelData(dataset.deviceTypeParts)}
                 data-dataset-sensor-modality-pills={labelData(dataset.sensorModalityParts)}
+                data-dataset-settings-pill-definitions={definitionData(dataset.settingParts)}
+                data-dataset-device-type-pill-definitions={definitionData(dataset.deviceTypeParts)}
+                data-dataset-sensor-modality-pill-definitions={definitionData(dataset.sensorModalityParts)}
                 data-subjects-value={dataset.detail.subjects}
                 data-activities-value={dataset.detail.activities}
                 data-channels-value={dataset.detail.channels}
@@ -627,14 +736,36 @@ function formatInstitutionSummary(institutions: string[]) {
                 <td>
                   <div class="pill-list" aria-label={`Settings: ${dataset.settingsLabel}`}>
                     {dataset.settingParts.map((part) => (
-                      <span class="pill">{part.name}</span>
+                      <span class="pill">
+                        {part.name}
+                        <span
+                          class="pill-info"
+                          tabindex="0"
+                          title={part.definition}
+                          data-tip={part.definition}
+                          aria-label={`Definition: ${part.definition}`}
+                        >
+                          i
+                        </span>
+                      </span>
                     ))}
                   </div>
                 </td>
                 <td>
                   <div class="pill-list" aria-label={`Device Types: ${dataset.deviceTypesLabel}`}>
                     {dataset.deviceTypeParts.map((part) => (
-                      <span class="pill">{part.name}</span>
+                      <span class="pill">
+                        {part.name}
+                        <span
+                          class="pill-info"
+                          tabindex="0"
+                          title={part.definition}
+                          data-tip={part.definition}
+                          aria-label={`Definition: ${part.definition}`}
+                        >
+                          i
+                        </span>
+                      </span>
                     ))}
                   </div>
                 </td>
@@ -644,7 +775,18 @@ function formatInstitutionSummary(institutions: string[]) {
                     aria-label={`Sensor Modalities: ${dataset.sensorModalitiesLabel}`}
                   >
                     {dataset.sensorModalityParts.map((part) => (
-                      <span class="pill">{part.name}</span>
+                      <span class="pill">
+                        {part.name}
+                        <span
+                          class="pill-info"
+                          tabindex="0"
+                          title={part.definition}
+                          data-tip={part.definition}
+                          aria-label={`Definition: ${part.definition}`}
+                        >
+                          i
+                        </span>
+                      </span>
                     ))}
                   </div>
                 </td>
@@ -653,11 +795,6 @@ function formatInstitutionSummary(institutions: string[]) {
           </tbody>
         </table>
       </div>
-    </section>
-
-    <section class="note-panel">
-      <strong>{datasetDetails.source.table} abbreviations</strong>
-      <p>{datasetDetails.source.abbreviations}</p>
     </section>
 
     <div class="modal-layer" data-dataset-modal hidden role="presentation">
@@ -718,14 +855,6 @@ function formatInstitutionSummary(institutions: string[]) {
           </div>
         </div>
 
-        <div class="detail-info-card">
-          <strong>{datasetDetails.source.table} stats</strong>
-          <p>
-            {datasetDetails.source.note} Abbreviations follow the paper:
-            {datasetDetails.source.abbreviations}
-          </p>
-        </div>
-
         <div class="detail-section">
           <h3>Paper</h3>
           <a
@@ -763,6 +892,30 @@ function formatInstitutionSummary(institutions: string[]) {
   const datasetSortButtons = Array.from(document.querySelectorAll("[data-sort-key]"));
   const datasetRows = Array.from(document.querySelectorAll("[data-dataset-row]"));
   const visibleDatasetCount = document.querySelector("[data-visible-dataset-count]");
+  const pillTooltip = document.createElement("div");
+  pillTooltip.className = "dataset-pill-tooltip";
+  pillTooltip.id = "dataset-pill-tooltip";
+  pillTooltip.setAttribute("role", "tooltip");
+  Object.assign(pillTooltip.style, {
+    position: "fixed",
+    zIndex: "120",
+    maxWidth: "min(260px, calc(100vw - 24px))",
+    padding: "8px 10px",
+    border: "1px solid lightgray",
+    borderRadius: "7px",
+    background: "var(--ink)",
+    color: "var(--panel)",
+    fontFamily:
+      '"baselGrotesk", "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    fontSize: "0.74rem",
+    fontWeight: "500",
+    lineHeight: "1.35",
+    pointerEvents: "none",
+    textAlign: "left",
+    whiteSpace: "normal",
+  });
+  pillTooltip.hidden = true;
+  document.body.append(pillTooltip);
   let lastDatasetTrigger = null;
   const datasetSortState = {
     key: "year",
@@ -834,27 +987,113 @@ function formatInstitutionSummary(institutions: string[]) {
     if (element) element.textContent = value || "-";
   }
 
-  function renderModalPills(element, value) {
+  function renderModalPills(element, value, definitionsValue) {
     if (!element) return;
 
     const labels = (value || "").split("|").filter(Boolean);
+    const definitions = (definitionsValue || "").split("|");
     if (labels.length === 0) {
       element.textContent = "-";
       return;
     }
 
     element.replaceChildren(
-      ...labels.map((label) => {
+      ...labels.map((label, index) => {
         const pill = document.createElement("span");
+        const definition = definitions[index] || "";
         pill.className = "pill";
-        pill.textContent = label;
+        pill.append(label);
+        if (definition) {
+          const info = document.createElement("span");
+          info.className = "pill-info";
+          info.tabIndex = 0;
+          info.title = definition;
+          info.dataset.tip = definition;
+          info.setAttribute("aria-label", `Definition: ${definition}`);
+          info.textContent = "i";
+          pill.append(info);
+        }
         return pill;
       }),
     );
+    bindPillInfoTooltips(element);
   }
 
   function isInteractiveTarget(target) {
-    return target instanceof Element && Boolean(target.closest("a, button"));
+    return target instanceof Element && Boolean(target.closest("a, button, input, label, summary, .pill-info"));
+  }
+
+  function clampNumber(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+  }
+
+  function positionPillTooltip(trigger) {
+    const triggerRect = trigger.getBoundingClientRect();
+    const tooltipRect = pillTooltip.getBoundingClientRect();
+    const left = clampNumber(
+      triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2,
+      8,
+      window.innerWidth - tooltipRect.width - 8,
+    );
+    const belowTop = triggerRect.bottom + 8;
+    const aboveTop = triggerRect.top - tooltipRect.height - 8;
+    const top =
+      belowTop + tooltipRect.height <= window.innerHeight - 8
+        ? belowTop
+        : Math.max(8, aboveTop);
+
+    pillTooltip.style.left = `${left}px`;
+    pillTooltip.style.top = `${top}px`;
+  }
+
+  function showPillTooltip(trigger) {
+    const definition = trigger.dataset.tip || trigger.getAttribute("title") || "";
+    if (!definition) return;
+
+    pillTooltip.textContent = definition;
+    pillTooltip.hidden = false;
+    trigger.setAttribute("aria-describedby", pillTooltip.id);
+    positionPillTooltip(trigger);
+  }
+
+  function hidePillTooltip(trigger) {
+    pillTooltip.hidden = true;
+    trigger.removeAttribute("aria-describedby");
+  }
+
+  function bindPillInfoTooltips(root = document) {
+    root.querySelectorAll(".pill-info").forEach((info) => {
+      if (info.dataset.tooltipBound === "true") return;
+      info.dataset.tooltipBound = "true";
+      if (!info.dataset.tip && info.title) info.dataset.tip = info.title;
+      if (info.title) {
+        info.dataset.nativeTitle = info.title;
+        info.removeAttribute("title");
+      }
+
+      info.addEventListener("mouseenter", () => showPillTooltip(info));
+      info.addEventListener("mousemove", () => positionPillTooltip(info));
+      info.addEventListener("mouseleave", () => hidePillTooltip(info));
+      info.addEventListener("focus", () => showPillTooltip(info));
+      info.addEventListener("blur", () => hidePillTooltip(info));
+      info.addEventListener("pointerdown", (event) => {
+        event.stopPropagation();
+      });
+      info.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        showPillTooltip(info);
+      });
+      info.addEventListener("keydown", (event) => {
+        event.stopPropagation();
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          showPillTooltip(info);
+        } else if (event.key === "Escape") {
+          hidePillTooltip(info);
+        }
+      });
+    });
   }
 
   function datasetAuthors(row) {
@@ -900,9 +1139,21 @@ function formatInstitutionSummary(institutions: string[]) {
     setModalText(modalFields.subjects, row.dataset.datasetSubjects);
     setModalText(modalFields.activities, row.dataset.datasetActivities);
     setModalText(modalFields.channels, row.dataset.datasetChannels);
-    renderModalPills(modalPillFields.settings, row.dataset.datasetSettingsPills);
-    renderModalPills(modalPillFields.deviceTypes, row.dataset.datasetDeviceTypePills);
-    renderModalPills(modalPillFields.sensorModalities, row.dataset.datasetSensorModalityPills);
+    renderModalPills(
+      modalPillFields.settings,
+      row.dataset.datasetSettingsPills,
+      row.dataset.datasetSettingsPillDefinitions,
+    );
+    renderModalPills(
+      modalPillFields.deviceTypes,
+      row.dataset.datasetDeviceTypePills,
+      row.dataset.datasetDeviceTypePillDefinitions,
+    );
+    renderModalPills(
+      modalPillFields.sensorModalities,
+      row.dataset.datasetSensorModalityPills,
+      row.dataset.datasetSensorModalityPillDefinitions,
+    );
     renderDatasetAuthors(datasetAuthors(row));
 
     const paperUrl = row.dataset.datasetPaperUrl || "";
@@ -1205,8 +1456,12 @@ function formatInstitutionSummary(institutions: string[]) {
     if (event.key === "Escape" && datasetModal && !datasetModal.hidden) {
       closeDatasetModal();
     }
+    if (event.key === "Escape") {
+      pillTooltip.hidden = true;
+    }
   });
 
+  bindPillInfoTooltips();
   applyDatasetSort();
   updateDatasetFilters();
 </script>
@@ -1552,8 +1807,7 @@ function formatInstitutionSummary(institutions: string[]) {
     min-width: 0;
   }
 
-  .arena-panel,
-  .note-panel {
+  .arena-panel {
     min-width: 0;
     border: 1px solid lightgray;
     border-radius: 8px;
@@ -1730,6 +1984,7 @@ function formatInstitutionSummary(institutions: string[]) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 5px;
     min-height: 20px;
     border: 1px solid lightgray;
     border-radius: 999px;
@@ -1741,6 +1996,53 @@ function formatInstitutionSummary(institutions: string[]) {
     line-height: 1.05;
     text-align: center;
     white-space: normal;
+  }
+
+  .pill-info {
+    display: inline-flex;
+    width: 13px;
+    height: 13px;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid hsl(24 6% 17% / 0.28);
+    border-radius: 999px;
+    color: var(--muted-strong);
+    font-size: 0.58rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: help;
+  }
+
+  .pill-info:hover,
+  .pill-info:focus-visible {
+    border-color: currentColor;
+    color: var(--ink);
+    outline: none;
+  }
+
+  :global(.dataset-pill-tooltip) {
+    position: fixed;
+    z-index: 120;
+    max-width: min(260px, calc(100vw - 24px));
+    padding: 8px 10px;
+    border: 1px solid lightgray;
+    border-radius: 7px;
+    background: var(--ink);
+    color: var(--panel);
+    font-family:
+      "baselGrotesk", "Inter", ui-sans-serif, system-ui, -apple-system,
+      BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 0.74rem;
+    font-weight: 500;
+    line-height: 1.35;
+    pointer-events: none;
+    text-align: left;
+    white-space: normal;
+  }
+
+  :global(.dataset-pill-tooltip[hidden]) {
+    display: none;
   }
 
   .filter-name-toggle .pill {
@@ -1773,25 +2075,6 @@ function formatInstitutionSummary(institutions: string[]) {
 
   .muted {
     color: var(--muted);
-  }
-
-  .note-panel {
-    margin-top: 14px;
-    padding: 14px 16px;
-  }
-
-  .note-panel strong {
-    color: var(--ink);
-    font-size: 0.82rem;
-    font-weight: 700;
-    text-transform: uppercase;
-  }
-
-  .note-panel p {
-    margin: 6px 0 0;
-    color: var(--muted-strong);
-    font-size: 0.86rem;
-    line-height: 1.4;
   }
 
   .modal-layer {

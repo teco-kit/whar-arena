@@ -152,7 +152,7 @@
     },
     "knn": {
       "title": "WHAR Arena: Benchmarking the State of the Art in Efficient Wearable Human Activity Recognition",
-      "url": "/whar-arena-paper.pdf"
+      "url": "/WHAR_Arena-Benchmarking_the_State_of_the_Art_in_Efficient_Wearable_Human_Activity_Recognition.pdf"
     },
     "lstms_ensemble": {
       "title": "Ensembles of Deep LSTM Learners for Activity Recognition Using Wearables",
@@ -168,7 +168,7 @@
     },
     "random_forest": {
       "title": "WHAR Arena: Benchmarking the State of the Art in Efficient Wearable Human Activity Recognition",
-      "url": "/whar-arena-paper.pdf"
+      "url": "/WHAR_Arena-Benchmarking_the_State_of_the_Art_in_Efficient_Wearable_Human_Activity_Recognition.pdf"
     },
     "sa_har": {
       "title": "Human Activity Recognition from Wearable Sensor Data Using Self-Attention",
@@ -176,7 +176,7 @@
     },
     "svm": {
       "title": "WHAR Arena: Benchmarking the State of the Art in Efficient Wearable Human Activity Recognition",
-      "url": "/whar-arena-paper.pdf"
+      "url": "/WHAR_Arena-Benchmarking_the_State_of_the_Art_in_Efficient_Wearable_Human_Activity_Recognition.pdf"
     },
     "tinierhar": {
       "title": "TinierHAR: Towards Ultra-Lightweight Deep Learning Models for Efficient Human Activity Recognition on Edge Devices",
