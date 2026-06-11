@@ -2,7 +2,7 @@
   "source": {
     "kind": "static_deployment_snapshot",
     "snapshot_date": "2026-05-01",
-    "notes": "Mean test Macro-F1 follows the paper snapshot. Latency and peak PSS delta are averaged over Android deployment measurements. Exported model size is included where present in the static export."
+    "notes": "Mean test Macro-F1 follows the paper snapshot. Latency and peak PSS delta are averaged over Android deployment measurements. Exported model size is included where present in the static export. Published efficiency-index scores are used where the paper reports a score and the raw static cost is unavailable."
   },
   "points": [
     {
@@ -53,6 +53,12 @@
       "mean_latency_ms": 25.211862,
       "mean_peak_pss_delta_mb": 10.065104,
       "exported_model_size_mb": null,
+      "published_efficiency_scores": {
+        "combined": 0.503,
+        "model_size": 0.495,
+        "peak_memory": 0.552,
+        "latency": 0.467
+      },
       "deployment_measurements": 30,
       "deployment_dataset_count": 30,
       "color": "#6d597a"

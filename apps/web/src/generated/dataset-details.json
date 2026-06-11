@@ -2,7 +2,7 @@
   "source": {
     "table": "Table 3",
     "note": "Dataset statistics are copied from Table 3 of the WHAR Arena paper.",
-    "abbreviations": "ADL=Activities of Daily Living, Loc=Locomotion, Fit=Fitness, Acc=Accelerometer, Gyr=Gyroscope, Mag=Magnetometer, HR=Heart Rate, ECG=Electrocardiogram, EEG=Electroencephalogram, EMG=electromyogram, GPS=Global Positioning System, Str=Stretch Sensor, Baro=Barometer, ALS=Ambient Light Sensor, Resp=Respiration Sensor."
+    "abbreviations": "ADL=Activities of Daily Living, Loc=Locomotion, Fit=Fitness, Acc=Accelerometer, Gyr=Gyroscope, Mag=Magnetometer, ECG=Electrocardiogram, EEG=Electroencephalogram, EMG=electromyogram, GPS=Global Positioning System, Str=Stretch Sensor, Baro=Barometer, Light Sensor=Ambient Light Sensor."
   },
   "datasets": {
     "wisdm": {
@@ -30,7 +30,7 @@
       "citations": 2086,
       "subjects": 2,
       "activities": 11,
-      "settings": "ADL, Sports",
+      "settings": "ADL, Fit",
       "deviceTypes": "Node",
       "sensorModalities": "Acc, Gyr",
       "channels": 15
@@ -42,7 +42,7 @@
       "activities": 13,
       "settings": "ADL, Loc, Fit",
       "deviceTypes": "Node",
-      "sensorModalities": "Acc, Gyr, Mag, HR",
+      "sensorModalities": "Acc, Gyr, Mag, ECG",
       "channels": 52
     },
     "opportunity": {
@@ -152,7 +152,7 @@
       "activities": 8,
       "settings": "ADL, Loc, Fit",
       "deviceTypes": "Phone, Watch",
-      "sensorModalities": "Acc, Gyr, Mag, GPS, ALS",
+      "sensorModalities": "Acc, Gyr, Mag, GPS, Light Sensor",
       "channels": 81
     },
     "up_fall": {
@@ -162,7 +162,7 @@
       "activities": 11,
       "settings": "ADL, Fall",
       "deviceTypes": "Node, Helmet",
-      "sensorModalities": "Acc, Gyr, ALS, EEG",
+      "sensorModalities": "Acc, Gyr, Light Sensor, EEG",
       "channels": 42
     },
     "motion_sense": {
@@ -260,7 +260,7 @@
       "citations": 66,
       "subjects": 24,
       "activities": 18,
-      "settings": "Fit, Sports",
+      "settings": "Fit",
       "deviceTypes": "Watch",
       "sensorModalities": "Acc",
       "channels": 12
@@ -271,7 +271,7 @@
       "subjects": 18,
       "activities": 7,
       "settings": "ADL, Loc, Health",
-      "deviceTypes": "ActivityTracker",
+      "deviceTypes": "Node",
       "sensorModalities": "Acc",
       "channels": 6
     },
@@ -280,7 +280,7 @@
       "citations": 52,
       "subjects": 24,
       "activities": 6,
-      "settings": "Fit, Sports",
+      "settings": "Fit",
       "deviceTypes": "Watch",
       "sensorModalities": "Acc",
       "channels": 3
@@ -302,7 +302,7 @@
       "activities": 16,
       "settings": "ADL, Loc, Fit, Health",
       "deviceTypes": "Node, LifeMonitor, Mask, Belt",
-      "sensorModalities": "Acc, ECG, Resp, HR, Gas, Flow",
+      "sensorModalities": "Acc, ECG, Stretch, Gas, Flow",
       "channels": 28
     }
   }

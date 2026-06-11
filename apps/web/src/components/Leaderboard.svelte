@@ -1,5 +1,6 @@
 <script lang="ts">
   import datasetDetailsData from "../generated/dataset-details.json";
+  import datasetPaperDetailsData from "../generated/dataset-paper-details.json";
   import modelDetailsData from "../generated/model-details.json";
   import paperLinks from "../generated/paper-links.json";
 
@@ -25,12 +26,17 @@
     metrics: Record<string, number | null>;
   };
   type LeaderboardRow = Model & {
-    rank: number | null;
     netImprovement: number | null;
     netImprovementCi95: number | null;
     macroF1: number | null;
+    latencyMs: number | null;
+    peakMemoryMb: number | null;
     modelSizeMb: number | null;
-    modelSizeIndex: number | null;
+    efficiencyCombined: number | null;
+    efficiencyModelSize: number | null;
+    efficiencyPeakMemory: number | null;
+    efficiencyLatency: number | null;
+    publishedEfficiencyScores: PublishedEfficiencyScores | null;
   };
   type MatrixCell = {
     modelId: string;
@@ -48,6 +54,13 @@
     deployment_measurements: number;
     deployment_dataset_count: number;
     color: string;
+    published_efficiency_scores?: PublishedEfficiencyScores;
+  };
+  type PublishedEfficiencyScores = {
+    combined?: number | null;
+    model_size?: number | null;
+    peak_memory?: number | null;
+    latency?: number | null;
   };
   type DeploymentTradeoffs = {
     source: {
@@ -64,6 +77,16 @@
   type ModelAuthor = {
     name: string;
     affiliation: string;
+  };
+  type DatasetPaperDetail = {
+    institutions?: string[];
+    authors?: ModelAuthor[];
+  };
+  type DatasetPaperDetailsData = {
+    source: {
+      note: string;
+    };
+    datasets: Record<string, DatasetPaperDetail>;
   };
   type ModelDetail = {
     params: string | null;
@@ -97,7 +120,14 @@
     };
     datasets: Record<string, DatasetDetail>;
   };
-  type SortKey = "rank" | "family" | "net_improvement" | "macro_f1" | "model_size";
+  type SortKey =
+    | "family"
+    | "net_improvement"
+    | "macro_f1"
+    | "efficiency_combined"
+    | "efficiency_model_size"
+    | "efficiency_peak_memory"
+    | "efficiency_latency";
   type SortDirection = "asc" | "desc";
   type ScatterMetric =
     | "mean_latency_ms"
@@ -126,6 +156,13 @@
     name: string;
     definition?: string;
   };
+  type BestScoreKey =
+    | "netImprovement"
+    | "macroF1"
+    | "efficiencyModelSize"
+    | "efficiencyPeakMemory"
+    | "efficiencyLatency"
+    | "efficiencyCombined";
 
   let {
     catalog,
@@ -159,11 +196,13 @@
   let selectedDetailModelId = $state<string | null>(null);
   let selectedDetailDatasetId = $state<string | null>(null);
   let scatterTooltip = $state<{ name: string; x: number; y: number } | null>(null);
-  let sortKey = $state<SortKey>("rank");
-  let sortDirection = $state<SortDirection>("asc");
+  let sortKey = $state<SortKey>("macro_f1");
+  let sortDirection = $state<SortDirection>("desc");
 
   const datasetDetails = datasetDetailsData as DatasetDetailsData;
   const datasetDetailMap = datasetDetails.datasets;
+  const datasetPaperDetails = datasetPaperDetailsData as DatasetPaperDetailsData;
+  const datasetPaperDetailMap = datasetPaperDetails.datasets;
   const modelDetails = modelDetailsData as ModelDetailsData;
   const detailMap = modelDetails.models;
   const linkMap = paperLinks as {
@@ -181,30 +220,34 @@
   const scatterConfigs: ScatterConfig[] = [
     {
       metric: "mean_latency_ms",
-      title: "Mean Test Macro-F1 vs Latency",
+      title: "Mean Test Macro-F1 vs. Latency",
       xLabel: "Mean latency (ms)",
     },
     {
       metric: "mean_peak_pss_delta_mb",
-      title: "Mean Test Macro-F1 vs Peak PSS Delta",
+      title: "Mean Test Macro-F1 vs. Peak PSS Delta",
       xLabel: "Mean peak PSS delta (MB)",
     },
     {
       metric: "exported_model_size_mb",
-      title: "Mean Test Macro-F1 vs Exported Model Size",
+      title: "Mean Test Macro-F1 vs. Exported Model Size",
       xLabel: "Exported model size (MB)",
     },
   ];
   const numberFormatter = new Intl.NumberFormat("en-US");
   const metricInfo = {
-    rank:
-      "Rank is assigned by mean Macro-F1 over the currently selected datasets. Higher Macro-F1 ranks first.",
     netImprovement:
       "Net Improvement is the average Macro-F1 gain over the best classical model on each selected dataset. Error bars show a 95% confidence interval across dataset-level gains.",
     macroF1:
       "Macro-F1 is the unweighted mean of per-class F1 scores. The leaderboard averages Macro-F1 over the selected datasets.",
-    modelSize:
-      "Combines normalized Macro-F1 and normalized log model size so higher-scoring models are both accurate and compact.",
+    efficiencyCombined:
+      "Combines normalized Macro-F1 with normalized log latency, peak-memory overhead, and model size. Higher is better.",
+    efficiencyModelSize:
+      "Combines normalized Macro-F1 with normalized log exported model size. Higher is better.",
+    efficiencyPeakMemory:
+      "Combines normalized Macro-F1 with normalized log peak PSS delta. Higher is better.",
+    efficiencyLatency:
+      "Combines normalized Macro-F1 with normalized log inference latency. Higher is better.",
   };
 
   const validResults = $derived(
@@ -239,43 +282,63 @@
   const selectedDatasetDetail = $derived(
     selectedDetailDatasetId ? getDatasetDetail(selectedDetailDatasetId) : null,
   );
+  const selectedDatasetPaperDetail = $derived(
+    selectedDetailDatasetId ? datasetPaperDetailMap[selectedDetailDatasetId] ?? null : null,
+  );
   const visibleModels = $derived(
     catalog.models.filter(
       (item) => selectedModelSet.has(item.id) && isFamilyAllowed(item.family),
     ),
   );
-
-  const rows = $derived(
-    withRanks(
-      withModelSizeIndex(
-        visibleModels.map((model) => {
-          const scopedResults = validResults.filter(
-            (result) =>
-              result.model_id === model.id &&
-              selectedDatasetSet.has(result.dataset_id),
-          );
-          const improvement = netImprovementStats(model.id);
-
-          return {
-            ...model,
-            rank: null,
-            netImprovement: improvement.mean,
-            netImprovementCi95: improvement.ci95,
-            macroF1: averageMetric(scopedResults, "macro_f1"),
-            modelSizeMb: averageMetric(scopedResults, "exported_model_size_mb"),
-            modelSizeIndex: averageMetric(scopedResults, "model_size_efficiency_index"),
-          };
-        }),
-      ),
-    ).sort(compareRows),
-  );
-
-  const netImprovementScale = $derived(getNetImprovementScale(rows));
   const deploymentPoints = $derived(
     deploymentTradeoffs?.points.filter(
       (point) => selectedModelSet.has(point.model_id) && isFamilyAllowed(point.family),
     ) ?? [],
   );
+  const deploymentPointByModelId = $derived(
+    new Map(deploymentPoints.map((point) => [point.model_id, point])),
+  );
+
+  const rows = $derived(
+    withEfficiencyIndices(
+      visibleModels.map((model) => {
+        const scopedResults = validResults.filter(
+          (result) =>
+            result.model_id === model.id &&
+            selectedDatasetSet.has(result.dataset_id),
+        );
+        const improvement = netImprovementStats(model.id);
+        const deploymentPoint = deploymentPointByModelId.get(model.id);
+
+        return {
+          ...model,
+          netImprovement: improvement.mean,
+          netImprovementCi95: improvement.ci95,
+          macroF1: averageMetric(scopedResults, "macro_f1"),
+          latencyMs: deploymentPoint?.mean_latency_ms ?? null,
+          peakMemoryMb: deploymentPoint?.mean_peak_pss_delta_mb ?? null,
+          modelSizeMb:
+            deploymentPoint?.exported_model_size_mb ??
+            averageMetric(scopedResults, "exported_model_size_mb"),
+          efficiencyCombined: null,
+          efficiencyModelSize: null,
+          efficiencyPeakMemory: null,
+          efficiencyLatency: null,
+          publishedEfficiencyScores: deploymentPoint?.published_efficiency_scores ?? null,
+        };
+      }),
+    ).sort(compareRows),
+  );
+
+  const bestScores = $derived({
+    netImprovement: bestScoreValue(rows, "netImprovement", "desc"),
+    macroF1: bestScoreValue(rows, "macroF1", "desc"),
+    efficiencyModelSize: bestScoreValue(rows, "efficiencyModelSize", "desc"),
+    efficiencyPeakMemory: bestScoreValue(rows, "efficiencyPeakMemory", "desc"),
+    efficiencyLatency: bestScoreValue(rows, "efficiencyLatency", "desc"),
+    efficiencyCombined: bestScoreValue(rows, "efficiencyCombined", "desc"),
+  });
+  const netImprovementScale = $derived(getNetImprovementScale(rows));
   const scatterPlots = $derived(scatterConfigs.map((config) => createScatterPlot(config)));
   const matrixRows = $derived(
     catalog.datasets
@@ -304,20 +367,6 @@
     return values.reduce((sum, value) => sum + value, 0) / values.length;
   }
 
-  function withRanks(baseRows: LeaderboardRow[]) {
-    const ranked = [...baseRows].sort(compareByPerformanceRank);
-    const rankById = new Map<string, number | null>();
-
-    ranked.forEach((row, index) => {
-      rankById.set(row.id, row.macroF1 === null ? null : index + 1);
-    });
-
-    return baseRows.map((row) => ({
-      ...row,
-      rank: rankById.get(row.id) ?? null,
-    }));
-  }
-
   function compareByPerformanceRank(a: LeaderboardRow, b: LeaderboardRow) {
     const byMacroF1 = compareNullableNumber(a.macroF1, b.macroF1, "desc");
     if (byMacroF1 !== 0) return byMacroF1;
@@ -327,20 +376,24 @@
   function compareRows(a: LeaderboardRow, b: LeaderboardRow) {
     let comparison = 0;
 
-    if (sortKey === "rank") {
-      comparison = compareNullableNumber(a.rank, b.rank, sortDirection);
-    } else if (sortKey === "family") {
+    if (sortKey === "family") {
       comparison = compareString(familyText(a.family), familyText(b.family), sortDirection);
     } else if (sortKey === "macro_f1") {
       comparison = compareNullableNumber(a.macroF1, b.macroF1, sortDirection);
     } else if (sortKey === "net_improvement") {
       comparison = compareNullableNumber(a.netImprovement, b.netImprovement, sortDirection);
+    } else if (sortKey === "efficiency_combined") {
+      comparison = compareNullableNumber(a.efficiencyCombined, b.efficiencyCombined, sortDirection);
+    } else if (sortKey === "efficiency_model_size") {
+      comparison = compareNullableNumber(a.efficiencyModelSize, b.efficiencyModelSize, sortDirection);
+    } else if (sortKey === "efficiency_peak_memory") {
+      comparison = compareNullableNumber(a.efficiencyPeakMemory, b.efficiencyPeakMemory, sortDirection);
     } else {
-      comparison = compareNullableNumber(a.modelSizeIndex, b.modelSizeIndex, sortDirection);
+      comparison = compareNullableNumber(a.efficiencyLatency, b.efficiencyLatency, sortDirection);
     }
 
     if (comparison !== 0) return comparison;
-    return compareNullableNumber(a.rank, b.rank, "asc") || a.name.localeCompare(b.name);
+    return compareByPerformanceRank(a, b);
   }
 
   function compareNullableNumber(
@@ -363,6 +416,26 @@
     return a.localeCompare(b, "en", { sensitivity: "base" });
   }
 
+  function bestScoreValue(
+    items: LeaderboardRow[],
+    key: BestScoreKey,
+    direction: SortDirection,
+  ) {
+    const values = items
+      .map((item) => item[key])
+      .filter((value): value is number => typeof value === "number" && Number.isFinite(value));
+
+    if (values.length === 0) return null;
+    return direction === "asc" ? Math.min(...values) : Math.max(...values);
+  }
+
+  function isBestScore(row: LeaderboardRow, key: BestScoreKey) {
+    const value = row[key];
+    const bestValue = bestScores[key];
+    if (typeof value !== "number" || typeof bestValue !== "number") return false;
+    return Math.abs(value - bestValue) < 1e-9;
+  }
+
   function setSort(nextKey: SortKey) {
     if (sortKey === nextKey) {
       sortDirection = sortDirection === "asc" ? "desc" : "asc";
@@ -374,7 +447,7 @@
   }
 
   function defaultDirection(nextKey: SortKey): SortDirection {
-    if (nextKey === "rank" || nextKey === "family") return "asc";
+    if (nextKey === "family") return "asc";
     return "desc";
   }
 
@@ -557,7 +630,6 @@
       .filter((model) => isFamilyAllowed(model.family))
       .map((model) => ({
         ...model,
-        rank: null,
         netImprovement: null,
         netImprovementCi95: null,
         macroF1: averageMetric(
@@ -568,42 +640,140 @@
           "macro_f1",
         ),
         modelSizeMb: null,
-        modelSizeIndex: null,
+        latencyMs: null,
+        peakMemoryMb: null,
+        efficiencyCombined: null,
+        efficiencyModelSize: null,
+        efficiencyPeakMemory: null,
+        efficiencyLatency: null,
+        publishedEfficiencyScores: null,
       }))
       .sort(compareByPerformanceRank)
       .slice(0, 10)
       .map((model) => model.id);
   }
 
-  function withModelSizeIndex(baseRows: LeaderboardRow[]) {
-    const eligible = baseRows.filter(
-      (row) => row.macroF1 !== null && row.modelSizeMb !== null && row.modelSizeMb > 0,
+  function withEfficiencyIndices(baseRows: LeaderboardRow[]) {
+    const modelSizeScores = efficiencyScores(baseRows, "modelSizeMb");
+    const peakMemoryScores = efficiencyScores(baseRows, "peakMemoryMb");
+    const latencyScores = efficiencyScores(baseRows, "latencyMs");
+    const combinedScores = combinedEfficiencyScores(baseRows);
+
+    return baseRows.map((row) => ({
+      ...row,
+      efficiencyCombined:
+        publishedScore(row.publishedEfficiencyScores?.combined) ??
+        combinedScores.get(row.id) ??
+        null,
+      efficiencyModelSize:
+        publishedScore(row.publishedEfficiencyScores?.model_size) ??
+        modelSizeScores.get(row.id) ??
+        null,
+      efficiencyPeakMemory:
+        publishedScore(row.publishedEfficiencyScores?.peak_memory) ??
+        peakMemoryScores.get(row.id) ??
+        null,
+      efficiencyLatency:
+        publishedScore(row.publishedEfficiencyScores?.latency) ??
+        latencyScores.get(row.id) ??
+        null,
+    }));
+  }
+
+  function publishedScore(score: number | null | undefined) {
+    return typeof score === "number" && Number.isFinite(score) ? score : null;
+  }
+
+  function efficiencyScores(
+    rows: LeaderboardRow[],
+    costKey: "modelSizeMb" | "peakMemoryMb" | "latencyMs",
+  ) {
+    const eligible = rows.filter(
+      (row) => row.macroF1 !== null && isPositiveFinite(row[costKey]),
     );
+    const scores = new Map<string, number>();
 
-    if (eligible.length === 0) return baseRows;
+    if (eligible.length === 0) return scores;
 
-    const f1Values = eligible.map((row) => row.macroF1 as number);
-    const sizeValues = eligible.map((row) => Math.log(row.modelSizeMb as number));
-    const minF1 = Math.min(...f1Values);
-    const maxF1 = Math.max(...f1Values);
-    const minSize = Math.min(...sizeValues);
-    const maxSize = Math.max(...sizeValues);
+    const f1Extent = extent(eligible.map((row) => row.macroF1 as number));
+    const costExtent = extent(eligible.map((row) => Math.log(row[costKey] as number)));
 
-    return baseRows.map((row) => {
-      if (row.macroF1 === null || row.modelSizeMb === null || row.modelSizeMb <= 0) {
-        return row;
-      }
-
-      const f1Norm = normalize(row.macroF1, minF1, maxF1, 1);
-      const sizeNorm = normalize(Math.log(row.modelSizeMb), minSize, maxSize, 0);
-      const modelSizeIndex =
-        1 - Math.sqrt(0.5 * (1 - f1Norm) ** 2 + 0.5 * sizeNorm ** 2);
-
-      return {
-        ...row,
-        modelSizeIndex,
-      };
+    eligible.forEach((row) => {
+      const f1Norm = normalize(row.macroF1 as number, f1Extent.min, f1Extent.max, 1);
+      const costNorm = normalize(
+        Math.log(row[costKey] as number),
+        costExtent.min,
+        costExtent.max,
+        0,
+      );
+      scores.set(row.id, 1 - Math.sqrt(0.5 * (1 - f1Norm) ** 2 + 0.5 * costNorm ** 2));
     });
+
+    return scores;
+  }
+
+  function combinedEfficiencyScores(rows: LeaderboardRow[]) {
+    const eligible = rows.filter(
+      (row) =>
+        row.macroF1 !== null &&
+        isPositiveFinite(row.latencyMs) &&
+        isPositiveFinite(row.peakMemoryMb) &&
+        isPositiveFinite(row.modelSizeMb),
+    );
+    const scores = new Map<string, number>();
+
+    if (eligible.length === 0) return scores;
+
+    const f1Extent = extent(eligible.map((row) => row.macroF1 as number));
+    const latencyExtent = extent(eligible.map((row) => Math.log(row.latencyMs as number)));
+    const memoryExtent = extent(eligible.map((row) => Math.log(row.peakMemoryMb as number)));
+    const sizeExtent = extent(eligible.map((row) => Math.log(row.modelSizeMb as number)));
+
+    eligible.forEach((row) => {
+      const f1Norm = normalize(row.macroF1 as number, f1Extent.min, f1Extent.max, 1);
+      const latencyNorm = normalize(
+        Math.log(row.latencyMs as number),
+        latencyExtent.min,
+        latencyExtent.max,
+        0,
+      );
+      const memoryNorm = normalize(
+        Math.log(row.peakMemoryMb as number),
+        memoryExtent.min,
+        memoryExtent.max,
+        0,
+      );
+      const sizeNorm = normalize(
+        Math.log(row.modelSizeMb as number),
+        sizeExtent.min,
+        sizeExtent.max,
+        0,
+      );
+
+      scores.set(
+        row.id,
+        1 -
+          Math.sqrt(
+            0.5 * (1 - f1Norm) ** 2 +
+              (1 / 6) * latencyNorm ** 2 +
+              (1 / 6) * memoryNorm ** 2 +
+              (1 / 6) * sizeNorm ** 2,
+          ),
+      );
+    });
+
+    return scores;
+  }
+
+  function isPositiveFinite(value: number | null) {
+    return typeof value === "number" && Number.isFinite(value) && value > 0;
+  }
+
+  function extent(values: number[]) {
+    return {
+      min: Math.min(...values),
+      max: Math.max(...values),
+    };
   }
 
   function normalize(value: number, min: number, max: number, fallback: number) {
@@ -678,6 +848,16 @@
   function formatModelSize(size: number | null) {
     if (size === null) return "";
     return `${size < 1 ? size.toFixed(2) : size.toFixed(1)} MB`;
+  }
+
+  function formatMemory(size: number | null) {
+    if (size === null) return "";
+    return `${size < 10 ? size.toFixed(2) : size.toFixed(1)} MB`;
+  }
+
+  function formatLatency(latency: number | null) {
+    if (latency === null) return "";
+    return `${latency < 10 ? latency.toFixed(2) : latency.toFixed(1)} ms`;
   }
 
   function getFamilyParts(family: string) {
@@ -846,6 +1026,10 @@
 
   function paperTitle(kind: "datasets" | "models", id: string, fallback: string) {
     return `Open paper: ${getPaperLink(kind, id)?.title ?? fallback}`;
+  }
+
+  function paperDisplayTitle(kind: "datasets" | "models", id: string, fallback: string) {
+    return getPaperLink(kind, id)?.title ?? fallback;
   }
 
   function datasetInputId(id: string) {
@@ -1151,7 +1335,7 @@
                         title={item.definition ?? ""}
                         aria-label={`Definition: ${item.definition ?? ""}`}
                       >
-                        i
+                        ⓘ
                       </span>
                     </span>
                   </label>
@@ -1175,31 +1359,6 @@
       <table class="leaderboard-table">
         <thead>
           <tr>
-            <th aria-sort={sortAria("rank")}>
-              <span class="metric-heading">
-                <button
-                  type="button"
-                  class:active-sort={sortKey === "rank"}
-                  class="sort-button"
-                  onclick={() => setSort("rank")}
-                >
-                  Rank
-                  <span class="sort-glyph" aria-hidden="true">
-                    <span class:active-arrow={sortKey === "rank" && sortDirection === "asc"}></span>
-                    <span class:active-arrow={sortKey === "rank" && sortDirection === "desc"}></span>
-                  </span>
-                </button>
-                <span
-                  class="info-tip"
-                  tabindex="0"
-                  title={metricInfo.rank}
-                  aria-label={metricInfo.rank}
-                  data-tip={metricInfo.rank}
-                >
-                  i
-                </span>
-              </span>
-            </th>
             <th>Model</th>
             <th aria-sort={sortAria("net_improvement")}>
               <span class="metric-heading">
@@ -1209,7 +1368,17 @@
                   class="sort-button"
                   onclick={() => setSort("net_improvement")}
                 >
-                  Net Improvement
+                  <span class="heading-label">
+                    Net Improvement
+                    <span
+                      class="info-tip"
+                      title={metricInfo.netImprovement}
+                      aria-label={metricInfo.netImprovement}
+                      data-tip={metricInfo.netImprovement}
+                    >
+                      ⓘ
+                    </span>
+                  </span>
                   <span class="sort-glyph" aria-hidden="true">
                     <span
                       class:active-arrow={sortKey === "net_improvement" && sortDirection === "asc"}
@@ -1219,15 +1388,6 @@
                     ></span>
                   </span>
                 </button>
-                <span
-                  class="info-tip"
-                  tabindex="0"
-                  title={metricInfo.netImprovement}
-                  aria-label={metricInfo.netImprovement}
-                  data-tip={metricInfo.netImprovement}
-                >
-                  i
-                </span>
               </span>
             </th>
             <th aria-sort={sortAria("family")}>
@@ -1252,47 +1412,126 @@
                   class="sort-button"
                   onclick={() => setSort("macro_f1")}
                 >
-                  <span class="mean-metric-icon" aria-hidden="true"></span>
-                  Macro F1
+                  <span class="heading-label">
+                    MEAN MACRO F1
+                    <span
+                      class="info-tip"
+                      title={metricInfo.macroF1}
+                      aria-label={metricInfo.macroF1}
+                      data-tip={metricInfo.macroF1}
+                    >
+                      ⓘ
+                    </span>
+                  </span>
                   <span class="sort-glyph" aria-hidden="true">
                     <span class:active-arrow={sortKey === "macro_f1" && sortDirection === "asc"}></span>
                     <span class:active-arrow={sortKey === "macro_f1" && sortDirection === "desc"}></span>
                   </span>
                 </button>
-                <span
-                  class="info-tip"
-                  tabindex="0"
-                  title={metricInfo.macroF1}
-                  aria-label={metricInfo.macroF1}
-                  data-tip={metricInfo.macroF1}
-                >
-                  i
-                </span>
               </span>
             </th>
-            <th aria-sort={sortAria("model_size")}>
+            <th aria-sort={sortAria("efficiency_model_size")}>
               <span class="metric-heading">
                 <button
                   type="button"
-                  class:active-sort={sortKey === "model_size"}
+                  class:active-sort={sortKey === "efficiency_model_size"}
                   class="sort-button"
-                  onclick={() => setSort("model_size")}
+                  onclick={() => setSort("efficiency_model_size")}
                 >
-                  Efficiency Score
+                  <span class="heading-label">
+                    Model Size Efficiency
+                    <span
+                      class="info-tip"
+                      title={metricInfo.efficiencyModelSize}
+                      aria-label={metricInfo.efficiencyModelSize}
+                      data-tip={metricInfo.efficiencyModelSize}
+                    >
+                      ⓘ
+                    </span>
+                  </span>
                   <span class="sort-glyph" aria-hidden="true">
-                    <span class:active-arrow={sortKey === "model_size" && sortDirection === "asc"}></span>
-                    <span class:active-arrow={sortKey === "model_size" && sortDirection === "desc"}></span>
+                    <span class:active-arrow={sortKey === "efficiency_model_size" && sortDirection === "asc"}></span>
+                    <span class:active-arrow={sortKey === "efficiency_model_size" && sortDirection === "desc"}></span>
                   </span>
                 </button>
-                <span
-                  class="info-tip"
-                  tabindex="0"
-                  title={metricInfo.modelSize}
-                  aria-label={metricInfo.modelSize}
-                  data-tip={metricInfo.modelSize}
+              </span>
+            </th>
+            <th aria-sort={sortAria("efficiency_peak_memory")}>
+              <span class="metric-heading">
+                <button
+                  type="button"
+                  class:active-sort={sortKey === "efficiency_peak_memory"}
+                  class="sort-button"
+                  onclick={() => setSort("efficiency_peak_memory")}
                 >
-                  i
-                </span>
+                  <span class="heading-label">
+                    Peak Memory Efficiency
+                    <span
+                      class="info-tip"
+                      title={metricInfo.efficiencyPeakMemory}
+                      aria-label={metricInfo.efficiencyPeakMemory}
+                      data-tip={metricInfo.efficiencyPeakMemory}
+                    >
+                      ⓘ
+                    </span>
+                  </span>
+                  <span class="sort-glyph" aria-hidden="true">
+                    <span class:active-arrow={sortKey === "efficiency_peak_memory" && sortDirection === "asc"}></span>
+                    <span class:active-arrow={sortKey === "efficiency_peak_memory" && sortDirection === "desc"}></span>
+                  </span>
+                </button>
+              </span>
+            </th>
+            <th aria-sort={sortAria("efficiency_latency")}>
+              <span class="metric-heading">
+                <button
+                  type="button"
+                  class:active-sort={sortKey === "efficiency_latency"}
+                  class="sort-button"
+                  onclick={() => setSort("efficiency_latency")}
+                >
+                  <span class="heading-label">
+                    Latency Efficiency
+                    <span
+                      class="info-tip"
+                      title={metricInfo.efficiencyLatency}
+                      aria-label={metricInfo.efficiencyLatency}
+                      data-tip={metricInfo.efficiencyLatency}
+                    >
+                      ⓘ
+                    </span>
+                  </span>
+                  <span class="sort-glyph" aria-hidden="true">
+                    <span class:active-arrow={sortKey === "efficiency_latency" && sortDirection === "asc"}></span>
+                    <span class:active-arrow={sortKey === "efficiency_latency" && sortDirection === "desc"}></span>
+                  </span>
+                </button>
+              </span>
+            </th>
+            <th aria-sort={sortAria("efficiency_combined")}>
+              <span class="metric-heading">
+                <button
+                  type="button"
+                  class:active-sort={sortKey === "efficiency_combined"}
+                  class="sort-button"
+                  onclick={() => setSort("efficiency_combined")}
+                >
+                  <span class="heading-label">
+                    Combined Efficiency
+                    <span
+                      class="info-tip"
+                      title={metricInfo.efficiencyCombined}
+                      aria-label={metricInfo.efficiencyCombined}
+                      data-tip={metricInfo.efficiencyCombined}
+                    >
+                      ⓘ
+                    </span>
+                  </span>
+                  <span class="sort-glyph" aria-hidden="true">
+                    <span class:active-arrow={sortKey === "efficiency_combined" && sortDirection === "asc"}></span>
+                    <span class:active-arrow={sortKey === "efficiency_combined" && sortDirection === "desc"}></span>
+                  </span>
+                </button>
               </span>
             </th>
           </tr>
@@ -1307,7 +1546,6 @@
               onclick={() => openModelDetail(row.id)}
               onkeydown={(event) => handleModelRowKeydown(event, row.id)}
             >
-              <td class="rank">{row.rank ?? "—"}</td>
               <td class="model-cell">
                 <span class="model-title-button">
                   {row.name}
@@ -1326,7 +1564,7 @@
                 {:else}
                   <div class="net-visual" style={netBarStyle(row)}>
                     <div class="net-score">
-                      <strong>
+                      <strong class:best-score={isBestScore(row, "netImprovement")}>
                         <span
                           class="net-direction"
                           class:down={netDirection(row.netImprovement) === "down"}
@@ -1358,21 +1596,60 @@
                         title={describeFamily(familyPart)}
                         aria-label={`Definition: ${describeFamily(familyPart)}`}
                       >
-                        i
+                        ⓘ
                       </span>
                     </span>
                   {/each}
                 </div>
               </td>
-              <td class="number">{formatPercent(row.macroF1)}</td>
               <td class="number">
-                {#if row.modelSizeIndex === null}
+                <strong class:best-score={isBestScore(row, "macroF1")}>
+                  {formatPercent(row.macroF1)}
+                </strong>
+              </td>
+              <td class="number efficiency-cell">
+                {#if row.efficiencyModelSize === null}
                   <span class="pending">pending</span>
                 {:else}
-                  <strong>{formatIndex(row.modelSizeIndex)}</strong>
+                  <strong class:best-score={isBestScore(row, "efficiencyModelSize")}>
+                    {formatIndex(row.efficiencyModelSize)}
+                  </strong>
                   {#if row.modelSizeMb !== null}
                     <span>{formatModelSize(row.modelSizeMb)}</span>
                   {/if}
+                {/if}
+              </td>
+              <td class="number efficiency-cell">
+                {#if row.efficiencyPeakMemory === null}
+                  <span class="pending">pending</span>
+                {:else}
+                  <strong class:best-score={isBestScore(row, "efficiencyPeakMemory")}>
+                    {formatIndex(row.efficiencyPeakMemory)}
+                  </strong>
+                  {#if row.peakMemoryMb !== null}
+                    <span>{formatMemory(row.peakMemoryMb)}</span>
+                  {/if}
+                {/if}
+              </td>
+              <td class="number efficiency-cell">
+                {#if row.efficiencyLatency === null}
+                  <span class="pending">pending</span>
+                {:else}
+                  <strong class:best-score={isBestScore(row, "efficiencyLatency")}>
+                    {formatIndex(row.efficiencyLatency)}
+                  </strong>
+                  {#if row.latencyMs !== null}
+                    <span>{formatLatency(row.latencyMs)}</span>
+                  {/if}
+                {/if}
+              </td>
+              <td class="number efficiency-cell">
+                {#if row.efficiencyCombined === null}
+                  <span class="pending">pending</span>
+                {:else}
+                  <strong class:best-score={isBestScore(row, "efficiencyCombined")}>
+                    {formatIndex(row.efficiencyCombined)}
+                  </strong>
                 {/if}
               </td>
             </tr>
@@ -1596,7 +1873,51 @@
         <div class="model-modal-header">
           <div>
             <h2 id="model-detail-title">{selectedDetailModel.name}</h2>
-            <p>{getPaperLink("models", selectedDetailModel.id)?.title ?? selectedDetailModel.name}</p>
+            {#if hasPaperLink("models", selectedDetailModel.id)}
+              <a
+                class="modal-paper-title"
+                href={paperUrl("models", selectedDetailModel.id)}
+                title={paperTitle("models", selectedDetailModel.id, selectedDetailModel.name)}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span class="paper-title-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M7 3.5h7l3 3V20.5H7z" />
+                    <path d="M14 3.5V7h3" />
+                    <path d="M9.5 11h5M9.5 14h5M9.5 17h3" />
+                  </svg>
+                </span>
+                <span>
+                  {paperDisplayTitle("models", selectedDetailModel.id, selectedDetailModel.name)}
+                </span>
+              </a>
+            {:else}
+              <span class="modal-paper-title pending">
+                <span class="paper-title-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M7 3.5h7l3 3V20.5H7z" />
+                    <path d="M14 3.5V7h3" />
+                    <path d="M9.5 11h5M9.5 14h5M9.5 17h3" />
+                  </svg>
+                </span>
+                <span>
+                  {paperDisplayTitle("models", selectedDetailModel.id, selectedDetailModel.name)}
+                </span>
+              </span>
+            {/if}
+            <ul class="author-list modal-author-list">
+              {#if selectedDetail.authors.length > 0}
+                {#each selectedDetail.authors as author}
+                  <li>
+                    <strong>{author.name}</strong>
+                    <span>{author.affiliation}</span>
+                  </li>
+                {/each}
+              {:else}
+                <li><span>Author information pending</span></li>
+              {/if}
+            </ul>
           </div>
           <button
             class="modal-close"
@@ -1624,35 +1945,6 @@
             timesteps.
           </p>
         </div>
-
-        <div class="detail-section">
-          <h3>Paper</h3>
-          {#if hasPaperLink("models", selectedDetailModel.id)}
-            <a
-              class="paper-link detail-paper-link"
-              href={paperUrl("models", selectedDetailModel.id)}
-              title={paperTitle("models", selectedDetailModel.id, selectedDetailModel.name)}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Open paper PDF
-            </a>
-          {:else}
-            <p class="pending">Paper link pending</p>
-          {/if}
-        </div>
-
-        <div class="detail-section">
-          <h3>Authors And Affiliations</h3>
-          <ul class="author-list">
-            {#each selectedDetail.authors as author}
-              <li>
-                <strong>{author.name}</strong>
-                <span>{author.affiliation}</span>
-              </li>
-            {/each}
-          </ul>
-        </div>
       </section>
     </div>
   {/if}
@@ -1674,10 +1966,51 @@
         <div class="model-modal-header">
           <div>
             <h2 id="dataset-detail-title">{selectedDetailDataset.name}</h2>
-            <p>
-              {getPaperLink("datasets", selectedDetailDataset.id)?.title ??
-                selectedDetailDataset.name}
-            </p>
+            {#if hasPaperLink("datasets", selectedDetailDataset.id)}
+              <a
+                class="modal-paper-title"
+                href={paperUrl("datasets", selectedDetailDataset.id)}
+                title={paperTitle("datasets", selectedDetailDataset.id, selectedDetailDataset.name)}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span class="paper-title-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M7 3.5h7l3 3V20.5H7z" />
+                    <path d="M14 3.5V7h3" />
+                    <path d="M9.5 11h5M9.5 14h5M9.5 17h3" />
+                  </svg>
+                </span>
+                <span>
+                  {paperDisplayTitle("datasets", selectedDetailDataset.id, selectedDetailDataset.name)}
+                </span>
+              </a>
+            {:else}
+              <span class="modal-paper-title pending">
+                <span class="paper-title-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M7 3.5h7l3 3V20.5H7z" />
+                    <path d="M14 3.5V7h3" />
+                    <path d="M9.5 11h5M9.5 14h5M9.5 17h3" />
+                  </svg>
+                </span>
+                <span>
+                  {paperDisplayTitle("datasets", selectedDetailDataset.id, selectedDetailDataset.name)}
+                </span>
+              </span>
+            {/if}
+            <ul class="author-list modal-author-list">
+              {#if selectedDatasetPaperDetail?.authors?.length}
+                {#each selectedDatasetPaperDetail.authors as author}
+                  <li>
+                    <strong>{author.name}</strong>
+                    <span>{author.affiliation}</span>
+                  </li>
+                {/each}
+              {:else}
+                <li><span>Author information pending</span></li>
+              {/if}
+            </ul>
           </div>
           <button
             class="modal-close"
@@ -1720,23 +2053,6 @@
             <span>Sensor Modalities</span>
             <strong>{formatDatasetMetric(selectedDatasetDetail.sensorModalities)}</strong>
           </div>
-        </div>
-
-        <div class="detail-section">
-          <h3>Paper</h3>
-          {#if hasPaperLink("datasets", selectedDetailDataset.id)}
-            <a
-              class="paper-link detail-paper-link"
-              href={paperUrl("datasets", selectedDetailDataset.id)}
-              title={paperTitle("datasets", selectedDetailDataset.id, selectedDetailDataset.name)}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Open dataset paper PDF
-            </a>
-          {:else}
-            <p class="pending">Paper link pending</p>
-          {/if}
         </div>
       </section>
     </div>
@@ -2039,17 +2355,51 @@
   }
 
   .leaderboard-table {
-    min-width: 1240px;
+    min-width: 1048px;
+    table-layout: fixed;
   }
 
   .leaderboard-table th,
   .leaderboard-table td {
-    padding: 12px 16px;
+    padding: 11px 8px;
+  }
+
+  .leaderboard-table th {
+    white-space: normal;
+  }
+
+  .leaderboard-table th:nth-child(1),
+  .leaderboard-table td:nth-child(1) {
+    width: 18%;
+  }
+
+  .leaderboard-table th:nth-child(2),
+  .leaderboard-table td:nth-child(2) {
+    width: 25%;
   }
 
   .leaderboard-table th:nth-child(3),
   .leaderboard-table td:nth-child(3) {
-    width: 330px;
+    width: 17%;
+  }
+
+  .leaderboard-table th:nth-child(4),
+  .leaderboard-table td:nth-child(4) {
+    width: 8%;
+  }
+
+  .leaderboard-table th:nth-child(n + 5),
+  .leaderboard-table td:nth-child(n + 5) {
+    width: 8%;
+  }
+
+  .leaderboard-table th:last-child,
+  .leaderboard-table td:last-child {
+    text-align: left;
+  }
+
+  .efficiency-cell {
+    min-width: 0;
   }
 
   .leaderboard-table tbody tr.clickable-row {
@@ -2073,8 +2423,9 @@
     appearance: none;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 3px;
     min-width: 0;
+    max-width: 100%;
     border: 0;
     background: transparent;
     color: inherit;
@@ -2082,6 +2433,7 @@
     font: inherit;
     text-align: left;
     text-transform: inherit;
+    white-space: normal;
     cursor: pointer;
   }
 
@@ -2092,44 +2444,29 @@
     gap: 6px;
   }
 
-  .mean-metric-icon {
-    position: relative;
-    display: inline-block;
-    width: 13px;
-    height: 13px;
-    flex: 0 0 auto;
-    border: 1.35px solid currentColor;
-    border-radius: 50%;
-    color: currentColor;
-    transform: translateY(-0.5px);
-  }
-
-  .mean-metric-icon::before {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 15px;
-    height: 1.35px;
-    background: currentColor;
-    content: "";
-    transform: translate(-50%, -50%) rotate(-42deg);
+  .heading-label {
+    display: inline;
+    min-width: 0;
+    font: inherit;
+    line-height: inherit;
+    overflow-wrap: normal;
   }
 
   .info-tip {
     position: relative;
-    display: inline-grid;
-    width: 15px;
-    height: 15px;
-    place-items: center;
-    border: 1px solid hsl(24 6% 17% / 0.34);
-    border-radius: 50%;
-    color: var(--muted-strong);
+    display: inline-block;
+    flex: 0 0 auto;
+    color: inherit;
     cursor: help;
-    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.62rem;
+    font-family:
+      "baselGrotesk", "Inter", ui-sans-serif, system-ui, -apple-system,
+      BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 0.7rem;
     font-weight: 600;
-    line-height: 1;
+    letter-spacing: 0;
+    line-height: 1.05;
     text-transform: none;
+    vertical-align: baseline;
   }
 
   .info-tip::after {
@@ -2197,9 +2534,12 @@
 
   .sort-glyph {
     display: inline-grid;
+    align-self: center;
+    align-content: center;
     gap: 2px;
-    width: 8px;
-    min-width: 8px;
+    width: 6px;
+    height: 12px;
+    min-width: 6px;
     color: hsl(24 6% 17% / 0.16);
     justify-items: center;
   }
@@ -2209,8 +2549,8 @@
     width: 0;
     height: 0;
     min-width: 0;
-    border-right: 3.5px solid transparent;
-    border-left: 3.5px solid transparent;
+    border-right: 3px solid transparent;
+    border-left: 3px solid transparent;
     opacity: 1;
     transition:
       border-color 120ms ease,
@@ -2218,11 +2558,11 @@
   }
 
   .sort-glyph span:first-child {
-    border-bottom: 4px solid currentColor;
+    border-bottom: 3.5px solid currentColor;
   }
 
   .sort-glyph span:last-child {
-    border-top: 4px solid currentColor;
+    border-top: 3.5px solid currentColor;
   }
 
   .sort-glyph span.active-arrow {
@@ -2251,15 +2591,9 @@
     color: var(--ink);
   }
 
-  .rank,
   .number,
   .net-cell {
     font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  }
-
-  .rank {
-    color: var(--muted-strong);
-    width: 68px;
   }
 
   .number strong,
@@ -2271,6 +2605,10 @@
     color: var(--ink);
     font-size: 0.94rem;
     font-weight: 500;
+  }
+
+  .number strong.best-score {
+    font-weight: 700;
   }
 
   .number span {
@@ -2298,7 +2636,7 @@
 
   .institution-list {
     display: block;
-    max-width: 260px;
+    max-width: 164px;
     margin-top: 4px;
     color: var(--muted);
     font-size: 0.72rem;
@@ -2311,8 +2649,8 @@
 
   .net-visual {
     display: grid;
-    grid-template-columns: 74px minmax(150px, 1fr);
-    gap: 14px;
+    grid-template-columns: 68px minmax(108px, 1fr);
+    gap: 10px;
     align-items: center;
   }
 
@@ -2329,6 +2667,10 @@
     font-size: 0.94rem;
     font-weight: 500;
     line-height: 1.1;
+  }
+
+  .net-score strong.best-score {
+    font-weight: 700;
   }
 
   .net-score span {
@@ -2436,7 +2778,7 @@
     justify-content: center;
     gap: 5px;
     min-height: 20px;
-    max-width: 7rem;
+    max-width: 5rem;
     border: 1px solid lightgray;
     border-radius: 999px;
     background: var(--panel-soft);
@@ -2451,24 +2793,23 @@
   }
 
   .family-pill-info {
-    display: inline-flex;
-    width: 13px;
-    height: 13px;
+    display: inline-block;
     flex: 0 0 auto;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid hsl(24 6% 17% / 0.28);
-    border-radius: 999px;
-    color: var(--muted-strong);
-    font-size: 0.58rem;
-    font-weight: 700;
-    line-height: 1;
+    color: inherit;
     cursor: help;
+    font-family:
+      "baselGrotesk", "Inter", ui-sans-serif, system-ui, -apple-system,
+      BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.05;
+    text-transform: none;
+    vertical-align: baseline;
   }
 
   .family-pill-info:hover,
   .family-pill-info:focus-visible {
-    border-color: currentColor;
     color: var(--ink);
     outline: none;
   }
@@ -2792,13 +3133,6 @@
     border-bottom: 1px solid var(--line);
   }
 
-  .model-modal-header p {
-    margin-top: 6px;
-    color: var(--muted-strong);
-    font-size: 0.88rem;
-    line-height: 1.35;
-  }
-
   .modal-close {
     position: relative;
     display: grid;
@@ -2903,11 +3237,52 @@
     gap: 10px;
   }
 
-  .detail-paper-link {
+  .modal-paper-title {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 7px;
     width: fit-content;
+    max-width: min(560px, 100%);
+    margin-top: 7px;
     color: var(--ink);
     font-size: 0.9rem;
     font-weight: 600;
+    line-height: 1.3;
+    text-decoration: underline;
+    text-decoration-color: hsl(24 6% 17% / 0.3);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .modal-paper-title:hover,
+  .modal-paper-title:focus-visible {
+    text-decoration-color: currentColor;
+    outline: none;
+  }
+
+  .modal-paper-title.pending {
+    color: var(--muted-strong);
+    text-decoration: none;
+  }
+
+  .paper-title-icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    width: 15px;
+    height: 15px;
+    margin-top: 1px;
+    color: inherit;
+  }
+
+  .paper-title-icon svg {
+    display: block;
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.7;
   }
 
   .author-list {
@@ -2940,6 +3315,16 @@
     color: var(--muted-strong);
     font-size: 0.82rem;
     line-height: 1.35;
+  }
+
+  .modal-author-list {
+    max-width: min(620px, 100%);
+    margin-top: 10px;
+    gap: 6px;
+  }
+
+  .modal-author-list li {
+    padding-bottom: 6px;
   }
 
   @media (max-width: 900px) {
@@ -2976,7 +3361,7 @@
     }
 
     .leaderboard-table {
-      min-width: 820px;
+      min-width: 1048px;
     }
 
     .sticky-col {

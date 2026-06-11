@@ -1,4 +1,5 @@
 ---
+import BenchmarkPage from "../components/BenchmarkPage.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import datasetDetailsData from "../generated/dataset-details.json";
 import datasetPaperDetailsData from "../generated/dataset-paper-details.json";
@@ -63,7 +64,6 @@ const settingLabels: Record<string, string> = {
   Fit: "Fitness",
   Health: "Health",
   Loc: "Locomotion",
-  Sports: "Sports",
 };
 const settingDefinitions: Record<string, string> = {
   ADL: "Everyday self-care, mobility, and household routines such as eating, dressing, walking, or chores.",
@@ -71,14 +71,13 @@ const settingDefinitions: Record<string, string> = {
   Fit: "Physical exercise performed to improve or maintain health, strength, endurance, flexibility, or skill.",
   Health: "Conditions, behaviors, or physiological states related to wellbeing, care, rehabilitation, or impairment.",
   Loc: "Bodily movement or transport from one place, posture, or motion state to another.",
-  Sports: "Structured athletic activities, training drills, or game-related movements.",
 };
 const deviceTypeLabels: Record<string, string> = {
   ActivityTracker: "Activity Tracker",
   Belt: "Belt",
   Glasses: "Smart Glasses",
   Helmet: "Helmet",
-  LifeMonitor: "Life Monitor",
+  LifeMonitor: "West",
   Mask: "Mask",
   Node: "Sensor Node",
   Phone: "Phone",
@@ -89,7 +88,7 @@ const deviceTypeDefinitions: Record<string, string> = {
   Belt: "A strap or band worn around the waist or torso.",
   Glasses: "Eyewear with integrated electronics, displays, cameras, or sensors.",
   Helmet: "Protective or task-specific headgear that can carry electronics or sensors.",
-  LifeMonitor: "A body-worn device for continuous physiological or vital-sign monitoring.",
+  LifeMonitor: "An upper-body garment or device that can carry physiological sensing hardware.",
   Mask: "A face-worn covering or device positioned around the mouth, nose, or both.",
   Node: "A standalone sensor unit that can be attached to the body, clothing, or equipment.",
   Phone: "A handheld mobile computing device with built-in sensors and wireless connectivity.",
@@ -97,7 +96,6 @@ const deviceTypeDefinitions: Record<string, string> = {
 };
 const sensorModalityLabels: Record<string, string> = {
   Acc: "Accelerometer",
-  ALS: "ALS",
   Baro: "Barometer",
   ECG: "ECG",
   EEG: "EEG",
@@ -106,14 +104,12 @@ const sensorModalityLabels: Record<string, string> = {
   Gas: "Gas Sensor",
   GPS: "GPS",
   Gyr: "Gyroscope",
-  HR: "HR",
+  "Light Sensor": "Light Sensor",
   Mag: "Magnetometer",
-  Resp: "Respiration Sensor",
   Stretch: "Stretch Sensor",
 };
 const sensorModalityDefinitions: Record<string, string> = {
   Acc: "Measures linear acceleration of the device or body segment, usually across three axes.",
-  ALS: "Measures surrounding light intensity.",
   Baro: "Measures atmospheric pressure.",
   ECG: "Measures electrical activity of the heart.",
   EEG: "Measures electrical activity of the brain.",
@@ -122,9 +118,8 @@ const sensorModalityDefinitions: Record<string, string> = {
   Gas: "Measures the concentration or presence of specific gases.",
   GPS: "Provides geographic position using satellite navigation signals.",
   Gyr: "Measures angular velocity and rotation of the device or body segment.",
-  HR: "Measures pulse or beats per minute.",
+  "Light Sensor": "Measures surrounding light intensity.",
   Mag: "Measures magnetic field strength or direction.",
-  Resp: "Measures breathing-related signals such as respiratory movement or rate.",
   Stretch: "Measures deformation, strain, or elongation.",
 };
 const datasets = Object.entries(datasetDetails.datasets)
@@ -259,33 +254,15 @@ function formatInstitutionSummary(institutions: string[]) {
 ---
 
 <BaseLayout title="WHAR Arena | Datasets">
-  <main class="page-shell">
-    <section class="catalog-intro" aria-labelledby="datasets-heading">
-      <h1 id="datasets-heading">Datasets</h1>
-      <p>Dataset catalog for the static WHAR Arena paper snapshot.</p>
-    </section>
-    <section class="catalog-meta" aria-label="Datasets summary">
-      <dl class="benchmark-meta">
-        <div>
-          <span class="meta-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M7 3v3M17 3v3M4.5 9h15M6.5 5h11a2 2 0 0 1 2 2v10.5a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" />
-            </svg>
-          </span>
-          <dt>Snapshot</dt>
-          <dd><time datetime={snapshotDateTime}>{snapshotDate}</time></dd>
-        </div>
-        <div>
-          <span class="meta-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M5 6c0-1.7 3.1-3 7-3s7 1.3 7 3-3.1 3-7 3-7-1.3-7-3ZM5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6" />
-            </svg>
-          </span>
-          <dt>Datasets</dt>
-          <dd>{datasets.length}</dd>
-        </div>
-      </dl>
-    </section>
+  <BenchmarkPage
+    title="Datasets"
+    headingId="datasets-heading"
+    description="Dataset catalog for the static WHAR Arena paper snapshot."
+    metaItems={[
+      { icon: "calendar", label: "Snapshot", value: snapshotDate, datetime: snapshotDateTime },
+      { icon: "datasets", label: "Datasets", value: datasets.length },
+    ]}
+  >
 
     <section class="arena-panel filter-panel">
       <div class="panel-header">
@@ -471,7 +448,7 @@ function formatInstitutionSummary(institutions: string[]) {
                           data-tip={describeSetting(item)}
                           aria-label={`Definition: ${describeSetting(item)}`}
                         >
-                          i
+                          ⓘ
                         </span>
                       </span>
                     </label>
@@ -525,7 +502,7 @@ function formatInstitutionSummary(institutions: string[]) {
                           data-tip={describeDeviceType(item)}
                           aria-label={`Definition: ${describeDeviceType(item)}`}
                         >
-                          i
+                          ⓘ
                         </span>
                       </span>
                     </label>
@@ -579,7 +556,7 @@ function formatInstitutionSummary(institutions: string[]) {
                           data-tip={describeSensorModality(item)}
                           aria-label={`Definition: ${describeSensorModality(item)}`}
                         >
-                          i
+                          ⓘ
                         </span>
                       </span>
                     </label>
@@ -745,7 +722,7 @@ function formatInstitutionSummary(institutions: string[]) {
                           data-tip={part.definition}
                           aria-label={`Definition: ${part.definition}`}
                         >
-                          i
+                          ⓘ
                         </span>
                       </span>
                     ))}
@@ -763,7 +740,7 @@ function formatInstitutionSummary(institutions: string[]) {
                           data-tip={part.definition}
                           aria-label={`Definition: ${part.definition}`}
                         >
-                          i
+                          ⓘ
                         </span>
                       </span>
                     ))}
@@ -784,7 +761,7 @@ function formatInstitutionSummary(institutions: string[]) {
                           data-tip={part.definition}
                           aria-label={`Definition: ${part.definition}`}
                         >
-                          i
+                          ⓘ
                         </span>
                       </span>
                     ))}
@@ -814,7 +791,33 @@ function formatInstitutionSummary(institutions: string[]) {
         <div class="dataset-modal-header">
           <div>
             <h2 id="dataset-detail-title" data-dataset-modal-title></h2>
-            <p data-dataset-modal-subtitle></p>
+            <a
+              class="modal-paper-title"
+              href=""
+              target="_blank"
+              rel="noreferrer"
+              data-dataset-modal-paper
+            >
+              <span class="paper-title-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M7 3.5h7l3 3V20.5H7z" />
+                  <path d="M14 3.5V7h3" />
+                  <path d="M9.5 11h5M9.5 14h5M9.5 17h3" />
+                </svg>
+              </span>
+              <span data-dataset-modal-paper-title></span>
+            </a>
+            <span class="modal-paper-title muted" data-dataset-modal-paper-pending hidden>
+              <span class="paper-title-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M7 3.5h7l3 3V20.5H7z" />
+                  <path d="M14 3.5V7h3" />
+                  <path d="M9.5 11h5M9.5 14h5M9.5 17h3" />
+                </svg>
+              </span>
+              <span data-dataset-modal-paper-pending-title></span>
+            </span>
+            <ul class="author-list modal-author-list" data-dataset-modal-authors></ul>
           </div>
           <button
             class="modal-close"
@@ -854,38 +857,22 @@ function formatInstitutionSummary(institutions: string[]) {
             <div class="detail-pill-list" data-dataset-modal-pill-field="sensorModalities"></div>
           </div>
         </div>
-
-        <div class="detail-section">
-          <h3>Paper</h3>
-          <a
-            class="paper-link detail-paper-link"
-            href=""
-            target="_blank"
-            rel="noreferrer"
-            data-dataset-modal-paper
-          >
-            Open dataset paper PDF
-          </a>
-          <p class="muted" data-dataset-modal-paper-pending hidden>Paper link pending</p>
-        </div>
-
-        <div class="detail-section">
-          <h3>Authors And Affiliations</h3>
-          <ul class="author-list" data-dataset-modal-authors></ul>
-        </div>
       </section>
     </div>
-  </main>
+  </BenchmarkPage>
 </BaseLayout>
 
 <script is:inline>
   const datasetModal = document.querySelector("[data-dataset-modal]");
   const datasetDialog = datasetModal?.querySelector(".dataset-modal");
   const datasetModalTitle = datasetModal?.querySelector("[data-dataset-modal-title]");
-  const datasetModalSubtitle = datasetModal?.querySelector("[data-dataset-modal-subtitle]");
   const datasetModalPaper = datasetModal?.querySelector("[data-dataset-modal-paper]");
   const datasetModalPaperPending = datasetModal?.querySelector(
     "[data-dataset-modal-paper-pending]",
+  );
+  const datasetModalPaperTitle = datasetModal?.querySelector("[data-dataset-modal-paper-title]");
+  const datasetModalPaperPendingTitle = datasetModal?.querySelector(
+    "[data-dataset-modal-paper-pending-title]",
   );
   const datasetModalAuthors = datasetModal?.querySelector("[data-dataset-modal-authors]");
   const datasetTableBody = document.querySelector("[data-dataset-table-body]");
@@ -1010,7 +997,7 @@ function formatInstitutionSummary(institutions: string[]) {
           info.title = definition;
           info.dataset.tip = definition;
           info.setAttribute("aria-label", `Definition: ${definition}`);
-          info.textContent = "i";
+          info.textContent = "ⓘ";
           pill.append(info);
         }
         return pill;
@@ -1134,7 +1121,9 @@ function formatInstitutionSummary(institutions: string[]) {
 
     lastDatasetTrigger = row;
     setModalText(datasetModalTitle, row.dataset.datasetName);
-    setModalText(datasetModalSubtitle, row.dataset.datasetPaperTitle);
+    const paperTitle = row.dataset.datasetPaperTitle || row.dataset.datasetName || "Paper pending";
+    setModalText(datasetModalPaperTitle, paperTitle);
+    setModalText(datasetModalPaperPendingTitle, paperTitle);
     setModalText(modalFields.year, row.dataset.datasetYear);
     setModalText(modalFields.subjects, row.dataset.datasetSubjects);
     setModalText(modalFields.activities, row.dataset.datasetActivities);
@@ -1467,88 +1456,6 @@ function formatInstitutionSummary(institutions: string[]) {
 </script>
 
 <style>
-  .page-shell {
-    width: min(1440px, calc(100vw - 24px));
-    margin: 0 auto;
-    padding: 12px 0 40px;
-  }
-
-  .catalog-intro {
-    display: grid;
-    gap: 15px;
-    padding: 0;
-  }
-
-  .catalog-intro h1 {
-    margin: 0;
-    font-family: var(--display-serif);
-    font-size: 1.55rem;
-    font-weight: 500;
-    line-height: 1.05;
-  }
-
-  .catalog-intro p {
-    margin: 0;
-    color: var(--muted-strong);
-    font-size: 0.95rem;
-    line-height: 1.45;
-  }
-
-  .catalog-meta {
-    padding: 6px 0 14px;
-  }
-
-  .benchmark-meta {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 22px;
-    margin: 0;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  .benchmark-meta div {
-    display: inline-flex;
-    align-items: center;
-    flex: 0 0 auto;
-    gap: 6px;
-  }
-
-  .meta-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 17px;
-    height: 17px;
-    color: var(--ink);
-  }
-
-  .meta-icon svg {
-    display: block;
-    width: 17px;
-    height: 17px;
-    fill: none;
-    stroke: currentColor;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 1.8;
-  }
-
-  .benchmark-meta dt {
-    color: var(--muted);
-    font-size: 0.68rem;
-    font-weight: 600;
-    text-transform: uppercase;
-  }
-
-  .benchmark-meta dd {
-    margin: 0;
-    color: var(--ink);
-    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.82rem;
-    font-weight: 500;
-  }
-
   .filter-panel {
     position: relative;
     z-index: 20;
@@ -1999,24 +1906,23 @@ function formatInstitutionSummary(institutions: string[]) {
   }
 
   .pill-info {
-    display: inline-flex;
-    width: 13px;
-    height: 13px;
+    display: inline-block;
     flex: 0 0 auto;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid hsl(24 6% 17% / 0.28);
-    border-radius: 999px;
-    color: var(--muted-strong);
-    font-size: 0.58rem;
-    font-weight: 700;
-    line-height: 1;
+    color: inherit;
     cursor: help;
+    font-family:
+      "baselGrotesk", "Inter", ui-sans-serif, system-ui, -apple-system,
+      BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.05;
+    text-transform: none;
+    vertical-align: baseline;
   }
 
   .pill-info:hover,
   .pill-info:focus-visible {
-    border-color: currentColor;
     color: var(--ink);
     outline: none;
   }
@@ -2135,13 +2041,6 @@ function formatInstitutionSummary(institutions: string[]) {
     line-height: 1.05;
   }
 
-  .dataset-modal-header p {
-    margin: 6px 0 0;
-    color: var(--muted-strong);
-    font-size: 0.88rem;
-    line-height: 1.35;
-  }
-
   .modal-close {
     position: relative;
     display: grid;
@@ -2246,11 +2145,52 @@ function formatInstitutionSummary(institutions: string[]) {
     margin: 0;
   }
 
-  .detail-paper-link {
+  .modal-paper-title {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 7px;
     width: fit-content;
+    max-width: min(560px, 100%);
+    margin-top: 7px;
     color: var(--ink);
     font-size: 0.9rem;
     font-weight: 600;
+    line-height: 1.3;
+    text-decoration: underline;
+    text-decoration-color: hsl(24 6% 17% / 0.3);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .modal-paper-title:hover,
+  .modal-paper-title:focus-visible {
+    text-decoration-color: currentColor;
+    outline: none;
+  }
+
+  .modal-paper-title.muted {
+    color: var(--muted-strong);
+    text-decoration: none;
+  }
+
+  .paper-title-icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    width: 15px;
+    height: 15px;
+    margin-top: 1px;
+    color: inherit;
+  }
+
+  .paper-title-icon svg {
+    display: block;
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.7;
   }
 
   .author-list {
@@ -2283,6 +2223,16 @@ function formatInstitutionSummary(institutions: string[]) {
     color: var(--muted-strong);
     font-size: 0.82rem;
     line-height: 1.35;
+  }
+
+  .modal-author-list {
+    max-width: min(620px, 100%);
+    margin-top: 10px;
+    gap: 6px;
+  }
+
+  .modal-author-list li {
+    padding-bottom: 6px;
   }
 
   @media (max-width: 1180px) {

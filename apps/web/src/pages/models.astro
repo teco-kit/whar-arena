@@ -1,4 +1,5 @@
 ---
+import BenchmarkPage from "../components/BenchmarkPage.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import modelDetailsData from "../generated/model-details.json";
 import paperBenchmark from "../generated/paper-benchmark.json";
@@ -206,33 +207,15 @@ function formatScaledMetric(value: number) {
 ---
 
 <BaseLayout title="WHAR Arena | Models">
-  <main class="page-shell">
-    <section class="catalog-intro" aria-labelledby="models-heading">
-      <h1 id="models-heading">Models</h1>
-      <p>Model catalog for the static WHAR Arena paper snapshot.</p>
-    </section>
-    <section class="catalog-meta" aria-label="Models summary">
-      <dl class="benchmark-meta">
-        <div>
-          <span class="meta-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M7 3v3M17 3v3M4.5 9h15M6.5 5h11a2 2 0 0 1 2 2v10.5a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" />
-            </svg>
-          </span>
-          <dt>Snapshot</dt>
-          <dd><time datetime={snapshotDateTime}>{snapshotDate}</time></dd>
-        </div>
-        <div>
-          <span class="meta-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M9 8h6v6H9zM9 3v3M15 3v3M9 16v3M15 16v3M3 9h3M3 13h3M18 9h3M18 13h3M11 10h2v2h-2z" />
-            </svg>
-          </span>
-          <dt>Models</dt>
-          <dd>{models.length}</dd>
-        </div>
-      </dl>
-    </section>
+  <BenchmarkPage
+    title="Models"
+    headingId="models-heading"
+    description="Model catalog for the static WHAR Arena paper snapshot."
+    metaItems={[
+      { icon: "calendar", label: "Snapshot", value: snapshotDate, datetime: snapshotDateTime },
+      { icon: "models", label: "Models", value: models.length },
+    ]}
+  >
 
     <section class="arena-panel filter-panel">
       <div class="panel-header">
@@ -281,7 +264,7 @@ function formatScaledMetric(value: number) {
                           title={item.definition}
                           aria-label={`Definition: ${item.definition}`}
                         >
-                          i
+                          ⓘ
                         </span>
                       </span>
                     </label>
@@ -540,7 +523,7 @@ function formatScaledMetric(value: number) {
                           title={part.definition}
                           aria-label={`Definition: ${part.definition}`}
                         >
-                          i
+                          ⓘ
                         </span>
                       </span>
                     ))}
@@ -579,7 +562,33 @@ function formatScaledMetric(value: number) {
         <div class="model-modal-header">
           <div>
             <h2 id="model-detail-title" data-model-modal-title></h2>
-            <p data-model-modal-subtitle></p>
+            <a
+              class="modal-paper-title"
+              href=""
+              target="_blank"
+              rel="noreferrer"
+              data-model-modal-paper
+            >
+              <span class="paper-title-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M7 3.5h7l3 3V20.5H7z" />
+                  <path d="M14 3.5V7h3" />
+                  <path d="M9.5 11h5M9.5 14h5M9.5 17h3" />
+                </svg>
+              </span>
+              <span data-model-modal-paper-title></span>
+            </a>
+            <span class="modal-paper-title muted" data-model-modal-paper-pending hidden>
+              <span class="paper-title-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M7 3.5h7l3 3V20.5H7z" />
+                  <path d="M14 3.5V7h3" />
+                  <path d="M9.5 11h5M9.5 14h5M9.5 17h3" />
+                </svg>
+              </span>
+              <span data-model-modal-paper-pending-title></span>
+            </span>
+            <ul class="author-list modal-author-list" data-model-modal-authors></ul>
           </div>
           <button
             class="modal-close"
@@ -611,28 +620,9 @@ function formatScaledMetric(value: number) {
             {modelDetails.source.input_assumption}.
           </p>
         </div>
-
-        <div class="detail-section">
-          <h3>Paper</h3>
-          <a
-            class="paper-link detail-paper-link"
-            href=""
-            target="_blank"
-            rel="noreferrer"
-            data-model-modal-paper
-          >
-            Open model paper PDF
-          </a>
-          <p class="muted" data-model-modal-paper-pending hidden>Paper link pending</p>
-        </div>
-
-        <div class="detail-section">
-          <h3>Authors And Affiliations</h3>
-          <ul class="author-list" data-model-modal-authors></ul>
-        </div>
       </section>
     </div>
-  </main>
+  </BenchmarkPage>
 </BaseLayout>
 
 <script is:inline>
@@ -640,9 +630,12 @@ function formatScaledMetric(value: number) {
   const modelModal = document.querySelector("[data-model-modal]");
   const modelDialog = modelModal?.querySelector(".model-modal");
   const modelModalTitle = modelModal?.querySelector("[data-model-modal-title]");
-  const modelModalSubtitle = modelModal?.querySelector("[data-model-modal-subtitle]");
   const modelModalPaper = modelModal?.querySelector("[data-model-modal-paper]");
   const modelModalPaperPending = modelModal?.querySelector("[data-model-modal-paper-pending]");
+  const modelModalPaperTitle = modelModal?.querySelector("[data-model-modal-paper-title]");
+  const modelModalPaperPendingTitle = modelModal?.querySelector(
+    "[data-model-modal-paper-pending-title]",
+  );
   const modelModalAuthors = modelModal?.querySelector("[data-model-modal-authors]");
   const modelTableBody = document.querySelector("[data-model-table-body]");
   const modelSortButtons = Array.from(document.querySelectorAll("[data-sort-key]"));
@@ -737,7 +730,9 @@ function formatScaledMetric(value: number) {
 
     lastModelTrigger = row;
     setModelModalText(modelModalTitle, row.dataset.modelName);
-    setModelModalText(modelModalSubtitle, row.dataset.modelPaperTitle);
+    const paperTitle = row.dataset.modelPaperTitle || row.dataset.modelName || "Paper pending";
+    setModelModalText(modelModalPaperTitle, paperTitle);
+    setModelModalText(modelModalPaperPendingTitle, paperTitle);
     setModelModalText(modelModalFields.year, row.dataset.modelYear);
     setModelModalText(modelModalFields.params, row.dataset.modelParams);
     setModelModalText(modelModalFields.flops, row.dataset.modelFlops);
@@ -1036,88 +1031,6 @@ function formatScaledMetric(value: number) {
 </script>
 
 <style>
-  .page-shell {
-    width: min(1440px, calc(100vw - 24px));
-    margin: 0 auto;
-    padding: 12px 0 40px;
-  }
-
-  .catalog-intro {
-    display: grid;
-    gap: 15px;
-    padding: 0;
-  }
-
-  .catalog-intro h1 {
-    margin: 0;
-    font-family: var(--display-serif);
-    font-size: 1.55rem;
-    font-weight: 500;
-    line-height: 1.05;
-  }
-
-  .catalog-intro p {
-    margin: 0;
-    color: var(--muted-strong);
-    font-size: 0.95rem;
-    line-height: 1.45;
-  }
-
-  .catalog-meta {
-    padding: 6px 0 14px;
-  }
-
-  .benchmark-meta {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 22px;
-    margin: 0;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  .benchmark-meta div {
-    display: inline-flex;
-    align-items: center;
-    flex: 0 0 auto;
-    gap: 6px;
-  }
-
-  .meta-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 17px;
-    height: 17px;
-    color: var(--ink);
-  }
-
-  .meta-icon svg {
-    display: block;
-    width: 17px;
-    height: 17px;
-    fill: none;
-    stroke: currentColor;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 1.8;
-  }
-
-  .benchmark-meta dt {
-    color: var(--muted);
-    font-size: 0.68rem;
-    font-weight: 600;
-    text-transform: uppercase;
-  }
-
-  .benchmark-meta dd {
-    margin: 0;
-    color: var(--ink);
-    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.82rem;
-    font-weight: 500;
-  }
-
   .filter-panel {
     position: relative;
     z-index: 20;
@@ -1559,24 +1472,23 @@ function formatScaledMetric(value: number) {
   }
 
   .pill-info {
-    display: inline-flex;
-    width: 13px;
-    height: 13px;
+    display: inline-block;
     flex: 0 0 auto;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid hsl(24 6% 17% / 0.28);
-    border-radius: 999px;
-    color: var(--muted-strong);
-    font-size: 0.58rem;
-    font-weight: 700;
-    line-height: 1;
+    color: inherit;
     cursor: help;
+    font-family:
+      "baselGrotesk", "Inter", ui-sans-serif, system-ui, -apple-system,
+      BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.05;
+    text-transform: none;
+    vertical-align: baseline;
   }
 
   .pill-info:hover,
   .pill-info:focus-visible {
-    border-color: currentColor;
     color: var(--ink);
     outline: none;
   }
@@ -1664,13 +1576,6 @@ function formatScaledMetric(value: number) {
     font-weight: 500;
     letter-spacing: 0;
     line-height: 1.05;
-  }
-
-  .model-modal-header p {
-    margin: 6px 0 0;
-    color: var(--muted-strong);
-    font-size: 0.88rem;
-    line-height: 1.35;
   }
 
   .modal-close {
@@ -1771,9 +1676,52 @@ function formatScaledMetric(value: number) {
     margin: 0;
   }
 
-  .detail-paper-link {
+  .modal-paper-title {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 7px;
     width: fit-content;
+    max-width: min(560px, 100%);
+    margin-top: 7px;
+    color: var(--ink);
     font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.3;
+    text-decoration: underline;
+    text-decoration-color: hsl(24 6% 17% / 0.3);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .modal-paper-title:hover,
+  .modal-paper-title:focus-visible {
+    text-decoration-color: currentColor;
+    outline: none;
+  }
+
+  .modal-paper-title.muted {
+    color: var(--muted-strong);
+    text-decoration: none;
+  }
+
+  .paper-title-icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    width: 15px;
+    height: 15px;
+    margin-top: 1px;
+    color: inherit;
+  }
+
+  .paper-title-icon svg {
+    display: block;
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.7;
   }
 
   .author-list {
@@ -1806,6 +1754,16 @@ function formatScaledMetric(value: number) {
     color: var(--muted-strong);
     font-size: 0.82rem;
     line-height: 1.35;
+  }
+
+  .modal-author-list {
+    max-width: min(620px, 100%);
+    margin-top: 10px;
+    gap: 6px;
+  }
+
+  .modal-author-list li {
+    padding-bottom: 6px;
   }
 
   @media (max-width: 900px) {
