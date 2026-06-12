@@ -2,17 +2,16 @@
 
 WHAR Arena is a Git-native benchmark and website for wearable human activity
 recognition. The arena has one official protocol, discovers datasets from
-`whar-datasets`, discovers models from `whar-models`, plans the full benchmark
-matrix, and renders committed result files as a static website.
+[`whar-datasets`](https://github.com/teco-kit/whar-datasets), discovers models
+from [`whar-models`](https://github.com/teco-kit/whar-models), plans the full
+benchmark matrix, and renders committed result files as a static website.
 
 ## Core Idea
 
-```text
-official protocol
-x all benchmark datasets from whar-datasets
-x all registered models from whar-models
-= benchmark matrix
-```
+- Official protocol
+- All benchmark datasets from [`whar-datasets`](https://github.com/teco-kit/whar-datasets)
+- All registered models from [`whar-models`](https://github.com/teco-kit/whar-models)
+- Benchmark matrix
 
 Every planned run receives a deterministic fingerprint. If a matching result
 already exists, the run is skipped. When a dataset or model is added upstream,
@@ -32,6 +31,5 @@ npm install
 npm run dev
 ```
 
-The first implementation includes a planner and static site renderer. The heavy
-training runner is intentionally separated behind `whar-arena run`, so CI can
-validate submissions cheaply and execute missing runs in dedicated jobs.
+The heavy training runner is intentionally separated behind `whar-arena run`, so
+CI can validate submissions cheaply and execute missing runs in dedicated jobs.
