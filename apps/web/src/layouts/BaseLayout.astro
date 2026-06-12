@@ -40,15 +40,16 @@ const tabs = [
     matches: ["/datasets"],
   },
 ];
-const bibtexCitation = `@misc{whar_arena_2026,
+const bibtexCitation = `@misc{burzer2026whararenabenchmarkingstate,
   title = {{WHAR Arena}: Benchmarking the State of the Art in Efficient Wearable Human Activity Recognition},
   author = {Maximilian Burzer and Tobias King and Till Riedel and Michael Beigl and Tobias R{\"o}ddiger},
   year = {2026},
-  note = {arXiv preprint, forthcoming}
+  eprint = {2606.13194},
+  archivePrefix = {arXiv},
+  primaryClass = {cs.LG},
+  url = {https://arxiv.org/abs/2606.13194}
 }`;
-const paperPdfFilename =
-  "WHAR_Arena-Benchmarking_the_State_of_the_Art_in_Efficient_Wearable_Human_Activity_Recognition.pdf";
-const paperPdfHref = withBase(`/${paperPdfFilename}`);
+const paperHref = "https://arxiv.org/abs/2606.13194";
 const acknowledgementsText =
   "This work was partially funded by the IPAI Foundation gGmbH through the Science Residency Program and by the Helmholtz Association Initiative and Networking Fund through the HAICORE@KIT partition. Support was also provided by the HammerHAI project, an EU co-funded AI Factory initiative operated by the High-Performance Computing Center Stuttgart. This project has received funding from the European High Performance Computing Joint Undertaking (EuroHPC JU) under Grant Agreement No. 101234027. It is jointly co-funded by the EuroHPC JU through the European Union's Digital Europe Programme, the European Commission, the German Federal Ministry of Research, Technology and Space (BMFTR), the Baden-Württemberg Ministry of Science, Research and the Arts, the Bavarian State Ministry of Science and the Arts, and the Lower Saxony Ministry of Science and Culture. Views and opinions expressed are those of the author(s) only and do not necessarily reflect those of the European Union or the EuroHPC JU.";
 const acknowledgementLogos = [
@@ -154,16 +155,17 @@ const acknowledgementLogos = [
             <div class="citation-actions">
               <a
                 class="citation-download-link"
-                href={paperPdfHref}
-                download={paperPdfFilename}
-                title="Download WHAR Arena paper PDF"
+                href={paperHref}
+                target="_blank"
+                rel="noreferrer"
+                title="View WHAR Arena arXiv submission"
               >
                 <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M12 4v10" />
-                  <path d="m7.5 9.5 4.5 4.5 4.5-4.5" />
-                  <path d="M5 19h14" />
+                  <path d="M7 3.5h7l3 3V20.5H7z" />
+                  <path d="M14 3.5V7h3" />
+                  <path d="M9.5 11h5M9.5 14h5M9.5 17h3" />
                 </svg>
-                <span>Download PDF</span>
+                <span>View arXiv</span>
               </a>
               <button class="citation-copy-button" type="button" data-copy-citation title="Copy BibTeX">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
