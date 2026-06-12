@@ -247,7 +247,7 @@
     efficiencyPeakMemory:
       "Combines normalized Macro-F1 with normalized log peak PSS delta. Higher is better.",
     efficiencyLatency:
-      "Combines normalized Macro-F1 with normalized log inference latency. Higher is better.",
+      "Combines normalized Macro-F1 with normalized log inference latency. Higher is better. Latency characterization was done with ExecuTorch on a Google Pixel 8.",
   };
 
   const validResults = $derived(

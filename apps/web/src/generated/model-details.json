@@ -83,14 +83,8 @@
     "knn": {
       "params": null,
       "flops": null,
-      "institutions": ["Karlsruhe Institute of Technology"],
-      "authors": [
-        {"name": "Maximilian Burzer", "affiliation": "Karlsruhe Institute of Technology, Germany"},
-        {"name": "Tobias King", "affiliation": "Karlsruhe Institute of Technology, Germany"},
-        {"name": "Till Riedel", "affiliation": "Karlsruhe Institute of Technology, Germany"},
-        {"name": "Michael Beigl", "affiliation": "Karlsruhe Institute of Technology, Germany"},
-        {"name": "Tobias Röddiger", "affiliation": "Karlsruhe Institute of Technology, Germany"}
-      ]
+      "institutions": ["Baseline"],
+      "authors": []
     },
     "lstms_ensemble": {
       "params": "798.0k",
@@ -126,14 +120,8 @@
     "random_forest": {
       "params": null,
       "flops": null,
-      "institutions": ["Karlsruhe Institute of Technology"],
-      "authors": [
-        {"name": "Maximilian Burzer", "affiliation": "Karlsruhe Institute of Technology, Germany"},
-        {"name": "Tobias King", "affiliation": "Karlsruhe Institute of Technology, Germany"},
-        {"name": "Till Riedel", "affiliation": "Karlsruhe Institute of Technology, Germany"},
-        {"name": "Michael Beigl", "affiliation": "Karlsruhe Institute of Technology, Germany"},
-        {"name": "Tobias Röddiger", "affiliation": "Karlsruhe Institute of Technology, Germany"}
-      ]
+      "institutions": ["Baseline"],
+      "authors": []
     },
     "sa_har": {
       "params": "401.3k",
@@ -153,14 +141,8 @@
     "svm": {
       "params": null,
       "flops": null,
-      "institutions": ["Karlsruhe Institute of Technology"],
-      "authors": [
-        {"name": "Maximilian Burzer", "affiliation": "Karlsruhe Institute of Technology, Germany"},
-        {"name": "Tobias King", "affiliation": "Karlsruhe Institute of Technology, Germany"},
-        {"name": "Till Riedel", "affiliation": "Karlsruhe Institute of Technology, Germany"},
-        {"name": "Michael Beigl", "affiliation": "Karlsruhe Institute of Technology, Germany"},
-        {"name": "Tobias Röddiger", "affiliation": "Karlsruhe Institute of Technology, Germany"}
-      ]
+      "institutions": ["Baseline"],
+      "authors": []
     },
     "tinierhar": {
       "params": "7.3k",

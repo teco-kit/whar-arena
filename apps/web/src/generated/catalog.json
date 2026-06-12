@@ -254,7 +254,7 @@
       "id": "knn",
       "name": "k-NN",
       "package": "whar-models",
-      "paper": "WHAR Arena: Benchmarking the State of the Art in Efficient Wearable Human Activity Recognition"
+      "paper": null
     },
     {
       "family": "dense_rnn",
@@ -286,7 +286,7 @@
       "id": "random_forest",
       "name": "Random Forest",
       "package": "whar-models",
-      "paper": "WHAR Arena: Benchmarking the State of the Art in Efficient Wearable Human Activity Recognition"
+      "paper": null
     },
     {
       "family": "attn_cnn_dense",
@@ -302,7 +302,7 @@
       "id": "svm",
       "name": "SVM",
       "package": "whar-models",
-      "paper": "WHAR Arena: Benchmarking the State of the Art in Efficient Wearable Human Activity Recognition"
+      "paper": null
     },
     {
       "family": "attn_cnn_dense_rnn",

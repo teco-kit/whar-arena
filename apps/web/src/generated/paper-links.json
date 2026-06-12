@@ -150,10 +150,6 @@
       "title": "Towards a Dynamic Inter-Sensor Correlations Learning Framework for Multi-Sensor-Based Wearable Human Activity Recognition",
       "url": "https://dl.acm.org/doi/pdf/10.1145/3550331"
     },
-    "knn": {
-      "title": "WHAR Arena: Benchmarking the State of the Art in Efficient Wearable Human Activity Recognition",
-      "url": "/WHAR_Arena-Benchmarking_the_State_of_the_Art_in_Efficient_Wearable_Human_Activity_Recognition.pdf"
-    },
     "lstms_ensemble": {
       "title": "Ensembles of Deep LSTM Learners for Activity Recognition Using Wearables",
       "url": "https://arxiv.org/pdf/1703.09370"
@@ -166,17 +162,9 @@
       "title": "MLPs Are All You Need for Human Activity Recognition",
       "url": "https://www.mdpi.com/2076-3417/13/20/11154/pdf"
     },
-    "random_forest": {
-      "title": "WHAR Arena: Benchmarking the State of the Art in Efficient Wearable Human Activity Recognition",
-      "url": "/WHAR_Arena-Benchmarking_the_State_of_the_Art_in_Efficient_Wearable_Human_Activity_Recognition.pdf"
-    },
     "sa_har": {
       "title": "Human Activity Recognition from Wearable Sensor Data Using Self-Attention",
       "url": "https://arxiv.org/pdf/2003.09018"
-    },
-    "svm": {
-      "title": "WHAR Arena: Benchmarking the State of the Art in Efficient Wearable Human Activity Recognition",
-      "url": "/WHAR_Arena-Benchmarking_the_State_of_the_Art_in_Efficient_Wearable_Human_Activity_Recognition.pdf"
     },
     "tinierhar": {
       "title": "TinierHAR: Towards Ultra-Lightweight Deep Learning Models for Efficient Human Activity Recognition on Edge Devices",
