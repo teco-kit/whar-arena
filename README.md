@@ -30,6 +30,3 @@ cd apps/web
 npm install
 npm run dev
 ```
-
-The heavy training runner is intentionally separated behind `whar-arena run`, so
-CI can validate submissions cheaply and execute missing runs in dedicated jobs.
