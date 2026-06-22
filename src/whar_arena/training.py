@@ -87,7 +87,7 @@ def run_benchmark(
 
     _seed_everything(cfg.seed)
     pre_pipeline = PreProcessingPipeline(cfg)
-    _, session_df, window_df = pre_pipeline.run()
+    activity_df, session_df, window_df = pre_pipeline.run()
     splits = LKSOSplitter(cfg).get_splits(session_df, window_df)
     if limit_splits is not None:
         splits = splits[:limit_splits]
@@ -116,7 +116,13 @@ def run_benchmark(
             split.train_indices,
         )
         samples = post_pipeline.run()
-        loader = Loader(session_df, window_df, post_pipeline.samples_dir, samples)
+        loader = Loader(
+            activity_df,
+            session_df,
+            window_df,
+            post_pipeline.samples_dir,
+            samples,
+        )
         split_metrics = _run_split(
             cfg=cfg,
             protocol=protocol,
