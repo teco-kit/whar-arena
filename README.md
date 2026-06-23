@@ -1,6 +1,6 @@
 # WHAR Arena
 
-WHAR Arena is a Git-native benchmark and website for wearable human activity
+WHAR Arena is a Git-native benchmark and [website](https://teco-kit.github.io/whar-arena/) for wearable human activity
 recognition. The arena has one official protocol, discovers datasets from
 [`whar-datasets`](https://github.com/teco-kit/whar-datasets), discovers models
 from [`whar-models`](https://github.com/teco-kit/whar-models), plans the full
