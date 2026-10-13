@@ -129,6 +129,7 @@
     | "efficiency_peak_memory"
     | "efficiency_latency";
   type SortDirection = "asc" | "desc";
+  type ViewId = "leaderboard" | "matrix" | "pareto";
   type ScatterMetric =
     | "mean_latency_ms"
     | "mean_peak_pss_delta_mb"
@@ -138,12 +139,19 @@
     title: string;
     xLabel: string;
   };
-  type ScatterPoint = DeploymentPoint & {
+  type ScatterPoint = {
+    model_id: string;
+    name: string;
+    family: string;
+    color: string;
     x: number;
     y: number;
+    isPareto: boolean;
+    dominators: string[];
   };
   type ScatterPlot = ScatterConfig & {
     points: ScatterPoint[];
+    frontierPoints: ScatterPoint[];
     xMax: number;
     yMin: number;
     yMax: number;
@@ -195,7 +203,14 @@
   let selectedModelIds = $state(catalog.models.map((item) => item.id));
   let selectedDetailModelId = $state<string | null>(null);
   let selectedDetailDatasetId = $state<string | null>(null);
-  let scatterTooltip = $state<{ name: string; x: number; y: number } | null>(null);
+  let activeView = $state<ViewId>("leaderboard");
+  let activeScatterMetric = $state<ScatterMetric>("mean_latency_ms");
+  let showParetoFrontier = $state(true);
+  let scatterTooltip = $state<{
+    point: ScatterPoint;
+    x: number;
+    y: number;
+  } | null>(null);
   let sortKey = $state<SortKey>("macro_f1");
   let sortDirection = $state<SortDirection>("desc");
 
@@ -210,27 +225,27 @@
     models: Record<string, PaperLink>;
   };
   const plotBox = {
-    width: 380,
-    height: 270,
-    left: 50,
-    right: 18,
-    top: 18,
-    bottom: 46,
+    width: 920,
+    height: 500,
+    left: 72,
+    right: 30,
+    top: 30,
+    bottom: 64,
   };
   const scatterConfigs: ScatterConfig[] = [
     {
       metric: "mean_latency_ms",
-      title: "Mean Test Macro-F1 vs. Latency",
+      title: "Mean Macro-F1 vs. Latency",
       xLabel: "Mean latency (ms)",
     },
     {
       metric: "mean_peak_pss_delta_mb",
-      title: "Mean Test Macro-F1 vs. Peak PSS Delta",
+      title: "Mean Macro-F1 vs. Peak PSS Delta",
       xLabel: "Mean peak PSS delta (MB)",
     },
     {
       metric: "exported_model_size_mb",
-      title: "Mean Test Macro-F1 vs. Exported Model Size",
+      title: "Mean Macro-F1 vs. Exported Model Size",
       xLabel: "Exported model size (MB)",
     },
   ];
@@ -339,7 +354,10 @@
     efficiencyCombined: bestScoreValue(rows, "efficiencyCombined", "desc"),
   });
   const netImprovementScale = $derived(getNetImprovementScale(rows));
-  const scatterPlots = $derived(scatterConfigs.map((config) => createScatterPlot(config)));
+  const activeScatterConfig = $derived(
+    scatterConfigs.find((config) => config.metric === activeScatterMetric) ?? scatterConfigs[0],
+  );
+  const scatterPlot = $derived(createScatterPlot(activeScatterConfig));
   const matrixRows = $derived(
     catalog.datasets
       .filter((item) => selectedDatasetSet.has(item.id))
@@ -1045,40 +1063,57 @@
   }
 
   function createScatterPlot(config: ScatterConfig): ScatterPlot {
-    const points = deploymentPoints.flatMap((point) => {
-      const metricValue = point[config.metric];
+    const rawPoints = rows.flatMap((row) => {
+      const metricValue = scatterMetricValue(row, config.metric);
+      const deploymentPoint = deploymentPointByModelId.get(row.id);
 
       if (
         typeof metricValue !== "number" ||
         !Number.isFinite(metricValue) ||
-        typeof point.mean_test_macro_f1 !== "number" ||
-        !Number.isFinite(point.mean_test_macro_f1)
+        typeof row.macroF1 !== "number" ||
+        !Number.isFinite(row.macroF1)
       ) {
         return [];
       }
 
       return [
         {
-          ...point,
+          model_id: row.id,
+          name: row.name,
+          family: row.family,
+          color: deploymentPoint?.color ?? "#6f6a64",
           x: metricValue,
-          y: point.mean_test_macro_f1,
+          y: row.macroF1,
         },
       ];
     });
-    const allMacroF1 = deploymentPoints
-      .map((point) => point.mean_test_macro_f1)
-      .filter((value): value is number => typeof value === "number" && Number.isFinite(value));
+    const points: ScatterPoint[] = rawPoints.map((point) => {
+      const dominators = rawPoints
+        .filter((candidate) => candidate.model_id !== point.model_id && dominates(candidate, point))
+        .map((candidate) => candidate.name);
+
+      return {
+        ...point,
+        isPareto: dominators.length === 0,
+        dominators,
+      };
+    });
+    const frontierPoints = points
+      .filter((point) => point.isPareto)
+      .sort((a, b) => a.x - b.x || a.y - b.y || a.name.localeCompare(b.name));
+    const allMacroF1 = points.map((point) => point.y);
 
     if (points.length === 0 || allMacroF1.length === 0) {
       return {
         ...config,
         points,
+        frontierPoints,
         xMax: 1,
         yMin: 0.45,
         yMax: 0.7,
         xTicks: createLinearTicks(0, 1, 4),
         yTicks: createLinearTicks(0.45, 0.7, 4),
-        missingCount: deploymentPoints.length,
+        missingCount: rows.length,
       };
     }
 
@@ -1089,13 +1124,40 @@
     return {
       ...config,
       points,
+      frontierPoints,
       xMax,
       yMin,
       yMax,
       xTicks: createLinearTicks(0, xMax, 4),
       yTicks: createLinearTicks(yMin, yMax, 4),
-      missingCount: deploymentPoints.length - points.length,
+      missingCount: rows.length - points.length,
     };
+  }
+
+  function scatterMetricValue(row: LeaderboardRow, metric: ScatterMetric) {
+    if (metric === "mean_latency_ms") return row.latencyMs;
+    if (metric === "mean_peak_pss_delta_mb") return row.peakMemoryMb;
+    return row.modelSizeMb;
+  }
+
+  function dominates(
+    candidate: { x: number; y: number },
+    point: { x: number; y: number },
+  ) {
+    return (
+      candidate.x <= point.x &&
+      candidate.y >= point.y &&
+      (candidate.x < point.x || candidate.y > point.y)
+    );
+  }
+
+  function frontierPath(chart: ScatterPlot) {
+    return chart.frontierPoints
+      .map(
+        (point, index) =>
+          `${index === 0 ? "M" : "L"} ${plotX(point.x, chart)} ${plotY(point.y, chart)}`,
+      )
+      .join(" ");
   }
 
   function createLinearTicks(min: number, max: number, steps: number) {
@@ -1139,9 +1201,15 @@
     return `${(value * 100).toFixed(0)}%`;
   }
 
-  function showScatterTooltip(event: MouseEvent, name: string) {
+  function formatScatterValue(value: number, metric: ScatterMetric) {
+    if (metric === "mean_latency_ms") return `${value.toFixed(2)} ms latency`;
+    if (metric === "mean_peak_pss_delta_mb") return `${value.toFixed(2)} MB peak PSS`;
+    return `${value.toFixed(2)} MB model size`;
+  }
+
+  function showScatterTooltip(event: MouseEvent, point: ScatterPoint) {
     scatterTooltip = {
-      name,
+      point,
       x: event.clientX,
       y: event.clientY,
     };
@@ -1156,10 +1224,10 @@
     };
   }
 
-  function showFocusedScatterTooltip(event: FocusEvent, name: string) {
+  function showFocusedScatterTooltip(event: FocusEvent, point: ScatterPoint) {
     const bounds = (event.currentTarget as SVGGraphicsElement).getBoundingClientRect();
     scatterTooltip = {
-      name,
+      point,
       x: bounds.left + bounds.width / 2,
       y: bounds.top,
     };
@@ -1348,10 +1416,52 @@
     </div>
   </section>
 
-  <section class="arena-panel">
-    <div class="panel-header">
-      <div>
-        <h2>Leaderboard</h2>
+  <div class="view-switcher" aria-label="Benchmark views" role="tablist">
+    <button
+      id="leaderboard-tab"
+      type="button"
+      role="tab"
+      aria-selected={activeView === "leaderboard"}
+      aria-controls="leaderboard-view"
+      class:active={activeView === "leaderboard"}
+      onclick={() => (activeView = "leaderboard")}
+    >
+      Rankings
+    </button>
+    <button
+      id="matrix-tab"
+      type="button"
+      role="tab"
+      aria-selected={activeView === "matrix"}
+      aria-controls="matrix-view"
+      class:active={activeView === "matrix"}
+      onclick={() => (activeView = "matrix")}
+    >
+      Score Matrix
+    </button>
+    <button
+      id="pareto-tab"
+      type="button"
+      role="tab"
+      aria-selected={activeView === "pareto"}
+      aria-controls="pareto-view"
+      class:active={activeView === "pareto"}
+      onclick={() => (activeView = "pareto")}
+    >
+      Efficiency Trade-offs
+    </button>
+  </div>
+
+  {#if activeView === "leaderboard"}
+  <div
+    id="leaderboard-view"
+    class="arena-panel"
+    role="tabpanel"
+    aria-labelledby="leaderboard-tab"
+  >
+      <div class="panel-header">
+        <div>
+          <h2>Rankings</h2>
       </div>
     </div>
 
@@ -1657,15 +1767,24 @@
         </tbody>
       </table>
     </div>
-  </section>
+  </div>
+  {/if}
 
-  <section class="arena-panel matrix-panel">
+  {#if activeView === "matrix"}
+  <div
+    id="matrix-view"
+    class="arena-panel matrix-panel"
+    role="tabpanel"
+    aria-labelledby="matrix-tab"
+  >
     <div class="panel-header">
       <div>
         <h2>Dataset × Model Matrix</h2>
+        <p>{matrixRows.length} selected datasets × {visibleModels.length} visible models</p>
       </div>
     </div>
 
+    {#if matrixRows.length > 0 && visibleModels.length > 0}
     <div class="table-wrap matrix-wrap">
       <table class="matrix-table">
         <thead>
@@ -1717,33 +1836,66 @@
         </tbody>
       </table>
     </div>
-  </section>
+    {:else}
+      <div class="empty-view">
+        Select at least one dataset and model to populate the score matrix.
+      </div>
+    {/if}
+  </div>
+  {/if}
 
-  {#if deploymentTradeoffs && deploymentPoints.length > 0}
-    <section class="arena-panel scatter-panel">
+  {#if activeView === "pareto"}
+    <div
+      id="pareto-view"
+      class="arena-panel scatter-panel"
+      role="tabpanel"
+      aria-labelledby="pareto-tab"
+    >
       <div class="panel-header">
         <div>
-          <h2>Deployment Trade-Offs</h2>
+          <h2>Performance–Efficiency Trade-offs</h2>
+          <p>Lower deployment cost and higher Macro-F1 are better.</p>
+        </div>
+        <div class="pareto-controls">
+          <label>
+            <span>X-axis</span>
+            <select bind:value={activeScatterMetric} aria-label="Pareto cost metric">
+              {#each scatterConfigs as config}
+                <option value={config.metric}>{config.xLabel}</option>
+              {/each}
+            </select>
+          </label>
+          <label class="frontier-toggle">
+            <input type="checkbox" bind:checked={showParetoFrontier} />
+            <span>Show frontier</span>
+          </label>
         </div>
       </div>
 
-      <div class="scatter-grid">
-        {#each scatterPlots as chart}
-          <article class="scatter-plot">
-            <h3>{chart.title}</h3>
+      {#if deploymentTradeoffs && scatterPlot.points.length > 0}
+        <div class="pareto-summary" aria-live="polite">
+          <strong>{scatterPlot.frontierPoints.length}</strong> Pareto-optimal models among
+          <strong>{scatterPlot.points.length}</strong> visible models
+          {#if scatterPlot.missingCount > 0}
+            <span>· {scatterPlot.missingCount} without this deployment measurement</span>
+          {/if}
+        </div>
+        <div class="scatter-grid pareto-grid">
+          <article class="scatter-plot pareto-plot">
+            <h3>{scatterPlot.title}</h3>
             <svg
               class="scatter-chart"
               viewBox={`0 0 ${plotBox.width} ${plotBox.height}`}
               role="img"
-              aria-label={chart.title}
+              aria-label={`${scatterPlot.title}. ${scatterPlot.frontierPoints.length} Pareto-optimal models.`}
             >
               <g class="scatter-grid-lines" aria-hidden="true">
-                {#each chart.yTicks as tick}
+                {#each scatterPlot.yTicks as tick}
                   <line
                     x1={plotBox.left}
                     x2={plotBox.width - plotBox.right}
-                    y1={plotY(tick, chart)}
-                    y2={plotY(tick, chart)}
+                    y1={plotY(tick, scatterPlot)}
+                    y2={plotY(tick, scatterPlot)}
                   ></line>
                 {/each}
               </g>
@@ -1762,34 +1914,34 @@
                 ></line>
               </g>
               <g class="scatter-ticks">
-                {#each chart.xTicks as tick}
+                {#each scatterPlot.xTicks as tick}
                   <g>
                     <line
-                      x1={plotX(tick, chart)}
-                      x2={plotX(tick, chart)}
+                      x1={plotX(tick, scatterPlot)}
+                      x2={plotX(tick, scatterPlot)}
                       y1={plotBox.height - plotBox.bottom}
                       y2={plotBox.height - plotBox.bottom + 5}
                     ></line>
                     <text
-                      x={plotX(tick, chart)}
+                      x={plotX(tick, scatterPlot)}
                       y={plotBox.height - plotBox.bottom + 20}
                       text-anchor="middle"
                     >
-                      {formatScatterTick(tick, chart.metric)}
+                      {formatScatterTick(tick, scatterPlot.metric)}
                     </text>
                   </g>
                 {/each}
-                {#each chart.yTicks as tick}
+                {#each scatterPlot.yTicks as tick}
                   <g>
                     <line
                       x1={plotBox.left - 5}
                       x2={plotBox.left}
-                      y1={plotY(tick, chart)}
-                      y2={plotY(tick, chart)}
+                      y1={plotY(tick, scatterPlot)}
+                      y2={plotY(tick, scatterPlot)}
                     ></line>
                     <text
                       x={plotBox.left - 9}
-                      y={plotY(tick, chart)}
+                      y={plotY(tick, scatterPlot)}
                       dominant-baseline="middle"
                       text-anchor="end"
                     >
@@ -1804,7 +1956,7 @@
                 y={plotBox.height - 8}
                 text-anchor="middle"
               >
-                {chart.xLabel}
+                {scatterPlot.xLabel}
               </text>
               <text
                 class="scatter-axis-title"
@@ -1812,39 +1964,51 @@
                 text-anchor="middle"
                 transform={`translate(14 ${(plotBox.top + plotBox.height - plotBox.bottom) / 2}) rotate(-90)`}
               >
-                Mean test Macro-F1
+                Mean Macro-F1 on selected datasets
               </text>
+              {#if showParetoFrontier && scatterPlot.frontierPoints.length > 1}
+                <path
+                  class="pareto-frontier"
+                  d={frontierPath(scatterPlot)}
+                  aria-hidden="true"
+                ></path>
+              {/if}
               <g class="scatter-points">
-                {#each chart.points as point}
+                {#each scatterPlot.points as point}
                   <g
                     class="scatter-point"
+                    class:pareto-point={point.isPareto}
+                    class:dominated-point={!point.isPareto}
                     role="button"
                     tabindex="0"
-                    aria-label={`Open model details: ${point.name}`}
+                    aria-label={`${point.name}: ${formatPercent(point.y)}, ${formatScatterValue(point.x, scatterPlot.metric)}. ${point.isPareto ? "Pareto optimal" : "Dominated"}. Open model details.`}
                     onclick={() => openModelDetail(point.model_id)}
                     onkeydown={(event) => handleModelRowKeydown(event, point.model_id)}
-                    onfocus={(event) => showFocusedScatterTooltip(event, point.name)}
+                    onfocus={(event) => showFocusedScatterTooltip(event, point)}
                     onblur={hideScatterTooltip}
+                    onmouseenter={(event) => showScatterTooltip(event, point)}
+                    onmousemove={moveScatterTooltip}
+                    onmouseleave={hideScatterTooltip}
                   >
-                    <title>{point.name}</title>
+                    <title>{point.name}: {point.isPareto ? "Pareto optimal" : "dominated"}</title>
                     <circle
-                      cx={plotX(point.x, chart)}
-                      cy={plotY(point.y, chart)}
-                      r={5.4}
+                      cx={plotX(point.x, scatterPlot)}
+                      cy={plotY(point.y, scatterPlot)}
+                      r={point.isPareto ? 7 : 5.5}
                       fill={point.color}
-                      onmouseenter={(event) => showScatterTooltip(event, point.name)}
-                      onmousemove={moveScatterTooltip}
-                      onmouseleave={hideScatterTooltip}
                     ></circle>
                   </g>
                 {/each}
               </g>
             </svg>
           </article>
-        {/each}
-      </div>
-
-    </section>
+        </div>
+      {:else}
+        <div class="empty-view">
+          Select at least one model and dataset with deployment measurements to draw the Pareto frontier.
+        </div>
+      {/if}
+    </div>
   {/if}
 
   {#if scatterTooltip}
@@ -1852,7 +2016,14 @@
       class="scatter-tooltip"
       style={`left: ${scatterTooltip.x}px; top: ${scatterTooltip.y}px;`}
     >
-      {scatterTooltip.name}
+      <strong>{scatterTooltip.point.name}</strong>
+      <span>{formatPercent(scatterTooltip.point.y)} Macro-F1</span>
+      <span>{formatScatterValue(scatterTooltip.point.x, scatterPlot.metric)}</span>
+      <span class:pareto-status={scatterTooltip.point.isPareto}>
+        {scatterTooltip.point.isPareto
+          ? "Pareto optimal"
+          : `Dominated by ${scatterTooltip.point.dominators.slice(0, 2).join(", ")}`}
+      </span>
     </div>
   {/if}
 
@@ -2086,6 +2257,49 @@
     border-radius: 7px 7px 0 0;
   }
 
+  .view-switcher {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    min-width: 0;
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    background: var(--panel-soft);
+    overflow: hidden;
+  }
+
+  .view-switcher button {
+    min-height: 44px;
+    border: 0;
+    border-right: 1px solid var(--line);
+    background: transparent;
+    color: var(--muted-strong);
+    padding: 0 14px;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .view-switcher button:last-child {
+    border-right: 0;
+  }
+
+  .view-switcher button:hover,
+  .view-switcher button:focus-visible {
+    background: var(--panel);
+    color: var(--ink);
+    outline: none;
+  }
+
+  .view-switcher button:focus-visible {
+    box-shadow: inset 0 0 0 2px hsl(24 6% 17% / 0.25);
+  }
+
+  .view-switcher button.active {
+    background: var(--ink);
+    color: var(--panel);
+  }
+
   .panel-header {
     display: flex;
     justify-content: space-between;
@@ -2095,6 +2309,12 @@
     padding: 14px 16px;
     border-bottom: 1px solid var(--line);
     background: var(--panel-soft);
+  }
+
+  .panel-header p {
+    margin-top: 5px;
+    color: var(--muted-strong);
+    font-size: 0.8rem;
   }
 
   h2,
@@ -3001,6 +3221,78 @@
     align-items: stretch;
   }
 
+  .pareto-grid {
+    grid-template-columns: minmax(0, 1fr);
+    padding-top: 8px;
+  }
+
+  .pareto-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    align-items: end;
+    justify-content: flex-end;
+  }
+
+  .pareto-controls label:not(.frontier-toggle) {
+    display: grid;
+    gap: 5px;
+  }
+
+  .pareto-controls label > span:first-child {
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .pareto-controls select {
+    min-height: 36px;
+    border: 1px solid var(--line-strong);
+    border-radius: 7px;
+    background: var(--panel);
+    color: var(--ink);
+    padding: 0 34px 0 10px;
+    font: inherit;
+    font-size: 0.8rem;
+  }
+
+  .frontier-toggle {
+    display: inline-flex;
+    min-height: 36px;
+    align-items: center;
+    gap: 8px;
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .frontier-toggle input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+  }
+
+  .frontier-toggle span {
+    color: var(--ink) !important;
+    font-size: 0.8rem !important;
+    text-transform: none !important;
+  }
+
+  .pareto-summary {
+    padding: 12px 16px 0;
+    color: var(--muted-strong);
+    font-size: 0.8rem;
+  }
+
+  .pareto-summary strong {
+    color: var(--ink);
+    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  .pareto-summary span {
+    color: var(--muted);
+  }
+
   .scatter-plot {
     display: grid;
     min-width: 0;
@@ -3020,6 +3312,14 @@
     font-weight: 500;
     letter-spacing: 0;
     line-height: 1.15;
+  }
+
+  .pareto-plot {
+    padding: 16px;
+  }
+
+  .pareto-plot h3 {
+    font-size: 1.1rem;
   }
 
   .scatter-chart {
@@ -3052,6 +3352,15 @@
     font-weight: 500;
   }
 
+  .pareto-frontier {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 6 4;
+  }
+
   .scatter-axis-title {
     fill: var(--ink);
     font-size: 9.4px;
@@ -3065,30 +3374,67 @@
   .scatter-point circle {
     stroke: var(--panel);
     stroke-width: 1.6;
+    transition:
+      opacity 120ms ease,
+      stroke-width 120ms ease;
+  }
+
+  .scatter-point.dominated-point circle {
+    opacity: 0.52;
+  }
+
+  .scatter-point.pareto-point circle {
+    stroke: var(--ink);
+    stroke-width: 2.2;
   }
 
   .scatter-point:hover circle,
   .scatter-point:focus-visible circle {
+    opacity: 1;
     stroke: var(--ink);
-    stroke-width: 2;
+    stroke-width: 3;
   }
 
   .scatter-tooltip {
     position: fixed;
     z-index: 90;
-    max-width: 14rem;
-    padding: 0.34rem 0.5rem;
+    display: grid;
+    gap: 2px;
+    width: max-content;
+    max-width: min(19rem, calc(100vw - 24px));
+    padding: 0.55rem 0.65rem;
     transform: translate(-50%, calc(-100% - 0.55rem));
     border: 1px solid var(--ink);
-    border-radius: 999px;
+    border-radius: 8px;
     background: var(--ink);
     color: var(--panel);
     font-size: 0.72rem;
     font-weight: 600;
     line-height: 1.2;
     pointer-events: none;
+    text-align: left;
+    white-space: normal;
+  }
+
+  .scatter-tooltip strong {
+    color: var(--panel);
+    font-size: 0.78rem;
+  }
+
+  .scatter-tooltip span {
+    color: hsl(33 31% 94% / 0.78);
+    font-weight: 500;
+  }
+
+  .scatter-tooltip .pareto-status {
+    color: hsl(85 56% 72%);
+    font-weight: 700;
+  }
+
+  .empty-view {
+    padding: 36px 16px;
+    color: var(--muted);
     text-align: center;
-    white-space: nowrap;
   }
 
   .modal-layer {
@@ -3348,6 +3694,26 @@
 
     .filter-content {
       grid-template-columns: 1fr;
+    }
+
+    .view-switcher button {
+      min-height: 46px;
+      padding: 5px 8px;
+      font-size: 0.76rem;
+    }
+
+    .pareto-controls {
+      width: 100%;
+      align-items: stretch;
+      justify-content: start;
+    }
+
+    .pareto-controls label:not(.frontier-toggle) {
+      width: 100%;
+    }
+
+    .pareto-controls select {
+      width: 100%;
     }
 
     .dataset-filter {

@@ -1,11 +1,11 @@
 # Contributing Benchmark Entries
 
-WHAR Arena uses pull requests as the submission interface.
+HARena uses pull requests as the submission interface.
 
 ## New Models
 
 Add the implementation to `whar-models` and register it in that package. Once
-the model appears in `whar_models.list_models()`, WHAR Arena automatically plans
+the model appears in `whar_models.list_models()`, HARena automatically plans
 the model against every benchmark dataset in the official protocol.
 
 Local check:
@@ -18,7 +18,7 @@ uv run whar-arena plan --only-model tinyhar --only-missing
 
 Add the dataset to `whar-datasets` and include it in
 `BENCHMARK_DATASET_IDS` when it is eligible for the official benchmark. Once it
-appears there, WHAR Arena automatically plans every registered model against it.
+appears there, HARena automatically plans every registered model against it.
 
 Local check:
 

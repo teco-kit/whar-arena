@@ -1,0 +1,879 @@
+---
+import BenchmarkPage from "../components/BenchmarkPage.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const modelRepository = "https://github.com/teco-kit/whar-models";
+const datasetRepository = "https://github.com/teco-kit/whar-datasets";
+---
+
+<BaseLayout title="HARena | Contribute">
+  <BenchmarkPage
+    title="Contribute"
+    headingId="contribute-heading"
+    description="Add a model or dataset to the open HARena benchmark. Prepare the metadata here, then submit the implementation through GitHub for review."
+  >
+    <section class="process-panel" aria-labelledby="process-heading">
+      <div class="section-heading">
+        <p class="eyebrow">How submissions work</p>
+        <h2 id="process-heading">From contribution to benchmark result</h2>
+        <p>
+          Code and metadata are reviewed together. Merging a contribution makes it discoverable by
+          HARena; official measurements are produced later by the benchmark runner, not supplied by
+          the contributor.
+        </p>
+      </div>
+      <ol class="process-steps">
+        <li><span>1</span><strong>Prepare</strong><small>Generate metadata and implement the adapter.</small></li>
+        <li><span>2</span><strong>Review</strong><small>Open a pull request in the relevant repository.</small></li>
+        <li><span>3</span><strong>Benchmark</strong><small>Maintainers approve eligibility and queue missing runs.</small></li>
+        <li><span>4</span><strong>Publish</strong><small>Validated results appear in the next HARena update.</small></li>
+      </ol>
+    </section>
+
+    <section class="submission-shell" aria-labelledby="submission-heading">
+      <div class="section-heading submission-heading">
+        <div>
+          <p class="eyebrow">Submission builder</p>
+          <h2 id="submission-heading">What would you like to contribute?</h2>
+        </div>
+        <p class="privacy-note">Nothing entered here is sent to HARena.</p>
+      </div>
+
+      <div class="submission-tabs" aria-label="Contribution type">
+        <button type="button" class="is-active" data-kind-button="model" aria-pressed="true">
+          <span>Model</span>
+          <small>Architecture, implementation and paper metadata</small>
+        </button>
+        <button type="button" data-kind-button="dataset" aria-pressed="false">
+          <span>Dataset</span>
+          <small>Source, sensors, parser and license metadata</small>
+        </button>
+      </div>
+
+      <div class="submission-layout">
+        <aside class="requirements" aria-live="polite">
+          <div data-requirements="model">
+            <h3>Model requirements</h3>
+            <p>
+              The pull request belongs in
+              <a href={modelRepository} target="_blank" rel="noreferrer">whar-models</a>.
+            </p>
+            <ol>
+              <li>Add the implementation under <code>src/whar_models/&lt;model_id&gt;/</code>.</li>
+              <li>Accept variable channel counts, sequence lengths and class counts.</li>
+              <li>Register the model in <code>src/whar_models/registry.py</code>.</li>
+              <li>Add a focused test that builds the model and performs a forward pass.</li>
+              <li>Document defaults and any differences from the published architecture.</li>
+            </ol>
+            <p class="after-merge">
+              After merge, <code>whar_models.list_models()</code> exposes the model and HARena can plan
+              it against every official dataset.
+            </p>
+          </div>
+
+          <div data-requirements="dataset" hidden>
+            <h3>Dataset requirements</h3>
+            <p>
+              The pull request belongs in
+              <a href={datasetRepository} target="_blank" rel="noreferrer">whar-datasets</a>.
+            </p>
+            <ol>
+              <li>Add a configuration, downloader and parser for the original data source.</li>
+              <li>Do not commit or re-host raw data; respect its license and access terms.</li>
+              <li>Standardize subjects, sessions, activities, timestamps and sensor channels.</li>
+              <li>Register the dataset and add parsing and metadata tests.</li>
+              <li>Request inclusion in <code>BENCHMARK_DATASET_IDS</code> for official evaluation.</li>
+            </ol>
+            <p class="after-merge">
+              Benchmark eligibility is reviewed separately. Once included, HARena can plan every
+              registered model against the dataset.
+            </p>
+          </div>
+        </aside>
+
+        <div class="builder-panel">
+          <form data-submission-form="model">
+            <div class="form-heading">
+              <h3>Model metadata</h3>
+              <p>Required fields are marked with an asterisk.</p>
+            </div>
+            <div class="field-grid">
+              <label>
+                <span>Model ID *</span>
+                <input name="id" required pattern="[a-z0-9]+(?:_[a-z0-9]+)*" placeholder="tinyhar" />
+                <small>Lowercase snake_case; this becomes the stable registry ID.</small>
+              </label>
+              <label>
+                <span>Display name *</span>
+                <input name="name" required placeholder="TinyHAR" />
+              </label>
+              <label>
+                <span>Architecture family *</span>
+                <input name="family" required placeholder="cnn_rnn_attention" />
+              </label>
+              <label>
+                <span>Framework *</span>
+                <select name="framework" required>
+                  <option value="">Select a framework</option>
+                  <option value="torch">PyTorch</option>
+                  <option value="sklearn">scikit-learn</option>
+                  <option value="tensorflow">TensorFlow</option>
+                  <option value="other">Other</option>
+                </select>
+              </label>
+              <label>
+                <span>Publication year</span>
+                <input name="year" type="number" min="1900" max="2100" placeholder="2026" />
+              </label>
+              <label>
+                <span>License *</span>
+                <input name="license" required placeholder="Apache-2.0" />
+              </label>
+              <label class="wide-field">
+                <span>Paper URL</span>
+                <input name="paper_url" type="url" placeholder="https://doi.org/..." />
+              </label>
+              <label class="wide-field">
+                <span>Original implementation URL</span>
+                <input name="source_url" type="url" placeholder="https://github.com/..." />
+              </label>
+              <label class="wide-field">
+                <span>Authors</span>
+                <input name="authors" placeholder="First Author, Second Author" />
+                <small>Comma-separated names.</small>
+              </label>
+              <label class="wide-field">
+                <span>Default configuration</span>
+                <textarea name="defaults" rows="3" placeholder="Learning rate, optimizer and architecture defaults"></textarea>
+              </label>
+              <label class="wide-field">
+                <span>Implementation notes</span>
+                <textarea name="notes" rows="3" placeholder="Known differences from the paper or special constraints"></textarea>
+              </label>
+            </div>
+            <button class="generate-button" type="submit">Generate model submission</button>
+          </form>
+
+          <form data-submission-form="dataset" hidden>
+            <div class="form-heading">
+              <h3>Dataset metadata</h3>
+              <p>Required fields are marked with an asterisk.</p>
+            </div>
+            <div class="field-grid">
+              <label>
+                <span>Dataset ID *</span>
+                <input name="id" required pattern="[a-z0-9]+(?:_[a-z0-9]+)*" placeholder="example_har" />
+                <small>Lowercase snake_case; this becomes the stable registry ID.</small>
+              </label>
+              <label>
+                <span>Display name *</span>
+                <input name="name" required placeholder="Example-HAR" />
+              </label>
+              <label>
+                <span>Publication year</span>
+                <input name="year" type="number" min="1900" max="2100" placeholder="2026" />
+              </label>
+              <label>
+                <span>License or access terms *</span>
+                <input name="license" required placeholder="CC BY 4.0" />
+              </label>
+              <label>
+                <span>Subjects</span>
+                <input name="subjects" type="number" min="1" placeholder="30" />
+              </label>
+              <label>
+                <span>Activities</span>
+                <input name="activities" type="number" min="1" placeholder="12" />
+              </label>
+              <label>
+                <span>Sensor channels</span>
+                <input name="channels" type="number" min="1" placeholder="6" />
+              </label>
+              <label>
+                <span>Sampling rate</span>
+                <input name="sampling_rate" placeholder="50 Hz" />
+              </label>
+              <label class="wide-field">
+                <span>Official dataset URL *</span>
+                <input name="dataset_url" type="url" required placeholder="https://zenodo.org/..." />
+              </label>
+              <label class="wide-field">
+                <span>Paper URL</span>
+                <input name="paper_url" type="url" placeholder="https://doi.org/..." />
+              </label>
+              <label class="wide-field">
+                <span>Authors</span>
+                <input name="authors" placeholder="First Author, Second Author" />
+                <small>Comma-separated names.</small>
+              </label>
+              <label class="wide-field">
+                <span>Sensor modalities</span>
+                <input name="modalities" placeholder="accelerometer, gyroscope" />
+                <small>Comma-separated values.</small>
+              </label>
+              <label class="wide-field">
+                <span>Devices and body placements</span>
+                <input name="devices" placeholder="smartwatch at wrist, phone at waist" />
+                <small>Comma-separated values.</small>
+              </label>
+              <label class="wide-field">
+                <span>Application settings</span>
+                <input name="settings" placeholder="ADL, locomotion, fitness" />
+                <small>Comma-separated values.</small>
+              </label>
+              <label class="wide-field">
+                <span>Access and data-quality notes</span>
+                <textarea name="notes" rows="3" placeholder="Authentication, consent, missing sensors or known limitations"></textarea>
+              </label>
+            </div>
+            <label class="eligibility-check">
+              <input name="benchmark_eligible" type="checkbox" value="true" />
+              <span>Request review for inclusion in the official benchmark dataset list.</span>
+            </label>
+            <button class="generate-button" type="submit">Generate dataset submission</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="output-panel" data-output-panel hidden aria-labelledby="output-heading">
+      <div class="output-heading">
+        <div>
+          <p class="eyebrow">Prepared locally</p>
+          <h2 id="output-heading">Your submission package</h2>
+        </div>
+        <span data-output-status>Ready</span>
+      </div>
+      <p class="output-guidance">
+        Add this metadata to the implementation pull request. You can also open a prefilled submission
+        issue first if you want feedback before writing code.
+      </p>
+      <pre><code data-yaml-output></code></pre>
+      <div class="output-actions">
+        <button type="button" data-copy-yaml>Copy YAML</button>
+        <button type="button" data-download-yaml>Download YAML</button>
+        <a data-open-issue target="_blank" rel="noreferrer">Open submission issue</a>
+        <a data-open-pr target="_blank" rel="noreferrer">Open pull request</a>
+      </div>
+      <p class="pr-note">
+        GitHub can only create the pull request after your code exists on a branch. The button opens
+        the repository comparison page so you can select that branch.
+      </p>
+    </section>
+  </BenchmarkPage>
+</BaseLayout>
+
+<script>
+  type ContributionKind = "model" | "dataset";
+
+  const repositories: Record<ContributionKind, string> = {
+    model: "https://github.com/teco-kit/whar-models",
+    dataset: "https://github.com/teco-kit/whar-datasets",
+  };
+
+  let currentYaml = "";
+  let currentFilename = "submission.yaml";
+
+  const kindButtons = Array.from(
+    document.querySelectorAll<HTMLButtonElement>("[data-kind-button]"),
+  );
+  const forms = Array.from(
+    document.querySelectorAll<HTMLFormElement>("[data-submission-form]"),
+  );
+  const requirementPanels = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-requirements]"),
+  );
+  const outputPanel = document.querySelector<HTMLElement>("[data-output-panel]");
+  const yamlOutput = document.querySelector<HTMLElement>("[data-yaml-output]");
+  const outputStatus = document.querySelector<HTMLElement>("[data-output-status]");
+  const issueLink = document.querySelector<HTMLAnchorElement>("[data-open-issue]");
+  const pullRequestLink = document.querySelector<HTMLAnchorElement>("[data-open-pr]");
+
+  const quoted = (value: FormDataEntryValue | null) => JSON.stringify(String(value ?? "").trim());
+  const listValue = (value: FormDataEntryValue | null) =>
+    String(value ?? "")
+      .split(",")
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .map((part) => JSON.stringify(part))
+      .join(", ");
+
+  const optionalLine = (key: string, data: FormData, array = false) => {
+    const value = data.get(key);
+    if (!String(value ?? "").trim()) return null;
+    return array ? `${key}: [${listValue(value)}]` : `${key}: ${quoted(value)}`;
+  };
+
+  const createYaml = (kind: ContributionKind, data: FormData) => {
+    const lines: Array<string | null> = [
+      `kind: ${kind}`,
+      `id: ${quoted(data.get("id"))}`,
+      `name: ${quoted(data.get("name"))}`,
+      optionalLine("year", data),
+      `license: ${quoted(data.get("license"))}`,
+      optionalLine("paper_url", data),
+      optionalLine("authors", data, true),
+    ];
+
+    if (kind === "model") {
+      lines.push(
+        `family: ${quoted(data.get("family"))}`,
+        `framework: ${quoted(data.get("framework"))}`,
+        optionalLine("source_url", data),
+        optionalLine("defaults", data),
+        optionalLine("notes", data),
+      );
+    } else {
+      lines.push(
+        `dataset_url: ${quoted(data.get("dataset_url"))}`,
+        optionalLine("subjects", data),
+        optionalLine("activities", data),
+        optionalLine("channels", data),
+        optionalLine("sampling_rate", data),
+        optionalLine("modalities", data, true),
+        optionalLine("devices", data, true),
+        optionalLine("settings", data, true),
+        `benchmark_eligible: ${data.get("benchmark_eligible") === "true"}`,
+        optionalLine("notes", data),
+      );
+    }
+
+    return lines.filter((line): line is string => line !== null).join("\n");
+  };
+
+  const setActiveKind = (kind: ContributionKind) => {
+    kindButtons.forEach((button) => {
+      const isActive = button.dataset.kindButton === kind;
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-pressed", String(isActive));
+    });
+    forms.forEach((form) => {
+      form.hidden = form.dataset.submissionForm !== kind;
+    });
+    requirementPanels.forEach((panel) => {
+      panel.hidden = panel.dataset.requirements !== kind;
+    });
+    if (outputPanel) outputPanel.hidden = true;
+  };
+
+  kindButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const kind = button.dataset.kindButton;
+      if (kind === "model" || kind === "dataset") setActiveKind(kind);
+    });
+  });
+
+  forms.forEach((form) => {
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+
+      const kind = form.dataset.submissionForm as ContributionKind;
+      const data = new FormData(form);
+      const submissionId = String(data.get("id") ?? "submission");
+      currentYaml = createYaml(kind, data);
+      currentFilename = `${submissionId}.metadata.yaml`;
+
+      if (yamlOutput) yamlOutput.textContent = currentYaml;
+      if (outputStatus) outputStatus.textContent = `${kind === "model" ? "Model" : "Dataset"} metadata ready`;
+
+      const issueTitle = `[${kind} submission] ${String(data.get("name") ?? submissionId)}`;
+      const checklist = kind === "model"
+        ? "- [ ] Implementation added\n- [ ] Registry entry added\n- [ ] Build and forward-pass test added"
+        : "- [ ] Downloader/parser added\n- [ ] Dataset registered\n- [ ] Parsing and metadata tests added\n- [ ] Benchmark eligibility reviewed";
+      const issueBody = `## Proposed ${kind}\n\n\`\`\`yaml\n${currentYaml}\n\`\`\`\n\n## Implementation checklist\n\n${checklist}`;
+      const repository = repositories[kind];
+
+      if (issueLink) {
+        issueLink.href = `${repository}/issues/new?title=${encodeURIComponent(issueTitle)}&body=${encodeURIComponent(issueBody)}`;
+      }
+      if (pullRequestLink) pullRequestLink.href = `${repository}/compare`;
+      if (outputPanel) {
+        outputPanel.hidden = false;
+        outputPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+  });
+
+  document.querySelector<HTMLButtonElement>("[data-copy-yaml]")?.addEventListener("click", async (event) => {
+    const button = event.currentTarget as HTMLButtonElement;
+    try {
+      await navigator.clipboard.writeText(currentYaml);
+      button.textContent = "Copied";
+    } catch {
+      const selection = window.getSelection();
+      const range = document.createRange();
+      if (yamlOutput) {
+        range.selectNodeContents(yamlOutput);
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+      }
+      button.textContent = "Selected";
+    }
+    window.setTimeout(() => (button.textContent = "Copy YAML"), 1600);
+  });
+
+  document.querySelector<HTMLButtonElement>("[data-download-yaml]")?.addEventListener("click", () => {
+    const blob = new Blob([`${currentYaml}\n`], { type: "text/yaml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = currentFilename;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  });
+</script>
+
+<style>
+  .process-panel,
+  .submission-shell,
+  .output-panel {
+    margin-top: 14px;
+    overflow: hidden;
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    background: var(--panel);
+  }
+
+  .section-heading,
+  .output-heading {
+    padding: 20px;
+  }
+
+  .section-heading h2,
+  .output-heading h2 {
+    margin: 2px 0 0;
+    font-family: var(--display-serif);
+    font-size: 1.35rem;
+    font-weight: 500;
+    line-height: 1.15;
+  }
+
+  .section-heading > p:last-child,
+  .output-guidance,
+  .pr-note {
+    max-width: 850px;
+    margin: 8px 0 0;
+    color: var(--muted-strong);
+    font-size: 0.88rem;
+  }
+
+  .eyebrow {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+    list-style: none;
+  }
+
+  .process-steps li {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 2px 9px;
+    min-height: 105px;
+    align-content: center;
+    padding: 18px;
+    border-right: 1px solid var(--line);
+  }
+
+  .process-steps li:last-child {
+    border-right: 0;
+  }
+
+  .process-steps span {
+    grid-row: 1 / 3;
+    display: grid;
+    width: 26px;
+    height: 26px;
+    place-items: center;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    font-family: "DM Mono", ui-monospace, monospace;
+    font-size: 0.74rem;
+  }
+
+  .process-steps strong {
+    font-size: 0.86rem;
+  }
+
+  .process-steps small {
+    color: var(--muted);
+    font-size: 0.76rem;
+    line-height: 1.35;
+  }
+
+  .submission-heading,
+  .output-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .privacy-note {
+    flex: 0 0 auto;
+    padding: 5px 8px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: 0.72rem !important;
+  }
+
+  .submission-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .submission-tabs button {
+    display: grid;
+    gap: 2px;
+    padding: 15px 20px;
+    border: 0;
+    border-right: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--muted-strong);
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .submission-tabs button:last-child {
+    border-right: 0;
+  }
+
+  .submission-tabs button:hover,
+  .submission-tabs button:focus-visible,
+  .submission-tabs button.is-active {
+    background: var(--panel-soft);
+    color: var(--ink);
+    outline: none;
+  }
+
+  .submission-tabs button.is-active {
+    box-shadow: inset 0 -2px var(--ink);
+  }
+
+  .submission-tabs span {
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .submission-tabs small {
+    color: var(--muted);
+    font-size: 0.74rem;
+  }
+
+  .submission-layout {
+    display: grid;
+    grid-template-columns: minmax(270px, 0.72fr) minmax(0, 1.8fr);
+  }
+
+  .requirements {
+    padding: 22px;
+    border-right: 1px solid var(--line);
+    background: var(--panel-soft);
+  }
+
+  .requirements h3,
+  .form-heading h3 {
+    margin: 0;
+    font-family: var(--display-serif);
+    font-size: 1.08rem;
+    font-weight: 500;
+  }
+
+  .requirements p,
+  .requirements li,
+  .form-heading p {
+    color: var(--muted-strong);
+    font-size: 0.8rem;
+  }
+
+  .requirements ol {
+    display: grid;
+    gap: 10px;
+    margin: 18px 0;
+    padding-left: 20px;
+  }
+
+  .requirements a {
+    font-weight: 700;
+  }
+
+  .requirements code,
+  .pr-note code {
+    font-family: "DM Mono", ui-monospace, monospace;
+    font-size: 0.75rem;
+  }
+
+  .after-merge {
+    padding-top: 15px;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .builder-panel {
+    min-width: 0;
+    padding: 22px;
+  }
+
+  .form-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .form-heading p {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .field-grid label,
+  .eligibility-check {
+    display: grid;
+    gap: 6px;
+  }
+
+  .field-grid label > span {
+    color: var(--muted-strong);
+    font-size: 0.74rem;
+    font-weight: 700;
+  }
+
+  .field-grid label > small {
+    color: var(--muted);
+    font-size: 0.68rem;
+  }
+
+  .wide-field {
+    grid-column: 1 / -1;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    background: var(--panel);
+    color: var(--ink);
+    font-size: 0.82rem;
+  }
+
+  input,
+  select {
+    min-height: 39px;
+    padding: 0 10px;
+  }
+
+  textarea {
+    min-height: 76px;
+    padding: 9px 10px;
+    resize: vertical;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    border-color: var(--ink);
+    outline: 2px solid hsl(24 6% 17% / 0.09);
+  }
+
+  .eligibility-check {
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    margin-top: 16px;
+    color: var(--muted-strong);
+    font-size: 0.78rem;
+  }
+
+  .eligibility-check input {
+    width: 16px;
+    min-height: 16px;
+    margin: 2px 0 0;
+  }
+
+  .generate-button,
+  .output-actions button,
+  .output-actions a {
+    display: inline-flex;
+    min-height: 38px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 13px;
+    border: 1px solid var(--ink);
+    border-radius: 6px;
+    background: var(--ink);
+    color: var(--panel);
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .generate-button {
+    margin-top: 18px;
+  }
+
+  .output-panel {
+    scroll-margin-top: 16px;
+  }
+
+  .output-heading {
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel-soft);
+  }
+
+  .output-heading > span {
+    color: var(--positive);
+    font-size: 0.76rem;
+    font-weight: 700;
+  }
+
+  .output-guidance,
+  .pr-note {
+    padding: 0 20px;
+  }
+
+  .output-panel pre {
+    margin: 16px 20px;
+    padding: 16px;
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: hsl(33 31% 97%);
+    font-size: 0.78rem;
+  }
+
+  .output-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 20px;
+  }
+
+  .output-actions button,
+  .output-actions a {
+    border-color: var(--line-strong);
+    background: var(--panel);
+    color: var(--ink);
+  }
+
+  .output-actions a:last-child {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--panel);
+  }
+
+  .output-actions button:hover,
+  .output-actions button:focus-visible,
+  .output-actions a:hover,
+  .output-actions a:focus-visible {
+    background: var(--panel-soft);
+    color: var(--ink);
+    outline: none;
+  }
+
+  .pr-note {
+    margin-bottom: 20px;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  @media (max-width: 900px) {
+    .process-steps {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .process-steps li:nth-child(2) {
+      border-right: 0;
+    }
+
+    .process-steps li:nth-child(-n + 2) {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .submission-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .requirements {
+      border-right: 0;
+      border-bottom: 1px solid var(--line);
+    }
+  }
+
+  @media (max-width: 620px) {
+    .process-steps,
+    .submission-tabs,
+    .field-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .process-steps li,
+    .process-steps li:nth-child(2) {
+      border-right: 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .process-steps li:last-child {
+      border-bottom: 0;
+    }
+
+    .submission-heading,
+    .output-heading,
+    .form-heading {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .submission-tabs button {
+      border-right: 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .wide-field {
+      grid-column: auto;
+    }
+
+    .builder-panel,
+    .requirements,
+    .section-heading,
+    .output-heading {
+      padding: 16px;
+    }
+
+    .output-guidance,
+    .pr-note,
+    .output-actions {
+      padding-right: 16px;
+      padding-left: 16px;
+    }
+
+    .output-panel pre {
+      margin-right: 16px;
+      margin-left: 16px;
+    }
+  }
+</style>
