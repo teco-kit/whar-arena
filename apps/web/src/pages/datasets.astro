@@ -66,17 +66,18 @@ const settingLabels: Record<string, string> = {
   Loc: "Locomotion",
 };
 const settingDefinitions: Record<string, string> = {
-  ADL: "Everyday self-care, mobility, and household routines such as eating, dressing, walking, or chores.",
-  Fall: "An event in which a person unintentionally loses balance and comes to rest on a lower surface.",
-  Fit: "Physical exercise performed to improve or maintain health, strength, endurance, flexibility, or skill.",
-  Health: "Conditions, behaviors, or physiological states related to wellbeing, care, rehabilitation, or impairment.",
-  Loc: "Bodily movement or transport from one place, posture, or motion state to another.",
+  ADL: "The dataset includes everyday self-care, mobility, or household routines such as eating, dressing, walking, and chores.",
+  Fall: "The dataset targets fall detection, typically distinguishing simulated or recorded falls from non-fall activities.",
+  Fit: "The dataset covers structured exercise or sport used to train fitness-activity recognition.",
+  Health: "The dataset studies health-related behavior, physiological state, care, rehabilitation, or impairment.",
+  Loc: "The dataset emphasizes locomotion or transitions between places, postures, or movement states.",
 };
 const deviceTypeLabels: Record<string, string> = {
   ActivityTracker: "Activity Tracker",
   Belt: "Belt",
   Glasses: "Smart Glasses",
   Helmet: "Helmet",
+  LifeMonitor: "Life Monitor",
   Mask: "Mask",
   Node: "Sensor Node",
   Phone: "Smartphone",
@@ -103,7 +104,7 @@ const sensorModalityLabels: Record<string, string> = {
   EMG: "Electromyogram",
   Flow: "Airflow Sensor",
   Gas: "Gas Sensor",
-  GPS: "Global Positioning System",
+  GPS: "Global Pos. System",
   Gyr: "Gyroscope",
   Light: "Light Sensor",
   Resp: "Respiration Sensor",
@@ -220,15 +221,15 @@ function formatSensorModality(part: string) {
 }
 
 function describeSetting(part: string) {
-  return settingDefinitions[part] ?? `Application setting: ${formatSetting(part)}.`;
+  return settingDefinitions[part] ?? `The dataset is categorized under the ${formatSetting(part)} application setting.`;
 }
 
 function describeDeviceType(part: string) {
-  return deviceTypeDefinitions[part] ?? `Device type: ${formatDeviceType(part)}.`;
+  return deviceTypeDefinitions[part] ?? `A ${formatDeviceType(part)} device was used to collect or process the sensor data.`;
 }
 
 function describeSensorModality(part: string) {
-  return sensorModalityDefinitions[part] ?? `Sensor modality: ${formatSensorModality(part)}.`;
+  return sensorModalityDefinitions[part] ?? `${formatSensorModality(part)} measurements are included in the dataset.`;
 }
 
 function compareLabels(a: string, b: string) {
@@ -463,7 +464,7 @@ function formatInstitutionSummary(institutions: string[]) {
           <span class="filter-label">Device Types</span>
           <details>
             <summary aria-label="Device Types">
-              <span data-filter-summary="deviceTypes">All device types</span>
+              <span data-filter-summary="deviceTypes">All devices</span>
               <span class="filter-count" data-filter-count="deviceTypes">
                 {deviceTypeOptions.length}/{deviceTypeOptions.length}
               </span>
@@ -517,7 +518,7 @@ function formatInstitutionSummary(institutions: string[]) {
           <span class="filter-label">Sensor Modalities</span>
           <details>
             <summary aria-label="Sensor Modalities">
-              <span data-filter-summary="sensorModalities">All sensor modalities</span>
+              <span data-filter-summary="sensorModalities">All sensors</span>
               <span class="filter-count" data-filter-count="sensorModalities">
                 {sensorModalityOptions.length}/{sensorModalityOptions.length}
               </span>
@@ -937,7 +938,7 @@ function formatInstitutionSummary(institutions: string[]) {
       count: document.querySelector('[data-filter-count="settings"]'),
     },
     deviceTypes: {
-      allLabel: "All device types",
+      allLabel: "All devices",
       noneLabel: "No device types",
       plural: "device types",
       inputs: Array.from(document.querySelectorAll('[data-filter-kind="deviceTypes"]')),
@@ -945,7 +946,7 @@ function formatInstitutionSummary(institutions: string[]) {
       count: document.querySelector('[data-filter-count="deviceTypes"]'),
     },
     sensorModalities: {
-      allLabel: "All sensor modalities",
+      allLabel: "All sensors",
       noneLabel: "No sensor modalities",
       plural: "sensor modalities",
       inputs: Array.from(document.querySelectorAll('[data-filter-kind="sensorModalities"]')),

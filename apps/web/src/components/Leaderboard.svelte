@@ -24,6 +24,11 @@
     split_id: string;
     status: string;
     metrics: Record<string, number | null>;
+    window_size_seconds?: number;
+    source?: {
+      window_size_seconds?: number;
+      [key: string]: unknown;
+    };
   };
   type LeaderboardRow = Model & {
     netImprovement: number | null;
@@ -39,6 +44,7 @@
   };
   type MatrixCell = {
     modelId: string;
+    modelName: string;
     macroF1: number | null;
   };
   type DeploymentPoint = {
@@ -51,6 +57,7 @@
     exported_model_size_mb: number | null;
     deployment_measurements: number;
     deployment_dataset_count: number;
+    window_size_seconds?: number;
     color: string;
   };
   type DeploymentTradeoffs = {
@@ -112,7 +119,6 @@
     datasets: Record<string, DatasetDetail>;
   };
   type SortKey =
-    | "family"
     | "net_improvement"
     | "macro_f1"
     | "efficiency_combined"
@@ -169,10 +175,12 @@
 
   let {
     catalog,
+    defaultWindowSizeSeconds = 3,
     deploymentTradeoffs = null,
     results,
   }: {
     catalog: Catalog;
+    defaultWindowSizeSeconds?: number;
     deploymentTradeoffs?: DeploymentTradeoffs | null;
     results: Result[];
   } = $props();
@@ -192,10 +200,16 @@
     neural: ["neural"],
   };
   const classicalBaselineIds = new Set(["knn", "random_forest", "svm"]);
+  const classicalBaselineDetails: Record<string, string> = {
+    knn: "k=5, distance-weighted",
+    random_forest: "100 trees, depth=8",
+    svm: "RBF kernel, C=1",
+  };
 
   let selectedDatasetIds = $state(catalog.datasets.map((item) => item.id));
   let selectedModelFamilyIds = $state(getModelFamilyIds(catalog.models));
   let selectedModelIds = $state(catalog.models.map((item) => item.id));
+  let selectedWindowSizeSeconds = $state(defaultWindowSizeSeconds);
   let componentMatchMode = $state<ComponentMatchMode>("inclusive");
   let selectedDetailModelId = $state<string | null>(null);
   let selectedDetailDatasetId = $state<string | null>(null);
@@ -254,21 +268,29 @@
   const numberFormatter = new Intl.NumberFormat("en-US");
   const metricInfo = {
     netImprovement:
-      "Net Improvement is the average Macro-F1 gain over the best classical model on each selected dataset. Error bars show a 95% confidence interval across dataset-level gains.",
+      "Selection-dependent. For each selected dataset, subtracts the best classical baseline Macro-F1 from this model’s Macro-F1, then averages those differences. The interval is a 95% confidence interval across datasets; higher is better.",
     macroF1:
-      "Computed mean of the stored model–dataset Macro-F1 measurements across all benchmark datasets. Filters only control visibility.",
+      "Performance for the selected window size. Arithmetic mean of stored test LKSO Macro-F1 values across all benchmark datasets, with equal weight per dataset. Dataset, model, and component filters only control visibility; higher is better.",
     efficiencyCombined:
-      "Computed from global Mean Macro-F1 and stored deployment measurements: 1 minus weighted distance to the ideal after min–max normalization (1/2 F1; 1/6 each log cost). Higher is better; filters do not change it.",
+      "Joint Efficiency Index for the selected window size. Uses Mean Macro-F1 plus log latency, peak-memory delta, and model size, normalized across all models with every input. Model, dataset, and component filters do not change it.",
     efficiencyModelSize:
-      "Computed from global Mean Macro-F1 and stored model size: 1 minus equal-weight distance to the ideal after min–max normalization of F1 and log size. Higher is better; filters do not change it.",
+      "Storage Efficiency Index for the selected window size. Mean Macro-F1 and log model size are normalized across all models with both values. Model, dataset, and component filters do not change it.",
     efficiencyPeakMemory:
-      "Computed from global Mean Macro-F1 and stored peak PSS delta: 1 minus equal-weight distance to the ideal after min–max normalization of F1 and log memory. Higher is better; filters do not change it.",
+      "Memory Efficiency Index for the selected window size. Mean Macro-F1 and log peak PSS increase are normalized across all models with both values. Model, dataset, and component filters do not change it.",
     efficiencyLatency:
-      "Computed from global Mean Macro-F1 and stored Pixel 8 ExecuTorch latency: 1 minus equal-weight distance to the ideal after min–max normalization of F1 and log latency. Higher is better; filters do not change it.",
+      "Latency Efficiency Index for the selected window size. Mean Macro-F1 and log latency are normalized across all models with both values. Latency was measured with ExecuTorch on a Pixel 8; model, dataset, and component filters do not change it.",
   };
 
-  const validResults = $derived(
+  const completeResults = $derived(
     results.filter((result) => result.status === "complete" || result.status === "example"),
+  );
+  const windowSizeOptions = $derived(
+    [...new Set(completeResults.map(resultWindowSizeSeconds))].sort((a, b) => a - b),
+  );
+  const validResults = $derived(
+    completeResults.filter(
+      (result) => resultWindowSizeSeconds(result) === selectedWindowSizeSeconds,
+    ),
   );
   const selectedDatasetSet = $derived(new Set(selectedDatasetIds));
   const selectedModelFamilySet = $derived(new Set(selectedModelFamilyIds));
@@ -277,7 +299,9 @@
     [...catalog.datasets].sort((a, b) => compareLabels(a.name, b.name)),
   );
   const modelFilterOptions = $derived(
-    [...catalog.models].sort((a, b) => compareLabels(a.name, b.name)),
+    catalog.models
+      .map((item) => ({ ...item, name: modelDisplayName(item.id, item.name) }))
+      .sort((a, b) => compareLabels(a.name, b.name)),
   );
   const modelFamilyOptions = $derived(getModelFamilyOptions(catalog.models));
   const selectedDatasetSummary = $derived(formatSelectedDatasetSummary());
@@ -285,7 +309,10 @@
   const selectedModelSummary = $derived(formatSelectedModelSummary());
   const selectedDetailModel = $derived(
     selectedDetailModelId
-      ? catalog.models.find((item) => item.id === selectedDetailModelId) ?? null
+      ? (() => {
+          const model = catalog.models.find((item) => item.id === selectedDetailModelId);
+          return model ? { ...model, name: modelDisplayName(model.id, model.name) } : null;
+        })()
       : null,
   );
   const selectedDetail = $derived(
@@ -305,10 +332,17 @@
   const visibleModels = $derived(
     catalog.models.filter(
       (item) => selectedModelSet.has(item.id) && isFamilyAllowed(item.family),
-    ),
+    ).map((item) => ({ ...item, name: modelDisplayName(item.id, item.name) })),
   );
   const deploymentPointByModelId = $derived(
-    new Map((deploymentTradeoffs?.points ?? []).map((point) => [point.model_id, point])),
+    new Map(
+      (deploymentTradeoffs?.points ?? [])
+        .filter(
+          (point) =>
+            (point.window_size_seconds ?? defaultWindowSizeSeconds) === selectedWindowSizeSeconds,
+        )
+        .map((point) => [point.model_id, point]),
+    ),
   );
 
   const benchmarkRows = $derived(
@@ -318,6 +352,7 @@
 
         return {
           ...model,
+          name: modelDisplayName(model.id, model.name),
           netImprovement: null,
           netImprovementCi95: null,
           macroF1: meanMacroF1AcrossDatasets(model.id),
@@ -371,6 +406,7 @@
 
           return {
             modelId: model.id,
+            modelName: model.name,
             macroF1: averageMetric(scopedResults, "macro_f1"),
           };
         });
@@ -385,6 +421,7 @@
   const matrixColumnMeans = $derived(
     visibleModels.map((model, modelIndex) => ({
       modelId: model.id,
+      modelName: model.name,
       macroF1: averageAvailable(
         matrixRows.map((row) => row.cells[modelIndex]?.macroF1 ?? null),
       ),
@@ -403,6 +440,14 @@
     return values.reduce((sum, value) => sum + value, 0) / values.length;
   }
 
+  function resultWindowSizeSeconds(result: Result) {
+    return result.window_size_seconds ?? result.source?.window_size_seconds ?? defaultWindowSizeSeconds;
+  }
+
+  function formatWindowSize(seconds: number) {
+    return `${numberFormatter.format(seconds)} s`;
+  }
+
   function compareByPerformanceRank(a: LeaderboardRow, b: LeaderboardRow) {
     const byMacroF1 = compareNullableNumber(a.macroF1, b.macroF1, "desc");
     if (byMacroF1 !== 0) return byMacroF1;
@@ -412,9 +457,7 @@
   function compareRows(a: LeaderboardRow, b: LeaderboardRow) {
     let comparison = 0;
 
-    if (sortKey === "family") {
-      comparison = compareString(familyText(a.family), familyText(b.family), sortDirection);
-    } else if (sortKey === "macro_f1") {
+    if (sortKey === "macro_f1") {
       comparison = compareNullableNumber(a.macroF1, b.macroF1, sortDirection);
     } else if (sortKey === "net_improvement") {
       comparison = compareNullableNumber(a.netImprovement, b.netImprovement, sortDirection);
@@ -441,11 +484,6 @@
     if (a === null) return 1;
     if (b === null) return -1;
     return direction === "asc" ? a - b : b - a;
-  }
-
-  function compareString(a: string, b: string, direction: SortDirection) {
-    const comparison = a.localeCompare(b);
-    return direction === "asc" ? comparison : -comparison;
   }
 
   function compareLabels(a: string, b: string) {
@@ -479,11 +517,10 @@
     }
 
     sortKey = nextKey;
-    sortDirection = defaultDirection(nextKey);
+    sortDirection = defaultDirection();
   }
 
-  function defaultDirection(nextKey: SortKey): SortDirection {
-    if (nextKey === "family") return "asc";
+  function defaultDirection(): SortDirection {
     return "desc";
   }
 
@@ -606,10 +643,8 @@
     if (selectedModelIds.length === catalog.models.length) return "All models";
     if (selectedModelIds.length === 0) return "No models";
     if (selectedModelIds.length === 1) {
-      return (
-        catalog.models.find((item) => item.id === selectedModelIds[0])?.name ??
-        "1 model"
-      );
+      const model = catalog.models.find((item) => item.id === selectedModelIds[0]);
+      return model ? modelDisplayName(model.id, model.name) : "1 model";
     }
     return `${selectedModelIds.length} models`;
   }
@@ -681,6 +716,7 @@
     selectedDatasetIds = catalog.datasets.map((item) => item.id);
     selectedModelIds = catalog.models.map((item) => item.id);
     selectedModelFamilyIds = getModelFamilyIds(catalog.models);
+    selectedWindowSizeSeconds = defaultWindowSizeSeconds;
     componentMatchMode = "inclusive";
   }
 
@@ -910,6 +946,10 @@
     return getFamilyParts(family).map(formatFamily).join(" ");
   }
 
+  function modelDisplayName(_id: string, fallback: string) {
+    return fallback;
+  }
+
   function formatFamily(family: string) {
     const labels: Record<string, string> = {
       attn: "Attention",
@@ -929,17 +969,17 @@
 
   function describeFamily(family: string) {
     const definitions: Record<string, string> = {
-      attn: "Weights relevant timesteps, channels, or feature interactions; transformer-style mechanisms are included here.",
-      cnn: "Convolutional filters learn local temporal or channel patterns in multivariate sensor windows.",
-      dense: "Fully connected layers combine information across all input units.",
-      fe: "Handcrafted or engineered variables are derived from raw sensor windows before classification.",
-      graph: "Node-and-edge interactions model relationships between sensors, channels, or learned components.",
-      neural: "Trainable layers learn representations directly from data.",
-      rnn: "Sequence layers carry hidden state across timesteps to model temporal context.",
-      spec: "Frequency-domain preprocessing or representations are used before classification.",
+      attn: "Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention.",
+      cnn: "Uses learned convolutional filters over time or sensor channels to detect local activity patterns.",
+      dense: "Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification.",
+      fe: "Uses manually designed statistical, temporal, or frequency features before classification instead of learning every representation end to end.",
+      graph: "Represents sensors, channels, or body parts as connected nodes and learns from their relationships.",
+      neural: "Uses trainable neural-network layers to learn representations directly from sensor data.",
+      rnn: "Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies.",
+      spec: "Transforms signals into frequency-domain representations or otherwise processes spectral features before classification.",
     };
 
-    return definitions[family] ?? "Model component used to describe an architecture.";
+    return definitions[family] ?? "Architecture component used by this model.";
   }
 
   function getModelFamilyIds(models: Model[]) {
@@ -986,10 +1026,11 @@
 
   function modelInstitutionSummary(id: string) {
     const institutions = modelInstitutions(id);
-    if (institutions.length > 3) {
-      return [...institutions.slice(0, 2), "et al."];
-    }
-    return institutions;
+    const summary = institutions.length > 3
+      ? [...institutions.slice(0, 2), "et al."]
+      : institutions;
+    const baselineDetail = classicalBaselineDetails[id];
+    return baselineDetail ? [...summary, baselineDetail] : summary;
   }
 
   function openModelDetail(id: string) {
@@ -1386,21 +1427,14 @@
                     for={datasetInputId(item.id)}
                     aria-label={`Toggle ${item.name}`}
                   ></label>
-                  {#if hasPaperLink("datasets", item.id)}
-                    <a
-                      class="paper-link dataset-option-link"
-                      href={paperUrl("datasets", item.id)}
-                      title={paperTitle("datasets", item.id, item.name)}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {item.name}
-                    </a>
-                  {:else}
-                    <label class="dataset-name-toggle" for={datasetInputId(item.id)}>
-                      {item.name}
-                    </label>
-                  {/if}
+                  <button
+                    type="button"
+                    class="dataset-option-link dataset-option-detail"
+                    title={`Open dataset overview: ${item.name}`}
+                    onclick={() => openDatasetDetail(item.id)}
+                  >
+                    {item.name}
+                  </button>
                 </div>
               {/each}
             </div>
@@ -1444,21 +1478,14 @@
                     for={modelInputId(item.id)}
                     aria-label={`Toggle ${item.name}`}
                   ></label>
-                  {#if hasPaperLink("models", item.id)}
-                    <a
-                      class="paper-link dataset-option-link"
-                      href={paperUrl("models", item.id)}
-                      title={paperTitle("models", item.id, item.name)}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {item.name}
-                    </a>
-                  {:else}
-                    <label class="dataset-name-toggle" for={modelInputId(item.id)}>
-                      {item.name}
-                    </label>
-                  {/if}
+                  <button
+                    type="button"
+                    class="dataset-option-link dataset-option-detail"
+                    title={`Open model overview: ${item.name}`}
+                    onclick={() => openModelDetail(item.id)}
+                  >
+                    {item.name}
+                  </button>
                 </div>
               {/each}
             </div>
@@ -1489,11 +1516,6 @@
                 <span>Exact combination</span>
               </label>
             </div>
-            <p class="component-match-help">
-              {componentMatchMode === "exact"
-                ? "Show models with exactly the selected components."
-                : "Show models containing any selected component."}
-            </p>
             <div class="dataset-options">
               {#each modelFamilyOptions as item}
                 <div class="dataset-option" data-model-family-id={item.id}>
@@ -1534,6 +1556,17 @@
           </div>
         </details>
       </div>
+
+      <label class="dataset-filter window-size-filter">
+        <span class="filter-label">Window size</span>
+        <span class="window-size-select">
+          <select bind:value={selectedWindowSizeSeconds} aria-label="Window size">
+            {#each windowSizeOptions as seconds}
+              <option value={seconds}>{formatWindowSize(seconds)}</option>
+            {/each}
+          </select>
+        </span>
+      </label>
     </div>
   </section>
 
@@ -1619,20 +1652,7 @@
                 </button>
               </span>
             </th>
-            <th aria-sort={sortAria("family")}>
-              <button
-                type="button"
-                class:active-sort={sortKey === "family"}
-                class="sort-button"
-                onclick={() => setSort("family")}
-              >
-                Components
-                <span class="sort-glyph" aria-hidden="true">
-                  <span class:active-arrow={sortKey === "family" && sortDirection === "asc"}></span>
-                  <span class:active-arrow={sortKey === "family" && sortDirection === "desc"}></span>
-                </span>
-              </button>
-            </th>
+            <th>Components</th>
             <th aria-sort={sortAria("macro_f1")}>
               <span class="metric-heading">
                 <button
@@ -1642,7 +1662,7 @@
                   onclick={() => setSort("macro_f1")}
                 >
                   <span class="heading-label">
-                    MEAN MACRO F1
+                    MEAN LKSO MACRO F1
                     <span
                       class="info-tip"
                       title={metricInfo.macroF1}
@@ -1932,7 +1952,10 @@
                 </span>
               </th>
             {/each}
-            <th class="matrix-mean-heading" title="Mean Macro-F1 across visible models">
+            <th
+              class="matrix-mean-heading"
+              title="Arithmetic mean of the displayed Macro-F1 values across visible models for each dataset"
+            >
               <span>Mean across models</span>
             </th>
           </tr>
@@ -1954,7 +1977,7 @@
                 <td
                   class:pending-cell={cell.macroF1 === null}
                   style={scoreStyle(cell.macroF1)}
-                  title={`${row.name} · ${cell.modelId}: ${formatPercent(cell.macroF1)}`}
+                  title={`${row.name} × ${cell.modelName}: test Macro-F1 ${formatPercent(cell.macroF1)}`}
                 >
                   <strong>{formatMatrixScore(cell.macroF1)}</strong>
                 </td>
@@ -1963,7 +1986,7 @@
                 class="matrix-mean-cell"
                 class:pending-cell={row.meanMacroF1 === null}
                 style={scoreStyle(row.meanMacroF1)}
-                title={`${row.name}: mean across visible models · ${formatPercent(row.meanMacroF1)}`}
+                title={`${row.name}: arithmetic mean across ${visibleModels.length} visible models · ${formatPercent(row.meanMacroF1)}`}
               >
                 <strong>{formatMatrixScore(row.meanMacroF1)}</strong>
               </td>
@@ -1977,7 +2000,7 @@
               <td
                 class:pending-cell={cell.macroF1 === null}
                 style={scoreStyle(cell.macroF1)}
-                title={`${cell.modelId}: mean across selected datasets · ${formatPercent(cell.macroF1)}`}
+                title={`${cell.modelName}: arithmetic mean across ${matrixRows.length} selected datasets · ${formatPercent(cell.macroF1)}`}
               >
                 <strong>{formatMatrixScore(cell.macroF1)}</strong>
               </td>
@@ -1986,7 +2009,7 @@
               class="matrix-mean-cell"
               class:pending-cell={matrixGrandMean === null}
               style={scoreStyle(matrixGrandMean)}
-              title={`Overall mean across visible models and selected datasets · ${formatPercent(matrixGrandMean)}`}
+              title={`Arithmetic mean across all ${visibleModels.length} visible models × ${matrixRows.length} selected datasets · ${formatPercent(matrixGrandMean)}`}
             >
               <strong>{formatMatrixScore(matrixGrandMean)}</strong>
             </td>
@@ -2015,20 +2038,24 @@
           <p>Lower deployment cost and higher Macro-F1 are better.</p>
         </div>
         <div class="pareto-controls">
-          <label>
-            <span>X-axis</span>
-            <select bind:value={activeScatterMetric} aria-label="Pareto cost metric">
-              {#each scatterConfigs as config}
-                <option value={config.metric}>{config.xLabel}</option>
-              {/each}
-            </select>
+          <label class="pareto-field pareto-metric-field">
+            <span class="pareto-field-label">X-axis</span>
+            <span class="pareto-select">
+              <select bind:value={activeScatterMetric} aria-label="Pareto cost metric">
+                {#each scatterConfigs as config}
+                  <option value={config.metric}>{config.xLabel}</option>
+                {/each}
+              </select>
+            </span>
           </label>
-          <label>
-            <span>Scale</span>
-            <select bind:value={scatterScale} aria-label="Pareto x-axis scale">
-              <option value="log">Logarithmic</option>
-              <option value="linear">Linear</option>
-            </select>
+          <label class="pareto-field pareto-scale-field">
+            <span class="pareto-field-label">Scale</span>
+            <span class="pareto-select">
+              <select bind:value={scatterScale} aria-label="Pareto x-axis scale">
+                <option value="log">Logarithmic</option>
+                <option value="linear">Linear</option>
+              </select>
+            </span>
           </label>
           <label class="frontier-toggle">
             <input type="checkbox" bind:checked={showParetoFrontier} />
@@ -2038,13 +2065,6 @@
       </div>
 
       {#if deploymentTradeoffs && scatterPlot.points.length > 0}
-        <div class="pareto-summary" aria-live="polite">
-          <strong>{scatterPlot.frontierPoints.length}</strong> Pareto-optimal models among
-          <strong>{scatterPlot.points.length}</strong> visible models
-          {#if scatterPlot.missingCount > 0}
-            <span>· {scatterPlot.missingCount} without this deployment measurement</span>
-          {/if}
-        </div>
         <div class="scatter-grid pareto-grid">
           <article class="scatter-plot pareto-plot">
             <h3>{scatterPlot.title}</h3>
@@ -2459,28 +2479,30 @@
   .view-switcher {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
     min-width: 0;
     border: 1px solid lightgray;
     border-radius: 8px;
     background: var(--panel-soft);
-    overflow: hidden;
+    padding: 5px;
   }
 
   .view-switcher button {
-    min-height: 44px;
-    border: 0;
-    border-right: 1px solid var(--line);
+    position: relative;
+    min-height: 42px;
+    border: 1px solid transparent;
+    border-radius: 6px;
     background: transparent;
     color: var(--muted-strong);
     padding: 0 14px;
     font: inherit;
-    font-size: 0.82rem;
+    font-size: 0.84rem;
     font-weight: 600;
     cursor: pointer;
-  }
-
-  .view-switcher button:last-child {
-    border-right: 0;
+    transition:
+      border-color 120ms ease,
+      background-color 120ms ease,
+      color 120ms ease;
   }
 
   .view-switcher button:hover,
@@ -2491,12 +2513,15 @@
   }
 
   .view-switcher button:focus-visible {
-    box-shadow: inset 0 0 0 2px hsl(24 6% 17% / 0.25);
+    border-color: var(--ink);
+    box-shadow: 0 0 0 2px hsl(24 6% 17% / 0.12);
   }
 
   .view-switcher button.active {
-    background: var(--ink);
-    color: var(--panel);
+    border-color: var(--line-strong);
+    background: var(--panel);
+    color: var(--ink);
+    box-shadow: 0 1px 3px hsl(24 6% 17% / 0.08);
   }
 
   .panel-header {
@@ -2543,7 +2568,7 @@
 
   .filter-content {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 14px;
     padding: 14px 16px 16px;
   }
@@ -2619,6 +2644,47 @@
     background: var(--panel);
   }
 
+  .window-size-select {
+    position: relative;
+    display: block;
+  }
+
+  .window-size-select::after {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    width: 7px;
+    height: 7px;
+    border-right: 1.5px solid var(--muted);
+    border-bottom: 1.5px solid var(--muted);
+    content: "";
+    pointer-events: none;
+    transform: translateY(-70%) rotate(45deg);
+  }
+
+  .window-size-select select {
+    width: 100%;
+    min-height: 36px;
+    appearance: none;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    background: var(--panel-soft);
+    color: var(--ink);
+    padding: 0 34px 0 10px;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .window-size-select select:hover {
+    border-color: var(--accent);
+    background: var(--panel);
+  }
+
+  .window-size-select select:focus-visible {
+    outline: 2px solid hsl(24 6% 17% / 0.28);
+    outline-offset: 2px;
+  }
+
   .filter-count {
     margin-left: auto;
     color: var(--muted);
@@ -2692,15 +2758,6 @@
     accent-color: var(--accent);
   }
 
-  .component-match-help {
-    padding: 8px 10px;
-    border-bottom: 1px solid var(--line);
-    background: var(--panel);
-    color: var(--muted);
-    font-size: 0.7rem;
-    line-height: 1.35;
-  }
-
   .paper-link {
     color: inherit;
     text-decoration: underline;
@@ -2726,6 +2783,28 @@
     color: var(--muted-strong);
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .dataset-option-detail {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    font: inherit;
+    text-align: left;
+    text-decoration: underline;
+    text-decoration-color: hsl(24 6% 17% / 0.3);
+    text-decoration-style: dotted;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+
+  .dataset-option-detail:hover,
+  .dataset-option-detail:focus-visible {
+    color: var(--ink);
+    text-decoration-color: currentColor;
+    outline: none;
   }
 
   .dataset-name-toggle {
@@ -3282,10 +3361,9 @@
   }
 
   .matrix-table {
-    width: max-content;
-    min-width: 100%;
+    width: 100%;
     margin: 0;
-    table-layout: fixed;
+    table-layout: auto;
   }
 
   .matrix-table th,
@@ -3301,13 +3379,16 @@
   }
 
   .matrix-table thead th:not(.sticky-col) {
-    width: 58px;
+    width: auto;
     min-width: 58px;
-    height: 148px;
+    height: auto;
+    padding-top: 8px;
+    padding-bottom: 8px;
     vertical-align: middle;
   }
 
   .matrix-model-heading {
+    position: relative;
     cursor: pointer;
   }
 
@@ -3318,7 +3399,6 @@
 
   .matrix-table thead th span {
     display: inline-block;
-    max-height: 132px;
     color: var(--muted-strong);
     font-size: 0.72rem;
     font-weight: 600;
@@ -3358,7 +3438,7 @@
   }
 
   .matrix-table td {
-    width: 58px;
+    width: auto;
     min-width: 58px;
     background: var(--score-bg, transparent);
     font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -3410,8 +3490,8 @@
     position: sticky;
     left: 0;
     z-index: 2;
-    width: 204px !important;
-    min-width: 204px !important;
+    width: 1% !important;
+    min-width: max-content !important;
     background: var(--panel-strong);
   }
 
@@ -3422,7 +3502,6 @@
   .dataset-cell {
     height: 30px;
     padding: 0 12px !important;
-    overflow: hidden;
     text-align: left !important;
     text-transform: none;
     white-space: nowrap;
@@ -3484,27 +3563,66 @@
     justify-content: flex-end;
   }
 
-  .pareto-controls label:not(.frontier-toggle) {
+  .pareto-field {
     display: grid;
     gap: 5px;
   }
 
-  .pareto-controls label > span:first-child {
+  .pareto-field-label {
     color: var(--muted);
     font-size: 0.68rem;
     font-weight: 600;
     text-transform: uppercase;
   }
 
-  .pareto-controls select {
+  .pareto-metric-field {
+    width: 220px;
+  }
+
+  .pareto-scale-field {
+    width: 132px;
+  }
+
+  .pareto-select {
+    position: relative;
+    display: block;
+  }
+
+  .pareto-select::after {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    width: 7px;
+    height: 7px;
+    border-right: 1.5px solid var(--muted);
+    border-bottom: 1.5px solid var(--muted);
+    content: "";
+    pointer-events: none;
+    transform: translateY(-70%) rotate(45deg);
+  }
+
+  .pareto-select select {
+    width: 100%;
     min-height: 36px;
+    appearance: none;
     border: 1px solid var(--line-strong);
-    border-radius: 7px;
-    background: var(--panel);
+    border-radius: 8px;
+    background: var(--panel-soft);
     color: var(--ink);
     padding: 0 34px 0 10px;
     font: inherit;
     font-size: 0.8rem;
+    cursor: pointer;
+  }
+
+  .pareto-select select:hover {
+    border-color: var(--accent);
+    background: var(--panel);
+  }
+
+  .pareto-select select:focus-visible {
+    outline: 2px solid hsl(24 6% 17% / 0.28);
+    outline-offset: 2px;
   }
 
   .frontier-toggle {
@@ -3526,21 +3644,6 @@
     color: var(--ink) !important;
     font-size: 0.8rem !important;
     text-transform: none !important;
-  }
-
-  .pareto-summary {
-    padding: 12px 16px 0;
-    color: var(--muted-strong);
-    font-size: 0.8rem;
-  }
-
-  .pareto-summary strong {
-    color: var(--ink);
-    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  }
-
-  .pareto-summary span {
-    color: var(--muted);
   }
 
   .scatter-plot {
@@ -4000,11 +4103,6 @@
     .leaderboard-table td {
       padding-right: 4px;
       padding-left: 4px;
-    }
-
-    .sticky-col {
-      width: 160px !important;
-      min-width: 160px !important;
     }
 
     .dataset-cell {

@@ -74,6 +74,11 @@ const modelYearById: Record<string, number> = {
   tinyhar: 2022,
   triple_cross_domain_attention: 2022,
 };
+const classicalBaselineDetails: Record<string, string> = {
+  knn: "k=5, distance-weighted",
+  random_forest: "100 trees, depth=8",
+  svm: "RBF kernel, C=1",
+};
 
 function getFamilyParts(family: string): string[] {
   return familyPartsById[family] ?? family.split("_").filter(Boolean);
@@ -98,17 +103,17 @@ function formatFamily(family: string): string {
 
 function describeFamily(family: string): string {
   const definitions: Record<string, string> = {
-    attn: "Weights relevant timesteps, channels, or feature interactions; transformer-style mechanisms are included here.",
-    cnn: "Convolutional filters learn local temporal or channel patterns in multivariate sensor windows.",
-    dense: "Fully connected layers combine information across all input units.",
-    fe: "Handcrafted or engineered variables are derived from raw sensor windows before classification.",
-    graph: "Node-and-edge interactions model relationships between sensors, channels, or learned components.",
-    neural: "Trainable layers learn representations directly from data.",
-    rnn: "Sequence layers carry hidden state across timesteps to model temporal context.",
-    spec: "Frequency-domain preprocessing or representations are used before classification.",
+    attn: "Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention.",
+    cnn: "Uses learned convolutional filters over time or sensor channels to detect local activity patterns.",
+    dense: "Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification.",
+    fe: "Uses manually designed statistical, temporal, or frequency features before classification instead of learning every representation end to end.",
+    graph: "Represents sensors, channels, or body parts as connected nodes and learns from their relationships.",
+    neural: "Uses trainable neural-network layers to learn representations directly from sensor data.",
+    rnn: "Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies.",
+    spec: "Transforms signals into frequency-domain representations or otherwise processes spectral features before classification.",
   };
 
-  return definitions[family] ?? "Model component used to describe an architecture.";
+  return definitions[family] ?? "Architecture component used by this model.";
 }
 
 const models = benchmark.catalog.models.map((model) => {
@@ -122,6 +127,7 @@ const models = benchmark.catalog.models.map((model) => {
 
   return {
     ...model,
+    name: model.name,
     architecture: architectureParts.map((part) => part.name),
     architectureIds,
     architectureParts,
@@ -129,7 +135,10 @@ const models = benchmark.catalog.models.map((model) => {
     year: modelYearById[model.id] ?? null,
     paramsValue: parseMetricValue(detail.params),
     flopsValue: parseMetricValue(detail.flops),
-    institutionSummary: formatInstitutionSummary(detail.institutions ?? []),
+    institutionSummary: formatInstitutionSummary(
+      detail.institutions ?? [],
+      classicalBaselineDetails[model.id],
+    ),
     paperLink: links.models[model.id] ?? null,
   };
 }).sort((a, b) => {
@@ -163,10 +172,14 @@ function compareLabels(a: string, b: string) {
   return a.localeCompare(b, "en", { sensitivity: "base" });
 }
 
-function formatInstitutionSummary(institutions: string[]) {
-  if (institutions.length === 0) return "Institution pending";
-  if (institutions.length > 3) return [...institutions.slice(0, 2), "et al."].join(", ");
-  return institutions.join(", ");
+function formatInstitutionSummary(institutions: string[], baselineDetail?: string) {
+  const summary = institutions.length === 0
+    ? "Institution pending"
+    : institutions.length > 3
+      ? [...institutions.slice(0, 2), "et al."].join(", ")
+      : institutions.join(", ");
+
+  return baselineDetail ? `${summary} · ${baselineDetail}` : summary;
 }
 
 function parseMetricValue(value: string | null | undefined) {
@@ -241,9 +254,6 @@ function formatScaledMetric(value: number) {
                   <span>Exact combination</span>
                 </label>
               </div>
-              <p class="component-match-help" data-component-match-help>
-                Show models containing any selected component.
-              </p>
               <div class="filter-options">
                 {architectureOptions.map((item) => (
                   <div class="filter-option" data-filter-option="architecture">
@@ -648,7 +658,6 @@ function formatScaledMetric(value: number) {
   };
   const visibleModelCount = document.querySelector("[data-visible-model-count]");
   const componentMatchInput = document.querySelector("[data-component-match-exact]");
-  const componentMatchHelp = document.querySelector("[data-component-match-help]");
   const architectureTooltip = document.createElement("div");
   architectureTooltip.className = "architecture-pill-tooltip";
   architectureTooltip.id = "architecture-pill-tooltip";
@@ -1104,9 +1113,6 @@ function formatScaledMetric(value: number) {
       range.max.value = range.max.dataset.rangeDefault;
     });
     if (componentMatchInput) componentMatchInput.checked = false;
-    if (componentMatchHelp) {
-      componentMatchHelp.textContent = "Show models containing any selected component.";
-    }
     updateModelFilters();
   });
 
@@ -1126,11 +1132,6 @@ function formatScaledMetric(value: number) {
   });
 
   componentMatchInput?.addEventListener("change", () => {
-    if (componentMatchHelp) {
-      componentMatchHelp.textContent = componentMatchInput.checked
-        ? "Show models with exactly the selected components."
-        : "Show models containing any selected component.";
-    }
     updateModelFilters();
   });
 
@@ -1379,15 +1380,6 @@ function formatScaledMetric(value: number) {
     height: 15px;
     margin: 0;
     accent-color: var(--accent);
-  }
-
-  .component-match-help {
-    margin: 0;
-    padding: 8px 10px;
-    border-bottom: 1px solid var(--line);
-    color: var(--muted);
-    font-size: 0.7rem;
-    line-height: 1.35;
   }
 
   .range-menu {

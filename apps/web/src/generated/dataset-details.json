@@ -2,7 +2,7 @@
   "source": {
     "table": "Table 3",
     "note": "Dataset statistics are copied from Table 3 of the WHAR Arena paper.",
-    "abbreviations": "ADL=Activities of Daily Living, Loc=Locomotion, Fit=Fitness, Fall=Fall Detection, Acc=Accelerometer, Gyr=Gyroscope, Mag=Magnetometer, ECG=Electrocardiogram, EEG=Electroencephalogram, EMG=Electromyogram, GPS=Global Positioning System, Stretch=Stretch Sensor, Baro=Barometer, Light=Light Sensor, Resp=Respiration Sensor, Gas=Gas Sensor, Flow=Airflow Sensor."
+    "abbreviations": "ADL=Activities of Daily Living, Loc=Locomotion, Fit=Fitness, Fall=Fall Detection, Acc=Accelerometer, Gyr=Gyroscope, Mag=Magnetometer, ECG=Electrocardiogram, EEG=Electroencephalogram, EMG=Electromyogram, GPS=Global Pos. System, Stretch=Stretch Sensor, Baro=Barometer, Light=Light Sensor, Resp=Respiration Sensor, Gas=Gas Sensor, Flow=Airflow Sensor."
   },
   "datasets": {
     "wisdm": {

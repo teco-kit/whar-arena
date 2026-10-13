@@ -4,6 +4,7 @@ import Leaderboard from "./Leaderboard.svelte";
 import catalog from "../generated/catalog.json";
 import deploymentTradeoffs from "../generated/deployment-tradeoffs.json";
 import paperBenchmark from "../generated/paper-benchmark.json";
+import protocol from "../generated/protocol.json";
 import results from "../generated/results.json";
 
 const usePaperStaticBenchmark = true;
@@ -30,6 +31,7 @@ const datasetCount = benchmark.catalog.datasets.length;
   <Leaderboard
     client:load
     catalog={benchmark.catalog}
+    defaultWindowSizeSeconds={protocol.data.window.duration_seconds}
     deploymentTradeoffs={deploymentTradeoffs}
     results={benchmark.results}
   />
