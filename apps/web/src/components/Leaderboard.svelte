@@ -36,7 +36,6 @@
     efficiencyModelSize: number | null;
     efficiencyPeakMemory: number | null;
     efficiencyLatency: number | null;
-    publishedEfficiencyScores: PublishedEfficiencyScores | null;
   };
   type MatrixCell = {
     modelId: string;
@@ -47,20 +46,12 @@
     benchmark_model_name: string;
     name: string;
     family: string;
-    mean_test_macro_f1: number | null;
     mean_latency_ms: number | null;
     mean_peak_pss_delta_mb: number | null;
     exported_model_size_mb: number | null;
     deployment_measurements: number;
     deployment_dataset_count: number;
     color: string;
-    published_efficiency_scores?: PublishedEfficiencyScores;
-  };
-  type PublishedEfficiencyScores = {
-    combined?: number | null;
-    model_size?: number | null;
-    peak_memory?: number | null;
-    latency?: number | null;
   };
   type DeploymentTradeoffs = {
     source: {
@@ -130,6 +121,8 @@
     | "efficiency_latency";
   type SortDirection = "asc" | "desc";
   type ViewId = "leaderboard" | "matrix" | "pareto";
+  type ComponentMatchMode = "inclusive" | "exact";
+  type ScatterScale = "log" | "linear";
   type ScatterMetric =
     | "mean_latency_ms"
     | "mean_peak_pss_delta_mb"
@@ -150,8 +143,10 @@
     dominators: string[];
   };
   type ScatterPlot = ScatterConfig & {
+    scale: ScatterScale;
     points: ScatterPoint[];
     frontierPoints: ScatterPoint[];
+    xMin: number;
     xMax: number;
     yMin: number;
     yMax: number;
@@ -201,13 +196,20 @@
   let selectedDatasetIds = $state(catalog.datasets.map((item) => item.id));
   let selectedModelFamilyIds = $state(getModelFamilyIds(catalog.models));
   let selectedModelIds = $state(catalog.models.map((item) => item.id));
+  let componentMatchMode = $state<ComponentMatchMode>("inclusive");
   let selectedDetailModelId = $state<string | null>(null);
   let selectedDetailDatasetId = $state<string | null>(null);
   let activeView = $state<ViewId>("leaderboard");
   let activeScatterMetric = $state<ScatterMetric>("mean_latency_ms");
+  let scatterScale = $state<ScatterScale>("log");
   let showParetoFrontier = $state(true);
   let scatterTooltip = $state<{
     point: ScatterPoint;
+    x: number;
+    y: number;
+  } | null>(null);
+  let componentTooltip = $state<{
+    text: string;
     x: number;
     y: number;
   } | null>(null);
@@ -254,15 +256,15 @@
     netImprovement:
       "Net Improvement is the average Macro-F1 gain over the best classical model on each selected dataset. Error bars show a 95% confidence interval across dataset-level gains.",
     macroF1:
-      "Macro-F1 is the unweighted mean of per-class F1 scores. The leaderboard averages Macro-F1 over the selected datasets.",
+      "Computed mean of the stored model–dataset Macro-F1 measurements across all benchmark datasets. Filters only control visibility.",
     efficiencyCombined:
-      "Combines normalized Macro-F1 with normalized log latency, peak-memory overhead, and model size. Higher is better.",
+      "Computed from global Mean Macro-F1 and stored deployment measurements: 1 minus weighted distance to the ideal after min–max normalization (1/2 F1; 1/6 each log cost). Higher is better; filters do not change it.",
     efficiencyModelSize:
-      "Combines normalized Macro-F1 with normalized log exported model size. Higher is better.",
+      "Computed from global Mean Macro-F1 and stored model size: 1 minus equal-weight distance to the ideal after min–max normalization of F1 and log size. Higher is better; filters do not change it.",
     efficiencyPeakMemory:
-      "Combines normalized Macro-F1 with normalized log peak PSS delta. Higher is better.",
+      "Computed from global Mean Macro-F1 and stored peak PSS delta: 1 minus equal-weight distance to the ideal after min–max normalization of F1 and log memory. Higher is better; filters do not change it.",
     efficiencyLatency:
-      "Combines normalized Macro-F1 with normalized log inference latency. Higher is better. Latency characterization was done with ExecuTorch on a Google Pixel 8.",
+      "Computed from global Mean Macro-F1 and stored Pixel 8 ExecuTorch latency: 1 minus equal-weight distance to the ideal after min–max normalization of F1 and log latency. Higher is better; filters do not change it.",
   };
 
   const validResults = $derived(
@@ -305,44 +307,44 @@
       (item) => selectedModelSet.has(item.id) && isFamilyAllowed(item.family),
     ),
   );
-  const deploymentPoints = $derived(
-    deploymentTradeoffs?.points.filter(
-      (point) => selectedModelSet.has(point.model_id) && isFamilyAllowed(point.family),
-    ) ?? [],
-  );
   const deploymentPointByModelId = $derived(
-    new Map(deploymentPoints.map((point) => [point.model_id, point])),
+    new Map((deploymentTradeoffs?.points ?? []).map((point) => [point.model_id, point])),
   );
 
-  const rows = $derived(
+  const benchmarkRows = $derived(
     withEfficiencyIndices(
-      visibleModels.map((model) => {
-        const scopedResults = validResults.filter(
-          (result) =>
-            result.model_id === model.id &&
-            selectedDatasetSet.has(result.dataset_id),
-        );
-        const improvement = netImprovementStats(model.id);
+      catalog.models.map((model) => {
         const deploymentPoint = deploymentPointByModelId.get(model.id);
 
         return {
           ...model,
-          netImprovement: improvement.mean,
-          netImprovementCi95: improvement.ci95,
-          macroF1: averageMetric(scopedResults, "macro_f1"),
+          netImprovement: null,
+          netImprovementCi95: null,
+          macroF1: meanMacroF1AcrossDatasets(model.id),
           latencyMs: deploymentPoint?.mean_latency_ms ?? null,
           peakMemoryMb: deploymentPoint?.mean_peak_pss_delta_mb ?? null,
-          modelSizeMb:
-            deploymentPoint?.exported_model_size_mb ??
-            averageMetric(scopedResults, "exported_model_size_mb"),
+          modelSizeMb: deploymentPoint?.exported_model_size_mb ?? null,
           efficiencyCombined: null,
           efficiencyModelSize: null,
           efficiencyPeakMemory: null,
           efficiencyLatency: null,
-          publishedEfficiencyScores: deploymentPoint?.published_efficiency_scores ?? null,
         };
       }),
-    ).sort(compareRows),
+    ),
+  );
+
+  const rows = $derived(
+    benchmarkRows
+      .filter((row) => selectedModelSet.has(row.id) && isFamilyAllowed(row.family))
+      .map((row) => {
+        const improvement = netImprovementStats(row.id);
+        return {
+          ...row,
+          netImprovement: improvement.mean,
+          netImprovementCi95: improvement.ci95,
+        };
+      })
+      .sort(compareRows),
   );
 
   const bestScores = $derived({
@@ -357,13 +359,12 @@
   const activeScatterConfig = $derived(
     scatterConfigs.find((config) => config.metric === activeScatterMetric) ?? scatterConfigs[0],
   );
-  const scatterPlot = $derived(createScatterPlot(activeScatterConfig));
+  const scatterPlot = $derived(createScatterPlot(activeScatterConfig, scatterScale));
   const matrixRows = $derived(
     catalog.datasets
       .filter((item) => selectedDatasetSet.has(item.id))
-      .map((item) => ({
-        ...item,
-        cells: visibleModels.map((model) => {
+      .map((item) => {
+        const cells = visibleModels.map((model) => {
           const scopedResults = validResults.filter(
             (result) => result.dataset_id === item.id && result.model_id === model.id,
           );
@@ -372,8 +373,25 @@
             modelId: model.id,
             macroF1: averageMetric(scopedResults, "macro_f1"),
           };
-        }),
-      })),
+        });
+
+        return {
+          ...item,
+          cells,
+          meanMacroF1: averageAvailable(cells.map((cell) => cell.macroF1)),
+        };
+      }),
+  );
+  const matrixColumnMeans = $derived(
+    visibleModels.map((model, modelIndex) => ({
+      modelId: model.id,
+      macroF1: averageAvailable(
+        matrixRows.map((row) => row.cells[modelIndex]?.macroF1 ?? null),
+      ),
+    })),
+  );
+  const matrixGrandMean = $derived(
+    averageAvailable(matrixRows.flatMap((row) => row.cells.map((cell) => cell.macroF1))),
   );
 
   function averageMetric(items: Result[], metric: string) {
@@ -518,6 +536,26 @@
     return values.reduce((sum, value) => sum + value, 0) / values.length;
   }
 
+  function averageAvailable(values: Array<number | null>) {
+    const available = values.filter((value): value is number => value !== null);
+    return available.length > 0 ? averageValues(available) : null;
+  }
+
+  function meanMacroF1AcrossDatasets(modelId: string) {
+    const datasetScores = catalog.datasets
+      .map((dataset) =>
+        averageMetric(
+          validResults.filter(
+            (result) => result.model_id === modelId && result.dataset_id === dataset.id,
+          ),
+          "macro_f1",
+        ),
+      )
+      .filter((value): value is number => value !== null);
+
+    return datasetScores.length > 0 ? averageValues(datasetScores) : null;
+  }
+
   function sampleStandardDeviation(values: number[], mean = averageValues(values)) {
     if (values.length < 2) return 0;
     const variance =
@@ -556,12 +594,12 @@
   }
 
   function formatSelectedModelFamilySummary() {
-    if (selectedModelFamilyIds.length === modelFamilyOptions.length) return "All architectures";
-    if (selectedModelFamilyIds.length === 0) return "No architectures";
+    if (selectedModelFamilyIds.length === modelFamilyOptions.length) return "All components";
+    if (selectedModelFamilyIds.length === 0) return "No components";
     if (selectedModelFamilyIds.length === 1) {
-      return formatFamily(selectedModelFamilyIds[0]);
+      return `${formatFamily(selectedModelFamilyIds[0])}${componentMatchMode === "exact" ? " · exact" : ""}`;
     }
-    return `${selectedModelFamilyIds.length} architectures`;
+    return `${selectedModelFamilyIds.length} components${componentMatchMode === "exact" ? " · exact" : ""}`;
   }
 
   function formatSelectedModelSummary() {
@@ -639,33 +677,20 @@
     selectedModelIds = [];
   }
 
+  function resetAllFilters() {
+    selectedDatasetIds = catalog.datasets.map((item) => item.id);
+    selectedModelIds = catalog.models.map((item) => item.id);
+    selectedModelFamilyIds = getModelFamilyIds(catalog.models);
+    componentMatchMode = "inclusive";
+  }
+
   function selectTopDatasets() {
     selectedDatasetIds = catalog.datasets.slice(0, 10).map((item) => item.id);
   }
 
   function selectTopModels() {
-    selectedModelIds = catalog.models
+    selectedModelIds = benchmarkRows
       .filter((model) => isFamilyAllowed(model.family))
-      .map((model) => ({
-        ...model,
-        netImprovement: null,
-        netImprovementCi95: null,
-        macroF1: averageMetric(
-          validResults.filter(
-            (result) =>
-              result.model_id === model.id && selectedDatasetSet.has(result.dataset_id),
-          ),
-          "macro_f1",
-        ),
-        modelSizeMb: null,
-        latencyMs: null,
-        peakMemoryMb: null,
-        efficiencyCombined: null,
-        efficiencyModelSize: null,
-        efficiencyPeakMemory: null,
-        efficiencyLatency: null,
-        publishedEfficiencyScores: null,
-      }))
       .sort(compareByPerformanceRank)
       .slice(0, 10)
       .map((model) => model.id);
@@ -679,27 +704,11 @@
 
     return baseRows.map((row) => ({
       ...row,
-      efficiencyCombined:
-        publishedScore(row.publishedEfficiencyScores?.combined) ??
-        combinedScores.get(row.id) ??
-        null,
-      efficiencyModelSize:
-        publishedScore(row.publishedEfficiencyScores?.model_size) ??
-        modelSizeScores.get(row.id) ??
-        null,
-      efficiencyPeakMemory:
-        publishedScore(row.publishedEfficiencyScores?.peak_memory) ??
-        peakMemoryScores.get(row.id) ??
-        null,
-      efficiencyLatency:
-        publishedScore(row.publishedEfficiencyScores?.latency) ??
-        latencyScores.get(row.id) ??
-        null,
+      efficiencyCombined: combinedScores.get(row.id) ?? null,
+      efficiencyModelSize: modelSizeScores.get(row.id) ?? null,
+      efficiencyPeakMemory: peakMemoryScores.get(row.id) ?? null,
+      efficiencyLatency: latencyScores.get(row.id) ?? null,
     }));
-  }
-
-  function publishedScore(score: number | null | undefined) {
-    return typeof score === "number" && Number.isFinite(score) ? score : null;
   }
 
   function efficiencyScores(
@@ -860,7 +869,7 @@
 
   function formatIndex(score: number | null) {
     if (score === null) return "pending";
-    return score.toFixed(3);
+    return `${(score * 100).toFixed(1)}%`;
   }
 
   function formatModelSize(size: number | null) {
@@ -883,7 +892,18 @@
   }
 
   function isFamilyAllowed(family: string) {
-    return getFamilyParts(family).every((part) => selectedModelFamilySet.has(part));
+    if (selectedModelFamilyIds.length === 0) return false;
+    if (selectedModelFamilyIds.length === modelFamilyOptions.length) return true;
+
+    const parts = getFamilyParts(family);
+    if (componentMatchMode === "exact") {
+      return (
+        parts.length === selectedModelFamilyIds.length &&
+        parts.every((part) => selectedModelFamilySet.has(part))
+      );
+    }
+
+    return parts.some((part) => selectedModelFamilySet.has(part));
   }
 
   function familyText(family: string) {
@@ -893,12 +913,11 @@
   function formatFamily(family: string) {
     const labels: Record<string, string> = {
       attn: "Attention",
-      cnn: "CNN",
+      cnn: "Convolutional",
       dense: "Dense",
-      fe: "Features",
+      fe: "Handcrafted",
       graph: "Graph",
-      neural: "Neural",
-      rnn: "RNN",
+      rnn: "Recurrent",
       spec: "Spectral",
     };
     const parts = getFamilyParts(family);
@@ -920,7 +939,7 @@
       spec: "Frequency-domain preprocessing or representations are used before classification.",
     };
 
-    return definitions[family] ?? "Architecture category used to group related model designs.";
+    return definitions[family] ?? "Model component used to describe an architecture.";
   }
 
   function getModelFamilyIds(models: Model[]) {
@@ -1062,7 +1081,7 @@
     return `model-filter-${id}`;
   }
 
-  function createScatterPlot(config: ScatterConfig): ScatterPlot {
+  function createScatterPlot(config: ScatterConfig, scale: ScatterScale): ScatterPlot {
     const rawPoints = rows.flatMap((row) => {
       const metricValue = scatterMetricValue(row, config.metric);
       const deploymentPoint = deploymentPointByModelId.get(row.id);
@@ -1070,6 +1089,7 @@
       if (
         typeof metricValue !== "number" ||
         !Number.isFinite(metricValue) ||
+        (scale === "log" && metricValue <= 0) ||
         typeof row.macroF1 !== "number" ||
         !Number.isFinite(row.macroF1)
       ) {
@@ -1106,29 +1126,49 @@
     if (points.length === 0 || allMacroF1.length === 0) {
       return {
         ...config,
+        scale,
         points,
         frontierPoints,
+        xMin: scale === "log" ? 0.1 : 0,
         xMax: 1,
         yMin: 0.45,
         yMax: 0.7,
-        xTicks: createLinearTicks(0, 1, 4),
+        xTicks: scale === "log" ? [0.1, 1] : createLinearTicks(0, 1, 4),
         yTicks: createLinearTicks(0.45, 0.7, 4),
         missingCount: rows.length,
       };
     }
 
-    const xMax = niceCostMax(Math.max(...points.map((point) => point.x), 1));
+    const xValues = points.map((point) => point.x);
+    let xMin = 0;
+    let xMax = niceCostMax(Math.max(...xValues, 1));
+    let xTicks = createLinearTicks(xMin, xMax, 4);
+
+    if (scale === "log") {
+      xMin = 10 ** Math.floor(Math.log10(Math.min(...xValues)));
+      xMax = 10 ** Math.ceil(Math.log10(Math.max(...xValues)));
+
+      if (xMin === xMax) {
+        xMin /= 10;
+        xMax *= 10;
+      }
+
+      xTicks = createLogTicks(xMin, xMax, 7);
+    }
+
     const yMin = Math.max(0, Math.floor((Math.min(...allMacroF1) - 0.015) * 100) / 100);
     const yMax = Math.min(1, Math.ceil((Math.max(...allMacroF1) + 0.015) * 100) / 100);
 
     return {
       ...config,
+      scale,
       points,
       frontierPoints,
+      xMin,
       xMax,
       yMin,
       yMax,
-      xTicks: createLinearTicks(0, xMax, 4),
+      xTicks,
       yTicks: createLinearTicks(yMin, yMax, 4),
       missingCount: rows.length - points.length,
     };
@@ -1165,6 +1205,27 @@
     return Array.from({ length: steps + 1 }, (_, index) => min + ((max - min) * index) / steps);
   }
 
+  function createLogTicks(min: number, max: number, maxTicks: number) {
+    const ticks: number[] = [];
+    const minExponent = Math.floor(Math.log10(min));
+    const maxExponent = Math.ceil(Math.log10(max));
+
+    for (let exponent = minExponent; exponent <= maxExponent; exponent += 1) {
+      for (const multiplier of [1, 2, 5]) {
+        const tick = multiplier * 10 ** exponent;
+        if (tick >= min && tick <= max) ticks.push(tick);
+      }
+    }
+
+    if (ticks.length <= maxTicks) return ticks;
+
+    const sampled = Array.from({ length: maxTicks }, (_, index) => {
+      const tickIndex = Math.round((index * (ticks.length - 1)) / (maxTicks - 1));
+      return ticks[tickIndex];
+    });
+    return [...new Set(sampled)];
+  }
+
   function niceCostMax(value: number) {
     if (value <= 2) return Math.ceil(value * 10) / 10;
     if (value <= 10) return Math.ceil(value / 2) * 2;
@@ -1174,7 +1235,10 @@
 
   function plotX(value: number, chart: ScatterPlot) {
     const innerWidth = plotBox.width - plotBox.left - plotBox.right;
-    return plotBox.left + (value / chart.xMax) * innerWidth;
+    const position = chart.scale === "log"
+      ? normalize(Math.log10(value), Math.log10(chart.xMin), Math.log10(chart.xMax), 0.5)
+      : normalize(value, chart.xMin, chart.xMax, 0.5);
+    return plotBox.left + position * innerWidth;
   }
 
   function plotY(value: number, chart: ScatterPlot) {
@@ -1186,15 +1250,11 @@
   }
 
   function formatScatterTick(value: number, metric: ScatterMetric) {
-    if (metric === "mean_latency_ms") {
-      return value >= 10 ? value.toFixed(0) : value.toFixed(1);
-    }
-
-    if (metric === "exported_model_size_mb" && value < 1) {
-      return value.toFixed(1);
-    }
-
-    return value >= 10 ? value.toFixed(0) : value.toFixed(1);
+    if (value >= 1000) return `${(value / 1000).toFixed(value >= 10_000 ? 0 : 1)}k`;
+    if (value >= 10) return value.toFixed(0);
+    if (value >= 1) return value.toFixed(1);
+    if (value >= 0.1) return value.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
+    return value.toPrecision(1);
   }
 
   function formatScatterF1Tick(value: number) {
@@ -1236,6 +1296,48 @@
   function hideScatterTooltip() {
     scatterTooltip = null;
   }
+
+  function tooltipX(x: number) {
+    return Math.min(Math.max(x, 150), Math.max(150, window.innerWidth - 150));
+  }
+
+  function showComponentTooltip(event: MouseEvent | FocusEvent, text: string) {
+    const bounds = (event.currentTarget as HTMLElement).getBoundingClientRect();
+    componentTooltip = {
+      text,
+      x: tooltipX(event instanceof MouseEvent ? event.clientX : bounds.left + bounds.width / 2),
+      y: event instanceof MouseEvent ? event.clientY : bounds.top,
+    };
+  }
+
+  function moveComponentTooltip(event: MouseEvent) {
+    if (!componentTooltip) return;
+    componentTooltip = {
+      ...componentTooltip,
+      x: tooltipX(event.clientX),
+      y: event.clientY,
+    };
+  }
+
+  function hideComponentTooltip() {
+    componentTooltip = null;
+  }
+
+  function handleComponentTooltipClick(event: MouseEvent, text: string) {
+    event.preventDefault();
+    event.stopPropagation();
+    showComponentTooltip(event, text);
+  }
+
+  function handleComponentTooltipKeydown(event: KeyboardEvent, text: string) {
+    event.stopPropagation();
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      showComponentTooltip(event as unknown as FocusEvent, text);
+    } else if (event.key === "Escape") {
+      hideComponentTooltip();
+    }
+  }
 </script>
 
 <svelte:window onkeydown={handleDialogKeydown} />
@@ -1243,9 +1345,8 @@
 <div class="bench-stack">
   <section class="arena-panel filter-panel">
     <div class="panel-header">
-      <div>
-        <h2>Filters</h2>
-      </div>
+      <h2>Filters</h2>
+      <button type="button" class="filter-reset-all" onclick={resetAllFilters}>Reset all</button>
     </div>
 
     <div class="filter-content">
@@ -1366,19 +1467,33 @@
       </div>
 
       <div class="dataset-filter">
-        <span class="filter-label">Architecture</span>
+        <span class="filter-label">Components</span>
         <details ontoggle={closeSiblingFilterDropdowns}>
-          <summary aria-label="Architecture">
+          <summary aria-label="Components">
             <span>{selectedModelFamilySummary}</span>
             <span class="filter-count">
               {selectedModelFamilyIds.length}/{modelFamilyOptions.length}
             </span>
           </summary>
           <div class="dataset-menu">
-            <div class="dataset-actions" aria-label="Architecture selection actions">
+            <div class="dataset-actions component-actions" aria-label="Component selection actions">
               <button type="button" onclick={selectAllModelFamilies}>All</button>
               <button type="button" onclick={clearModelFamilies}>None</button>
+              <label class="component-match-toggle">
+                <input
+                  type="checkbox"
+                  checked={componentMatchMode === "exact"}
+                  onchange={(event) =>
+                    (componentMatchMode = event.currentTarget.checked ? "exact" : "inclusive")}
+                />
+                <span>Exact combination</span>
+              </label>
             </div>
+            <p class="component-match-help">
+              {componentMatchMode === "exact"
+                ? "Show models with exactly the selected components."
+                : "Show models containing any selected component."}
+            </p>
             <div class="dataset-options">
               {#each modelFamilyOptions as item}
                 <div class="dataset-option" data-model-family-id={item.id}>
@@ -1400,8 +1515,14 @@
                       <span
                         class="family-pill-info"
                         tabindex="0"
-                        title={item.definition ?? ""}
                         aria-label={`Definition: ${item.definition ?? ""}`}
+                        onmouseenter={(event) => showComponentTooltip(event, item.definition ?? "")}
+                        onmousemove={moveComponentTooltip}
+                        onmouseleave={hideComponentTooltip}
+                        onfocus={(event) => showComponentTooltip(event, item.definition ?? "")}
+                        onblur={hideComponentTooltip}
+                        onclick={(event) => handleComponentTooltipClick(event, item.definition ?? "")}
+                        onkeydown={(event) => handleComponentTooltipKeydown(event, item.definition ?? "")}
                       >
                         ⓘ
                       </span>
@@ -1460,10 +1581,8 @@
     aria-labelledby="leaderboard-tab"
   >
       <div class="panel-header">
-        <div>
-          <h2>Rankings</h2>
+        <h2>Rankings</h2>
       </div>
-    </div>
 
     <div class="table-wrap leaderboard-wrap">
       <table class="leaderboard-table">
@@ -1507,7 +1626,7 @@
                 class="sort-button"
                 onclick={() => setSort("family")}
               >
-                Architecture
+                Components
                 <span class="sort-glyph" aria-hidden="true">
                   <span class:active-arrow={sortKey === "family" && sortDirection === "asc"}></span>
                   <span class:active-arrow={sortKey === "family" && sortDirection === "desc"}></span>
@@ -1549,7 +1668,7 @@
                   onclick={() => setSort("efficiency_model_size")}
                 >
                   <span class="heading-label">
-                    Model Size Efficiency
+                    Model Size Index
                     <span
                       class="info-tip"
                       title={metricInfo.efficiencyModelSize}
@@ -1575,7 +1694,7 @@
                   onclick={() => setSort("efficiency_peak_memory")}
                 >
                   <span class="heading-label">
-                    Peak Memory Efficiency
+                    Peak Memory Index
                     <span
                       class="info-tip"
                       title={metricInfo.efficiencyPeakMemory}
@@ -1601,7 +1720,7 @@
                   onclick={() => setSort("efficiency_latency")}
                 >
                   <span class="heading-label">
-                    Latency Efficiency
+                    Latency Index
                     <span
                       class="info-tip"
                       title={metricInfo.efficiencyLatency}
@@ -1627,7 +1746,7 @@
                   onclick={() => setSort("efficiency_combined")}
                 >
                   <span class="heading-label">
-                    Combined Efficiency
+                    Joint Index
                     <span
                       class="info-tip"
                       title={metricInfo.efficiencyCombined}
@@ -1696,15 +1815,21 @@
                 {/if}
               </td>
               <td class="family">
-                <div class="family-pill-list" aria-label={`Architecture: ${familyText(row.family)}`}>
+                <div class="family-pill-list" aria-label={`Components: ${familyText(row.family)}`}>
                   {#each getFamilyParts(row.family) as familyPart}
                     <span class="family-pill">
                       {formatFamily(familyPart)}
                       <span
                         class="family-pill-info"
                         tabindex="0"
-                        title={describeFamily(familyPart)}
                         aria-label={`Definition: ${describeFamily(familyPart)}`}
+                        onmouseenter={(event) => showComponentTooltip(event, describeFamily(familyPart))}
+                        onmousemove={moveComponentTooltip}
+                        onmouseleave={hideComponentTooltip}
+                        onfocus={(event) => showComponentTooltip(event, describeFamily(familyPart))}
+                        onblur={hideComponentTooltip}
+                        onclick={(event) => handleComponentTooltipClick(event, describeFamily(familyPart))}
+                        onkeydown={(event) => handleComponentTooltipKeydown(event, describeFamily(familyPart))}
                       >
                         ⓘ
                       </span>
@@ -1807,6 +1932,9 @@
                 </span>
               </th>
             {/each}
+            <th class="matrix-mean-heading" title="Mean Macro-F1 across visible models">
+              <span>Mean across models</span>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -1831,8 +1959,38 @@
                   <strong>{formatMatrixScore(cell.macroF1)}</strong>
                 </td>
               {/each}
+              <td
+                class="matrix-mean-cell"
+                class:pending-cell={row.meanMacroF1 === null}
+                style={scoreStyle(row.meanMacroF1)}
+                title={`${row.name}: mean across visible models · ${formatPercent(row.meanMacroF1)}`}
+              >
+                <strong>{formatMatrixScore(row.meanMacroF1)}</strong>
+              </td>
             </tr>
           {/each}
+          <tr class="matrix-summary-row">
+            <th class="sticky-col dataset-cell matrix-summary-label">
+              Mean across datasets
+            </th>
+            {#each matrixColumnMeans as cell}
+              <td
+                class:pending-cell={cell.macroF1 === null}
+                style={scoreStyle(cell.macroF1)}
+                title={`${cell.modelId}: mean across selected datasets · ${formatPercent(cell.macroF1)}`}
+              >
+                <strong>{formatMatrixScore(cell.macroF1)}</strong>
+              </td>
+            {/each}
+            <td
+              class="matrix-mean-cell"
+              class:pending-cell={matrixGrandMean === null}
+              style={scoreStyle(matrixGrandMean)}
+              title={`Overall mean across visible models and selected datasets · ${formatPercent(matrixGrandMean)}`}
+            >
+              <strong>{formatMatrixScore(matrixGrandMean)}</strong>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -1863,6 +2021,13 @@
               {#each scatterConfigs as config}
                 <option value={config.metric}>{config.xLabel}</option>
               {/each}
+            </select>
+          </label>
+          <label>
+            <span>Scale</span>
+            <select bind:value={scatterScale} aria-label="Pareto x-axis scale">
+              <option value="log">Logarithmic</option>
+              <option value="linear">Linear</option>
             </select>
           </label>
           <label class="frontier-toggle">
@@ -1956,7 +2121,7 @@
                 y={plotBox.height - 8}
                 text-anchor="middle"
               >
-                {scatterPlot.xLabel}
+                {scatterPlot.xLabel}{scatterPlot.scale === "log" ? " (log scale)" : ""}
               </text>
               <text
                 class="scatter-axis-title"
@@ -1964,7 +2129,7 @@
                 text-anchor="middle"
                 transform={`translate(14 ${(plotBox.top + plotBox.height - plotBox.bottom) / 2}) rotate(-90)`}
               >
-                Mean Macro-F1 on selected datasets
+                Mean test Macro-F1
               </text>
               {#if showParetoFrontier && scatterPlot.frontierPoints.length > 1}
                 <path
@@ -2024,6 +2189,16 @@
           ? "Pareto optimal"
           : `Dominated by ${scatterTooltip.point.dominators.slice(0, 2).join(", ")}`}
       </span>
+    </div>
+  {/if}
+
+  {#if componentTooltip}
+    <div
+      class="component-tooltip"
+      role="tooltip"
+      style={`left: ${componentTooltip.x}px; top: ${componentTooltip.y}px;`}
+    >
+      {componentTooltip.text}
     </div>
   {/if}
 
@@ -2254,7 +2429,31 @@
   }
 
   .filter-panel > .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     border-radius: 7px 7px 0 0;
+  }
+
+  .filter-reset-all {
+    flex: 0 0 auto;
+    min-height: 30px;
+    border: 1px solid var(--line-strong);
+    border-radius: 7px;
+    background: var(--panel);
+    color: var(--muted-strong);
+    padding: 0 10px;
+    font: inherit;
+    font-size: 0.76rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .filter-reset-all:hover,
+  .filter-reset-all:focus-visible {
+    border-color: var(--accent);
+    color: var(--ink);
+    outline: none;
   }
 
   .view-switcher {
@@ -2366,10 +2565,13 @@
 
   .dataset-filter details {
     position: relative;
+    width: 100%;
+    min-width: 0;
   }
 
   .dataset-filter summary {
     display: flex;
+    width: 100%;
     min-height: 36px;
     align-items: center;
     justify-content: space-between;
@@ -2427,9 +2629,11 @@
   .dataset-menu {
     position: absolute;
     top: calc(100% + 6px);
+    left: 0;
     right: 0;
     z-index: 10;
-    width: min(360px, calc(100vw - 48px));
+    width: auto;
+    max-width: none;
     max-height: min(560px, 72vh);
     overflow: auto;
     border: 1px solid lightgray;
@@ -2462,6 +2666,39 @@
   .dataset-actions button:hover {
     border-color: var(--accent);
     color: var(--ink);
+  }
+
+  .component-actions {
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .component-match-toggle {
+    display: inline-flex;
+    min-height: 28px;
+    align-items: center;
+    gap: 7px;
+    margin-left: auto;
+    color: var(--muted-strong);
+    cursor: pointer;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+
+  .component-match-toggle input {
+    width: 15px;
+    height: 15px;
+    margin: 0;
+    accent-color: var(--accent);
+  }
+
+  .component-match-help {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--muted);
+    font-size: 0.7rem;
+    line-height: 1.35;
   }
 
   .paper-link {
@@ -2559,6 +2796,10 @@
     overflow: auto;
   }
 
+  .leaderboard-wrap {
+    overflow-x: hidden;
+  }
+
   table {
     width: 100%;
     border-collapse: collapse;
@@ -2572,47 +2813,35 @@
   }
 
   .leaderboard-table {
-    min-width: 1048px;
-    table-layout: fixed;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    table-layout: auto;
   }
 
   .leaderboard-table th,
   .leaderboard-table td {
+    min-width: 0;
     padding: 11px 8px;
+    overflow-wrap: anywhere;
   }
 
   .leaderboard-table th {
     white-space: normal;
   }
 
-  .leaderboard-table th:nth-child(1),
-  .leaderboard-table td:nth-child(1) {
-    width: 18%;
+  .leaderboard-table th:first-child,
+  .leaderboard-table td:first-child {
+    width: 1%;
   }
 
   .leaderboard-table th:nth-child(2),
   .leaderboard-table td:nth-child(2) {
-    width: 26%;
-  }
-
-  .leaderboard-table th:nth-child(3),
-  .leaderboard-table td:nth-child(3) {
-    width: 18%;
-  }
-
-  .leaderboard-table th:nth-child(4),
-  .leaderboard-table td:nth-child(4) {
-    width: 8%;
-  }
-
-  .leaderboard-table th:nth-child(n + 5),
-  .leaderboard-table td:nth-child(n + 5) {
-    width: 8%;
+    width: 30%;
   }
 
   .leaderboard-table th:last-child,
   .leaderboard-table td:last-child {
-    width: 6%;
     text-align: left;
   }
 
@@ -2844,6 +3073,8 @@
     text-decoration-style: dotted;
     text-decoration-thickness: 1px;
     text-underline-offset: 4px;
+    overflow-wrap: normal;
+    white-space: nowrap;
   }
 
   .clickable-row:hover .model-title-button,
@@ -2867,8 +3098,8 @@
 
   .net-visual {
     display: grid;
-    grid-template-columns: 68px minmax(108px, 1fr);
-    gap: 10px;
+    grid-template-columns: minmax(54px, max-content) minmax(44px, 1fr);
+    gap: 6px;
     align-items: center;
   }
 
@@ -2984,11 +3215,10 @@
   }
 
   .family-pill-list {
-    display: grid;
-    grid-template-columns: repeat(2, max-content);
+    display: flex;
+    flex-wrap: wrap;
     gap: 5px 6px;
     align-items: center;
-    justify-items: start;
   }
 
   .family-pill {
@@ -3008,7 +3238,9 @@
     line-height: 1.05;
     overflow-wrap: normal;
     text-align: center;
-    white-space: nowrap;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    white-space: normal;
   }
 
   .family-pill-info {
@@ -3077,6 +3309,11 @@
 
   .matrix-model-heading {
     cursor: pointer;
+  }
+
+  .matrix-mean-heading,
+  .matrix-mean-cell {
+    border-left: 2px solid var(--line-strong) !important;
   }
 
   .matrix-table thead th span {
@@ -3154,6 +3391,19 @@
 
   .matrix-table .pending-cell strong {
     color: var(--muted);
+  }
+
+  .matrix-summary-row th,
+  .matrix-summary-row td {
+    border-top: 2px solid var(--line-strong);
+  }
+
+  .matrix-summary-label {
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 0.94rem;
+    font-weight: 500;
+    line-height: 30px;
   }
 
   .sticky-col {
@@ -3411,6 +3661,25 @@
     font-size: 0.72rem;
     font-weight: 600;
     line-height: 1.2;
+    pointer-events: none;
+    text-align: left;
+    white-space: normal;
+  }
+
+  .component-tooltip {
+    position: fixed;
+    z-index: 120;
+    width: max-content;
+    max-width: min(19rem, calc(100vw - 24px));
+    padding: 0.55rem 0.65rem;
+    transform: translate(-50%, calc(-100% - 0.55rem));
+    border: 1px solid var(--ink);
+    border-radius: 8px;
+    background: var(--ink);
+    color: var(--panel);
+    font-size: 0.74rem;
+    font-weight: 500;
+    line-height: 1.35;
     pointer-events: none;
     text-align: left;
     white-space: normal;
@@ -3727,8 +3996,10 @@
       margin-top: 6px;
     }
 
-    .leaderboard-table {
-      min-width: 1048px;
+    .leaderboard-table th,
+    .leaderboard-table td {
+      padding-right: 4px;
+      padding-left: 4px;
     }
 
     .sticky-col {

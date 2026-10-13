@@ -10,107 +10,248 @@ const datasetRepository = "https://github.com/teco-kit/whar-datasets";
   <BenchmarkPage
     title="Contribute"
     headingId="contribute-heading"
-    description="Add a model or dataset to the open HARena benchmark. Prepare the metadata here, then submit the implementation through GitHub for review."
+    description="Contribute code and metadata through one pull request to the model or dataset library. HARena discovers accepted contributions and benchmarks them using the official protocol."
   >
-    <section class="process-panel" aria-labelledby="process-heading">
+    <section class="start-panel" aria-labelledby="start-heading">
       <div class="section-heading">
-        <p class="eyebrow">How submissions work</p>
-        <h2 id="process-heading">From contribution to benchmark result</h2>
-        <p>
-          Code and metadata are reviewed together. Merging a contribution makes it discoverable by
-          HARena; official measurements are produced later by the benchmark runner, not supplied by
-          the contributor.
-        </p>
-      </div>
-      <ol class="process-steps">
-        <li><span>1</span><strong>Prepare</strong><small>Generate metadata and implement the adapter.</small></li>
-        <li><span>2</span><strong>Review</strong><small>Open a pull request in the relevant repository.</small></li>
-        <li><span>3</span><strong>Benchmark</strong><small>Maintainers approve eligibility and queue missing runs.</small></li>
-        <li><span>4</span><strong>Publish</strong><small>Validated results appear in the next HARena update.</small></li>
-      </ol>
-    </section>
-
-    <section class="submission-shell" aria-labelledby="submission-heading">
-      <div class="section-heading submission-heading">
-        <div>
-          <p class="eyebrow">Submission builder</p>
-          <h2 id="submission-heading">What would you like to contribute?</h2>
-        </div>
-        <p class="privacy-note">Nothing entered here is sent to HARena.</p>
+        <p class="step-label">Step 1</p>
+        <h2 id="start-heading">Choose what you are adding</h2>
+        <p>Select a contribution type to see the exact repository, files and checks involved.</p>
       </div>
 
-      <div class="submission-tabs" aria-label="Contribution type">
+      <div class="type-switch" aria-label="Contribution type">
         <button type="button" class="is-active" data-kind-button="model" aria-pressed="true">
-          <span>Model</span>
-          <small>Architecture, implementation and paper metadata</small>
+          <span class="type-icon" aria-hidden="true">M</span>
+          <span>
+            <strong>Add a model</strong>
+            <small>Implement an architecture in whar-models</small>
+          </span>
         </button>
         <button type="button" data-kind-button="dataset" aria-pressed="false">
-          <span>Dataset</span>
-          <small>Source, sensors, parser and license metadata</small>
+          <span class="type-icon" aria-hidden="true">D</span>
+          <span>
+            <strong>Add a dataset</strong>
+            <small>Add downloading, parsing and configuration in whar-datasets</small>
+          </span>
         </button>
       </div>
+    </section>
 
-      <div class="submission-layout">
-        <aside class="requirements" aria-live="polite">
-          <div data-requirements="model">
-            <h3>Model requirements</h3>
+    <section class="path-panel" aria-labelledby="path-heading">
+      <div data-path="model">
+        <div class="path-intro">
+          <div>
+            <p class="step-label">Step 2</p>
+            <h2 id="path-heading">Implement the model in <code>whar-models</code></h2>
             <p>
-              The pull request belongs in
-              <a href={modelRepository} target="_blank" rel="noreferrer">whar-models</a>.
-            </p>
-            <ol>
-              <li>Add the implementation under <code>src/whar_models/&lt;model_id&gt;/</code>.</li>
-              <li>Accept variable channel counts, sequence lengths and class counts.</li>
-              <li>Register the model in <code>src/whar_models/registry.py</code>.</li>
-              <li>Add a focused test that builds the model and performs a forward pass.</li>
-              <li>Document defaults and any differences from the published architecture.</li>
-            </ol>
-            <p class="after-merge">
-              After merge, <code>whar_models.list_models()</code> exposes the model and HARena can plan
-              it against every official dataset.
+              The pull request itself is the submission. You do not add results or change the HARena
+              repository.
             </p>
           </div>
+          <a class="repo-button" href={modelRepository} target="_blank" rel="noreferrer">
+            Open whar-models
+          </a>
+        </div>
 
-          <div data-requirements="dataset" hidden>
-            <h3>Dataset requirements</h3>
-            <p>
-              The pull request belongs in
-              <a href={datasetRepository} target="_blank" rel="noreferrer">whar-datasets</a>.
-            </p>
-            <ol>
-              <li>Add a configuration, downloader and parser for the original data source.</li>
-              <li>Do not commit or re-host raw data; respect its license and access terms.</li>
-              <li>Standardize subjects, sessions, activities, timestamps and sensor channels.</li>
-              <li>Register the dataset and add parsing and metadata tests.</li>
-              <li>Request inclusion in <code>BENCHMARK_DATASET_IDS</code> for official evaluation.</li>
-            </ol>
-            <p class="after-merge">
-              Benchmark eligibility is reviewed separately. Once included, HARena can plan every
-              registered model against the dataset.
-            </p>
-          </div>
-        </aside>
-
-        <div class="builder-panel">
-          <form data-submission-form="model">
-            <div class="form-heading">
-              <h3>Model metadata</h3>
-              <p>Required fields are marked with an asterisk.</p>
+        <ol class="code-steps">
+          <li>
+            <span class="step-number">1</span>
+            <div>
+              <h3>Add the implementation</h3>
+              <p>
+                Create <code>src/whar_models/&lt;model_id&gt;/model.py</code> and
+                <code>__init__.py</code>. Export a builder that accepts
+                <code>input_channels</code>, <code>window_length</code> and
+                <code>num_classes</code> as keyword arguments.
+              </p>
             </div>
+          </li>
+          <li>
+            <span class="step-number">2</span>
+            <div>
+              <h3>Register the model and its metadata</h3>
+              <p>
+                Add an entry to <code>WHARModelID</code> and a matching
+                <code>ModelSpec</code> in <code>src/whar_models/registry.py</code>. The registry stores
+                the ID, display name, family, framework, paper title and builder.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="step-number">3</span>
+            <div>
+              <h3>Test and open the pull request</h3>
+              <p>
+                Add a focused build and forward-pass test using a generic input shaped
+                <code>(batch, channels, timesteps)</code>. Models must support different channel,
+                window and class counts.
+              </p>
+              <div class="command-row">
+                <code>uv sync --extra dev</code>
+                <code>uv run pytest</code>
+              </div>
+            </div>
+          </li>
+        </ol>
+
+        <div class="acceptance-note">
+          <strong>After merge</strong>
+          <span>
+            <code>whar_models.list_models()</code> exposes the model. HARena can then plan it against
+            every official dataset; maintainers produce and validate the benchmark results.
+          </span>
+        </div>
+      </div>
+
+      <div data-path="dataset" hidden>
+        <div class="path-intro">
+          <div>
+            <p class="step-label">Step 2</p>
+            <h2>Implement the dataset in <code>whar-datasets</code></h2>
+            <p>
+              The pull request adds an adapter for the original source. Raw dataset files must not be
+              committed to the repository.
+            </p>
+          </div>
+          <a class="repo-button" href={datasetRepository} target="_blank" rel="noreferrer">
+            Open whar-datasets
+          </a>
+        </div>
+
+        <ol class="code-steps">
+          <li>
+            <span class="step-number">1</span>
+            <div>
+              <h3>Add a parser and configuration</h3>
+              <p>
+                Create <code>src/whar_datasets/config/cfg_&lt;dataset_id&gt;.py</code>. Its parser returns
+                activity metadata, session metadata and standardized sensor sessions; its
+                <code>WHARConfig</code> declares source URLs, sampling, counts, activities and channels.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="step-number">2</span>
+            <div>
+              <h3>Register the dataset</h3>
+              <p>
+                Add the ID to <code>WHARDatasetID</code> in
+                <code>src/whar_datasets/config/getter.py</code>. Standard names
+                <code>cfg_&lt;dataset_id&gt;.py</code> and <code>cfg_&lt;dataset_id&gt;</code> are discovered
+                automatically. Add it to <code>BENCHMARK_DATASET_IDS</code> only when requesting
+                official benchmark inclusion.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="step-number">3</span>
+            <div>
+              <h3>Test and open the pull request</h3>
+              <p>
+                Add focused parser tests using small synthetic fixtures. Verify subject, activity,
+                timestamp and channel semantics without committing the raw dataset.
+              </p>
+              <div class="command-row">
+                <code>uv sync --extra dev</code>
+                <code>uv run pytest</code>
+              </div>
+            </div>
+          </li>
+        </ol>
+
+        <div class="acceptance-note">
+          <strong>After merge</strong>
+          <span>
+            Maintainers separately review benchmark eligibility. Once the dataset is in
+            <code>BENCHMARK_DATASET_IDS</code>, HARena can plan every registered model against it.
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section class="brief-panel" aria-labelledby="brief-heading">
+      <div class="section-heading brief-heading">
+        <div>
+          <p class="step-label">Step 3</p>
+          <h2 id="brief-heading">Prepare the pull-request description</h2>
+          <p>
+            This optional helper turns your metadata into Markdown for the PR. It does not upload,
+            save or submit anything.
+          </p>
+        </div>
+      </div>
+
+      <form data-contribution-form="model">
+        <div class="metadata-layout model-metadata-layout">
+          <fieldset class="metadata-section">
+            <legend>
+              <span>Identity and publication</span>
+              <small>Stable registry names and the scientific source represented by this implementation.</small>
+            </legend>
             <div class="field-grid">
               <label>
                 <span>Model ID *</span>
                 <input name="id" required pattern="[a-z0-9]+(?:_[a-z0-9]+)*" placeholder="tinyhar" />
-                <small>Lowercase snake_case; this becomes the stable registry ID.</small>
+                <small>Lowercase snake_case, matching <code>WHARModelID</code>.</small>
               </label>
               <label>
                 <span>Display name *</span>
                 <input name="name" required placeholder="TinyHAR" />
               </label>
-              <label>
-                <span>Architecture family *</span>
-                <input name="family" required placeholder="cnn_rnn_attention" />
+              <label class="wide-field">
+                <span>Paper title *</span>
+                <input name="paper_title" required placeholder="Full publication title" />
+                <small>The model registry requires paper metadata.</small>
               </label>
+              <label>
+                <span>Paper URL</span>
+                <input name="paper_url" type="url" placeholder="https://doi.org/..." />
+              </label>
+              <label>
+                <span>Publication year</span>
+                <input name="year" type="number" min="1900" max="2100" placeholder="2026" />
+              </label>
+              <label class="wide-field">
+                <span>Authors</span>
+                <input name="authors" placeholder="First Author, Second Author" />
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="metadata-section">
+            <legend>
+              <span>Architecture and implementation</span>
+              <small>How the implementation is classified and licensed.</small>
+            </legend>
+            <div class="field-grid">
+              <div class="architecture-picker wide-field" aria-labelledby="architecture-picker-label">
+                <div class="field-label-row">
+                  <span id="architecture-picker-label">Architecture components *</span>
+                  <small>Select all that apply.</small>
+                </div>
+                <div class="architecture-options" data-architecture-options>
+                  <label><input type="checkbox" name="architecture_parts" value="attention" /><span>Attention</span></label>
+                  <label><input type="checkbox" name="architecture_parts" value="cnn" /><span>Convolutional</span></label>
+                  <label><input type="checkbox" name="architecture_parts" value="dense" /><span>Dense</span></label>
+                  <label><input type="checkbox" name="architecture_parts" value="features" /><span>Handcrafted</span></label>
+                  <label><input type="checkbox" name="architecture_parts" value="graph" /><span>Graph</span></label>
+                  <label><input type="checkbox" name="architecture_parts" value="rnn" /><span>Recurrent</span></label>
+                  <label><input type="checkbox" name="architecture_parts" value="spectral" /><span>Spectral</span></label>
+                </div>
+                <div class="custom-architecture-row">
+                  <input
+                    type="text"
+                    data-custom-architecture
+                    aria-label="Custom architecture component"
+                    placeholder="Add another component"
+                  />
+                  <button type="button" data-add-architecture>Add component</button>
+                </div>
+                <small class="field-help">
+                  Multiple selections are combined into the proposed registry family; custom components
+                  appear as additional selected options.
+                </small>
+              </div>
               <label>
                 <span>Framework *</span>
                 <select name="framework" required>
@@ -122,61 +263,74 @@ const datasetRepository = "https://github.com/teco-kit/whar-datasets";
                 </select>
               </label>
               <label>
-                <span>Publication year</span>
-                <input name="year" type="number" min="1900" max="2100" placeholder="2026" />
+                <span>Implementation license</span>
+                <input name="license" placeholder="Apache-2.0" />
               </label>
               <label>
-                <span>License *</span>
-                <input name="license" required placeholder="Apache-2.0" />
-              </label>
-              <label class="wide-field">
-                <span>Paper URL</span>
-                <input name="paper_url" type="url" placeholder="https://doi.org/..." />
-              </label>
-              <label class="wide-field">
                 <span>Original implementation URL</span>
                 <input name="source_url" type="url" placeholder="https://github.com/..." />
               </label>
-              <label class="wide-field">
-                <span>Authors</span>
-                <input name="authors" placeholder="First Author, Second Author" />
-                <small>Comma-separated names.</small>
-              </label>
-              <label class="wide-field">
-                <span>Default configuration</span>
-                <textarea name="defaults" rows="3" placeholder="Learning rate, optimizer and architecture defaults"></textarea>
-              </label>
-              <label class="wide-field">
-                <span>Implementation notes</span>
-                <textarea name="notes" rows="3" placeholder="Known differences from the paper or special constraints"></textarea>
-              </label>
             </div>
-            <button class="generate-button" type="submit">Generate model submission</button>
-          </form>
+          </fieldset>
 
-          <form data-submission-form="dataset" hidden>
-            <div class="form-heading">
-              <h3>Dataset metadata</h3>
-              <p>Required fields are marked with an asterisk.</p>
+          <fieldset class="metadata-section">
+            <legend>
+              <span>Reproducibility notes</span>
+              <small>Defaults, deviations and constraints reviewers should know about.</small>
+            </legend>
+            <div class="field-grid">
+              <label class="wide-field">
+                <span>Defaults and implementation notes</span>
+                <textarea name="notes" rows="4" placeholder="Default hyperparameters, implementation differences or special constraints"></textarea>
+              </label>
             </div>
+          </fieldset>
+        </div>
+
+        <div class="form-footer">
+          <p><strong>*</strong> Required for a complete PR description.</p>
+          <button class="prepare-button" type="submit">Prepare model PR description</button>
+        </div>
+      </form>
+
+      <form data-contribution-form="dataset" hidden>
+        <div class="metadata-layout dataset-metadata-layout">
+          <fieldset class="metadata-section">
+            <legend>
+              <span>Identity and publication</span>
+              <small>Stable registry names and the scientific source that introduced the dataset.</small>
+            </legend>
             <div class="field-grid">
               <label>
                 <span>Dataset ID *</span>
                 <input name="id" required pattern="[a-z0-9]+(?:_[a-z0-9]+)*" placeholder="example_har" />
-                <small>Lowercase snake_case; this becomes the stable registry ID.</small>
+                <small>Lowercase snake_case, matching <code>WHARDatasetID</code>.</small>
               </label>
               <label>
                 <span>Display name *</span>
                 <input name="name" required placeholder="Example-HAR" />
               </label>
               <label>
+                <span>Paper URL</span>
+                <input name="paper_url" type="url" placeholder="https://doi.org/..." />
+              </label>
+              <label>
                 <span>Publication year</span>
                 <input name="year" type="number" min="1900" max="2100" placeholder="2026" />
               </label>
-              <label>
-                <span>License or access terms *</span>
-                <input name="license" required placeholder="CC BY 4.0" />
+              <label class="wide-field">
+                <span>Authors</span>
+                <input name="authors" placeholder="First Author, Second Author" />
               </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="metadata-section">
+            <legend>
+              <span>Dataset structure and sampling</span>
+              <small>Scale, labels, channels and timing exposed by <code>WHARConfig</code>.</small>
+            </legend>
+            <div class="field-grid three-column-grid">
               <label>
                 <span>Subjects</span>
                 <input name="subjects" type="number" min="1" placeholder="30" />
@@ -189,75 +343,90 @@ const datasetRepository = "https://github.com/teco-kit/whar-datasets";
                 <span>Sensor channels</span>
                 <input name="channels" type="number" min="1" placeholder="6" />
               </label>
+            </div>
+            <div class="field-grid dataset-detail-grid">
               <label>
-                <span>Sampling rate</span>
-                <input name="sampling_rate" placeholder="50 Hz" />
+                <span>Available activities</span>
+                <input name="activity_names" placeholder="walking, running, sitting" />
+                <small>Comma-separated canonical activity names.</small>
               </label>
-              <label class="wide-field">
-                <span>Official dataset URL *</span>
-                <input name="dataset_url" type="url" required placeholder="https://zenodo.org/..." />
+              <label>
+                <span>Available sensor channels</span>
+                <input name="channel_names" placeholder="wrist_acc_x, wrist_acc_y, wrist_acc_z" />
+                <small>Comma-separated channel names.</small>
               </label>
-              <label class="wide-field">
-                <span>Paper URL</span>
-                <input name="paper_url" type="url" placeholder="https://doi.org/..." />
+              <label>
+                <span>Source rate mode</span>
+                <select name="source_rate_mode">
+                  <option value="fixed">Fixed sampling rate</option>
+                  <option value="per_session">Varies by session</option>
+                </select>
               </label>
-              <label class="wide-field">
-                <span>Authors</span>
-                <input name="authors" placeholder="First Author, Second Author" />
-                <small>Comma-separated names.</small>
-              </label>
-              <label class="wide-field">
-                <span>Sensor modalities</span>
-                <input name="modalities" placeholder="accelerometer, gyroscope" />
-                <small>Comma-separated values.</small>
-              </label>
-              <label class="wide-field">
-                <span>Devices and body placements</span>
-                <input name="devices" placeholder="smartwatch at wrist, phone at waist" />
-                <small>Comma-separated values.</small>
-              </label>
-              <label class="wide-field">
-                <span>Application settings</span>
-                <input name="settings" placeholder="ADL, locomotion, fitness" />
-                <small>Comma-separated values.</small>
-              </label>
-              <label class="wide-field">
-                <span>Access and data-quality notes</span>
-                <textarea name="notes" rows="3" placeholder="Authentication, consent, missing sensors or known limitations"></textarea>
+              <label>
+                <span>Sampling frequency</span>
+                <input name="sampling_freq" placeholder="50 Hz" />
               </label>
             </div>
-            <label class="eligibility-check">
-              <input name="benchmark_eligible" type="checkbox" value="true" />
-              <span>Request review for inclusion in the official benchmark dataset list.</span>
-            </label>
-            <button class="generate-button" type="submit">Generate dataset submission</button>
-          </form>
+          </fieldset>
+
+          <fieldset class="metadata-section">
+            <legend>
+              <span>Source, access and limitations</span>
+              <small>Where the data comes from, how it may be used and constraints reviewers should know.</small>
+            </legend>
+            <div class="field-grid">
+              <label>
+                <span>Official dataset page *</span>
+                <input name="dataset_url" type="url" required placeholder="https://zenodo.org/..." />
+              </label>
+              <label>
+                <span>Download URL or access instructions *</span>
+                <input name="download_url" required placeholder="https://... or registration required" />
+              </label>
+              <label class="wide-field">
+                <span>License or access terms *</span>
+                <input name="license" required placeholder="CC BY 4.0 or research access agreement" />
+              </label>
+              <label class="wide-field">
+                <span>Devices, placements and limitations</span>
+                <textarea name="notes" rows="4" placeholder="Devices, body positions, missing values, access constraints or known quality issues"></textarea>
+              </label>
+            </div>
+          </fieldset>
         </div>
-      </div>
+
+        <div class="form-footer dataset-form-footer">
+          <label class="eligibility-check">
+            <input name="benchmark_eligible" type="checkbox" value="true" />
+            <span>Ask maintainers to review this dataset for <code>BENCHMARK_DATASET_IDS</code>.</span>
+          </label>
+          <button class="prepare-button" type="submit">Prepare dataset PR description</button>
+        </div>
+      </form>
     </section>
 
     <section class="output-panel" data-output-panel hidden aria-labelledby="output-heading">
       <div class="output-heading">
         <div>
-          <p class="eyebrow">Prepared locally</p>
-          <h2 id="output-heading">Your submission package</h2>
+          <p class="step-label">Ready to use</p>
+          <h2 id="output-heading">Pull-request description</h2>
         </div>
-        <span data-output-status>Ready</span>
+        <span data-output-status>Prepared</span>
       </div>
-      <p class="output-guidance">
-        Add this metadata to the implementation pull request. You can also open a prefilled submission
-        issue first if you want feedback before writing code.
+      <p>
+        Copy this Markdown into your PR description. If you want early feedback before implementing,
+        open the same content as a GitHub issue instead.
       </p>
-      <pre><code data-yaml-output></code></pre>
+      <pre><code data-markdown-output></code></pre>
       <div class="output-actions">
-        <button type="button" data-copy-yaml>Copy YAML</button>
-        <button type="button" data-download-yaml>Download YAML</button>
-        <a data-open-issue target="_blank" rel="noreferrer">Open submission issue</a>
-        <a data-open-pr target="_blank" rel="noreferrer">Open pull request</a>
+        <button type="button" data-copy-markdown>Copy PR description</button>
+        <a data-open-repository target="_blank" rel="noreferrer">Open repository</a>
+        <a data-open-issue target="_blank" rel="noreferrer">Ask for feedback first</a>
+        <a class="primary-action" data-open-pr target="_blank" rel="noreferrer">Open pull request</a>
       </div>
       <p class="pr-note">
-        GitHub can only create the pull request after your code exists on a branch. The button opens
-        the repository comparison page so you can select that branch.
+        Your implementation must already be pushed to a branch before GitHub can open its pull
+        request. HARena never receives the form data directly.
       </p>
     </section>
   </BenchmarkPage>
@@ -271,74 +440,134 @@ const datasetRepository = "https://github.com/teco-kit/whar-datasets";
     dataset: "https://github.com/teco-kit/whar-datasets",
   };
 
-  let currentYaml = "";
-  let currentFilename = "submission.yaml";
+  let currentMarkdown = "";
 
-  const kindButtons = Array.from(
-    document.querySelectorAll<HTMLButtonElement>("[data-kind-button]"),
-  );
+  const kindButtons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-kind-button]"));
+  const paths = Array.from(document.querySelectorAll<HTMLElement>("[data-path]"));
   const forms = Array.from(
-    document.querySelectorAll<HTMLFormElement>("[data-submission-form]"),
-  );
-  const requirementPanels = Array.from(
-    document.querySelectorAll<HTMLElement>("[data-requirements]"),
+    document.querySelectorAll<HTMLFormElement>("[data-contribution-form]"),
   );
   const outputPanel = document.querySelector<HTMLElement>("[data-output-panel]");
-  const yamlOutput = document.querySelector<HTMLElement>("[data-yaml-output]");
+  const markdownOutput = document.querySelector<HTMLElement>("[data-markdown-output]");
   const outputStatus = document.querySelector<HTMLElement>("[data-output-status]");
+  const repositoryLink = document.querySelector<HTMLAnchorElement>("[data-open-repository]");
   const issueLink = document.querySelector<HTMLAnchorElement>("[data-open-issue]");
   const pullRequestLink = document.querySelector<HTMLAnchorElement>("[data-open-pr]");
+  const architectureOptions = document.querySelector<HTMLElement>("[data-architecture-options]");
+  const customArchitectureInput = document.querySelector<HTMLInputElement>("[data-custom-architecture]");
+  const addArchitectureButton = document.querySelector<HTMLButtonElement>("[data-add-architecture]");
 
-  const quoted = (value: FormDataEntryValue | null) => JSON.stringify(String(value ?? "").trim());
-  const listValue = (value: FormDataEntryValue | null) =>
-    String(value ?? "")
-      .split(",")
-      .map((part) => part.trim())
-      .filter(Boolean)
-      .map((part) => JSON.stringify(part))
-      .join(", ");
+  const value = (data: FormData, key: string) => String(data.get(key) ?? "").trim();
+  const row = (label: string, fieldValue: string) =>
+    fieldValue ? `| ${label} | ${fieldValue.replaceAll("|", "\\|").replaceAll("\n", " ")} |` : null;
+  const slugify = (text: string) =>
+    text.toLowerCase().trim().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
 
-  const optionalLine = (key: string, data: FormData, array = false) => {
-    const value = data.get(key);
-    if (!String(value ?? "").trim()) return null;
-    return array ? `${key}: [${listValue(value)}]` : `${key}: ${quoted(value)}`;
+  const addCustomArchitecture = () => {
+    const labelText = customArchitectureInput?.value.trim() ?? "";
+    if (!labelText || !architectureOptions || !customArchitectureInput) return;
+
+    const existing = Array.from(
+      architectureOptions.querySelectorAll<HTMLInputElement>('input[name="architecture_parts"]'),
+    ).find((input) => input.value.toLowerCase() === labelText.toLowerCase());
+
+    if (existing) {
+      existing.checked = true;
+    } else {
+      const label = document.createElement("label");
+      label.className = "is-custom";
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.name = "architecture_parts";
+      input.value = labelText;
+      input.checked = true;
+      const text = document.createElement("span");
+      text.textContent = labelText;
+      label.append(input, text);
+      architectureOptions.append(label);
+    }
+
+    customArchitectureInput.value = "";
+    customArchitectureInput.setCustomValidity("");
   };
 
-  const createYaml = (kind: ContributionKind, data: FormData) => {
-    const lines: Array<string | null> = [
-      `kind: ${kind}`,
-      `id: ${quoted(data.get("id"))}`,
-      `name: ${quoted(data.get("name"))}`,
-      optionalLine("year", data),
-      `license: ${quoted(data.get("license"))}`,
-      optionalLine("paper_url", data),
-      optionalLine("authors", data, true),
+  addArchitectureButton?.addEventListener("click", addCustomArchitecture);
+  customArchitectureInput?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      addCustomArchitecture();
+    }
+  });
+  architectureOptions?.addEventListener("change", () => customArchitectureInput?.setCustomValidity(""));
+
+  const makeDescription = (kind: ContributionKind, data: FormData) => {
+    const rows = [
+      row(kind === "model" ? "Model ID" : "Dataset ID", `\`${value(data, "id")}\``),
+      row("Name", value(data, "name")),
     ];
 
     if (kind === "model") {
-      lines.push(
-        `family: ${quoted(data.get("family"))}`,
-        `framework: ${quoted(data.get("framework"))}`,
-        optionalLine("source_url", data),
-        optionalLine("defaults", data),
-        optionalLine("notes", data),
+      const components = data.getAll("architecture_parts").map(String);
+      rows.push(
+        row("Architecture components", components.join(", ")),
+        row("Proposed registry family", components.map(slugify).filter(Boolean).join("_")),
+        row("Framework", value(data, "framework")),
+        row("Paper", value(data, "paper_title")),
+        row("Paper URL", value(data, "paper_url")),
+        row("Publication year", value(data, "year")),
+        row("Original implementation", value(data, "source_url")),
+        row("License", value(data, "license")),
+        row("Authors", value(data, "authors")),
+        row("Notes", value(data, "notes")),
       );
     } else {
-      lines.push(
-        `dataset_url: ${quoted(data.get("dataset_url"))}`,
-        optionalLine("subjects", data),
-        optionalLine("activities", data),
-        optionalLine("channels", data),
-        optionalLine("sampling_rate", data),
-        optionalLine("modalities", data, true),
-        optionalLine("devices", data, true),
-        optionalLine("settings", data, true),
-        `benchmark_eligible: ${data.get("benchmark_eligible") === "true"}`,
-        optionalLine("notes", data),
+      rows.push(
+        row("Dataset page", value(data, "dataset_url")),
+        row("Download/access", value(data, "download_url")),
+        row("License/access terms", value(data, "license")),
+        row("Paper URL", value(data, "paper_url")),
+        row("Publication year", value(data, "year")),
+        row("Authors", value(data, "authors")),
+        row("Source-rate mode", value(data, "source_rate_mode")),
+        row("Sampling frequency", value(data, "sampling_freq")),
+        row("Subjects", value(data, "subjects")),
+        row("Activities", value(data, "activities")),
+        row("Channels", value(data, "channels")),
+        row("Activity names", value(data, "activity_names")),
+        row("Channel names", value(data, "channel_names")),
+        row("Notes", value(data, "notes")),
+        row(
+          "Official benchmark review",
+          data.get("benchmark_eligible") === "true" ? "Requested" : "Not requested",
+        ),
       );
     }
 
-    return lines.filter((line): line is string => line !== null).join("\n");
+    const checklist = kind === "model"
+      ? [
+          "- [ ] Implementation package and builder added",
+          "- [ ] `WHARModelID` and `ModelSpec` registered",
+          "- [ ] Generic build and forward-pass test added",
+          "- [ ] `uv run pytest` passes",
+        ]
+      : [
+          "- [ ] Parser and `WHARConfig` added",
+          "- [ ] `WHARDatasetID` registered",
+          "- [ ] Focused parser tests added without raw data",
+          "- [ ] `uv run pytest` passes",
+        ];
+
+    return [
+      `## ${kind === "model" ? "Model" : "Dataset"} summary`,
+      "",
+      "| Field | Value |",
+      "| --- | --- |",
+      ...rows.filter((item): item is string => item !== null),
+      "",
+      "## Implementation checklist",
+      "",
+      ...checklist,
+    ].join("\n");
   };
 
   const setActiveKind = (kind: ContributionKind) => {
@@ -347,12 +576,8 @@ const datasetRepository = "https://github.com/teco-kit/whar-datasets";
       button.classList.toggle("is-active", isActive);
       button.setAttribute("aria-pressed", String(isActive));
     });
-    forms.forEach((form) => {
-      form.hidden = form.dataset.submissionForm !== kind;
-    });
-    requirementPanels.forEach((panel) => {
-      panel.hidden = panel.dataset.requirements !== kind;
-    });
+    paths.forEach((path) => (path.hidden = path.dataset.path !== kind));
+    forms.forEach((form) => (form.hidden = form.dataset.contributionForm !== kind));
     if (outputPanel) outputPanel.hidden = true;
   };
 
@@ -366,26 +591,33 @@ const datasetRepository = "https://github.com/teco-kit/whar-datasets";
   forms.forEach((form) => {
     form.addEventListener("submit", (event) => {
       event.preventDefault();
+      const kind = form.dataset.contributionForm as ContributionKind;
+      if (kind === "model") {
+        addCustomArchitecture();
+        const selectedComponents = form.querySelectorAll<HTMLInputElement>(
+          'input[name="architecture_parts"]:checked',
+        );
+        if (selectedComponents.length === 0 && customArchitectureInput) {
+          customArchitectureInput.setCustomValidity("Select or add at least one architecture component.");
+          customArchitectureInput.reportValidity();
+          return;
+        }
+      }
       if (!form.reportValidity()) return;
 
-      const kind = form.dataset.submissionForm as ContributionKind;
       const data = new FormData(form);
-      const submissionId = String(data.get("id") ?? "submission");
-      currentYaml = createYaml(kind, data);
-      currentFilename = `${submissionId}.metadata.yaml`;
-
-      if (yamlOutput) yamlOutput.textContent = currentYaml;
-      if (outputStatus) outputStatus.textContent = `${kind === "model" ? "Model" : "Dataset"} metadata ready`;
-
-      const issueTitle = `[${kind} submission] ${String(data.get("name") ?? submissionId)}`;
-      const checklist = kind === "model"
-        ? "- [ ] Implementation added\n- [ ] Registry entry added\n- [ ] Build and forward-pass test added"
-        : "- [ ] Downloader/parser added\n- [ ] Dataset registered\n- [ ] Parsing and metadata tests added\n- [ ] Benchmark eligibility reviewed";
-      const issueBody = `## Proposed ${kind}\n\n\`\`\`yaml\n${currentYaml}\n\`\`\`\n\n## Implementation checklist\n\n${checklist}`;
       const repository = repositories[kind];
+      const displayName = value(data, "name") || value(data, "id");
+      currentMarkdown = makeDescription(kind, data);
 
+      if (markdownOutput) markdownOutput.textContent = currentMarkdown;
+      if (outputStatus) {
+        outputStatus.textContent = `${kind === "model" ? "Model" : "Dataset"} PR text ready`;
+      }
+      if (repositoryLink) repositoryLink.href = repository;
       if (issueLink) {
-        issueLink.href = `${repository}/issues/new?title=${encodeURIComponent(issueTitle)}&body=${encodeURIComponent(issueBody)}`;
+        const title = `[${kind} proposal] ${displayName}`;
+        issueLink.href = `${repository}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(currentMarkdown)}`;
       }
       if (pullRequestLink) pullRequestLink.href = `${repository}/compare`;
       if (outputPanel) {
@@ -395,485 +627,219 @@ const datasetRepository = "https://github.com/teco-kit/whar-datasets";
     });
   });
 
-  document.querySelector<HTMLButtonElement>("[data-copy-yaml]")?.addEventListener("click", async (event) => {
-    const button = event.currentTarget as HTMLButtonElement;
-    try {
-      await navigator.clipboard.writeText(currentYaml);
-      button.textContent = "Copied";
-    } catch {
-      const selection = window.getSelection();
-      const range = document.createRange();
-      if (yamlOutput) {
-        range.selectNodeContents(yamlOutput);
-        selection?.removeAllRanges();
-        selection?.addRange(range);
+  document
+    .querySelector<HTMLButtonElement>("[data-copy-markdown]")
+    ?.addEventListener("click", async (event) => {
+      const button = event.currentTarget as HTMLButtonElement;
+      try {
+        await navigator.clipboard.writeText(currentMarkdown);
+        button.textContent = "Copied";
+      } catch {
+        if (markdownOutput) {
+          const range = document.createRange();
+          range.selectNodeContents(markdownOutput);
+          const selection = window.getSelection();
+          selection?.removeAllRanges();
+          selection?.addRange(range);
+        }
+        button.textContent = "Selected";
       }
-      button.textContent = "Selected";
-    }
-    window.setTimeout(() => (button.textContent = "Copy YAML"), 1600);
-  });
-
-  document.querySelector<HTMLButtonElement>("[data-download-yaml]")?.addEventListener("click", () => {
-    const blob = new Blob([`${currentYaml}\n`], { type: "text/yaml;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = currentFilename;
-    anchor.click();
-    URL.revokeObjectURL(url);
-  });
+      window.setTimeout(() => (button.textContent = "Copy PR description"), 1600);
+    });
 </script>
 
 <style>
-  .process-panel,
-  .submission-shell,
-  .output-panel {
-    margin-top: 14px;
-    overflow: hidden;
-    border: 1px solid lightgray;
-    border-radius: 8px;
-    background: var(--panel);
+  .start-panel, .path-panel, .brief-panel, .output-panel {
+    margin-top: 14px; overflow: hidden; border: 1px solid lightgray;
+    border-radius: 8px; background: var(--panel);
   }
-
-  .section-heading,
-  .output-heading {
-    padding: 20px;
+  .section-heading, .path-intro, .output-heading { padding: 20px; }
+  .section-heading h2, .path-intro h2, .output-heading h2 {
+    margin: 2px 0 0; font-family: var(--display-serif); font-size: 1.35rem;
+    font-weight: 500; line-height: 1.15;
   }
-
-  .section-heading h2,
-  .output-heading h2 {
-    margin: 2px 0 0;
-    font-family: var(--display-serif);
-    font-size: 1.35rem;
-    font-weight: 500;
-    line-height: 1.15;
+  .section-heading p:last-child, .path-intro p:last-child, .output-panel > p {
+    max-width: 850px; margin: 8px 0 0; color: var(--muted-strong); font-size: 0.86rem;
   }
-
-  .section-heading > p:last-child,
-  .output-guidance,
-  .pr-note {
-    max-width: 850px;
-    margin: 8px 0 0;
-    color: var(--muted-strong);
-    font-size: 0.88rem;
+  .step-label {
+    margin: 0; color: var(--muted); font-size: 0.68rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
   }
-
-  .eyebrow {
-    margin: 0;
-    color: var(--muted);
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+  .type-switch { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--line); }
+  .type-switch button {
+    display: flex; min-height: 90px; align-items: center; gap: 12px; padding: 18px 20px;
+    border: 0; border-right: 1px solid var(--line); background: var(--panel);
+    color: var(--muted-strong); text-align: left; cursor: pointer;
   }
-
-  .process-steps {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    margin: 0;
-    padding: 0;
-    border-top: 1px solid var(--line);
-    list-style: none;
+  .type-switch button:last-child { border-right: 0; }
+  .type-switch button:hover, .type-switch button:focus-visible, .type-switch button.is-active {
+    background: var(--panel-soft); color: var(--ink); outline: none;
   }
-
-  .process-steps li {
-    display: grid;
-    grid-template-columns: 28px 1fr;
-    gap: 2px 9px;
-    min-height: 105px;
-    align-content: center;
-    padding: 18px;
+  .type-switch button.is-active { box-shadow: inset 0 -2px var(--ink); }
+  .type-switch button > span:last-child { display: grid; gap: 2px; }
+  .type-switch strong { font-size: 0.92rem; }
+  .type-switch small { color: var(--muted); font-size: 0.75rem; }
+  .type-icon {
+    display: grid; flex: 0 0 auto; width: 34px; height: 34px; place-items: center;
+    border: 1px solid var(--line-strong); border-radius: 50%; font-family: var(--display-serif);
+  }
+  .path-intro, .output-heading, .brief-heading {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 20px;
+  }
+  .path-intro code, .code-steps code, .acceptance-note code, label code {
+    font-family: "DM Mono", ui-monospace, monospace; font-size: 0.88em;
+  }
+  .repo-button, .prepare-button, .output-actions button, .output-actions a {
+    display: inline-flex; min-height: 38px; align-items: center; justify-content: center;
+    padding: 0 13px; border: 1px solid var(--line-strong); border-radius: 6px;
+    background: var(--panel); color: var(--ink); font-size: 0.78rem; font-weight: 700;
+    cursor: pointer; text-decoration: none;
+  }
+  .repo-button { flex: 0 0 auto; }
+  .repo-button:hover, .repo-button:focus-visible, .output-actions button:hover,
+  .output-actions button:focus-visible, .output-actions a:hover, .output-actions a:focus-visible {
+    background: var(--panel-soft); outline: none;
+  }
+  .code-steps {
+    display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; padding: 0;
+    border-top: 1px solid var(--line); list-style: none;
+  }
+  .code-steps li {
+    display: grid; grid-template-columns: 30px 1fr; gap: 12px; padding: 20px;
     border-right: 1px solid var(--line);
   }
-
-  .process-steps li:last-child {
-    border-right: 0;
+  .code-steps li:last-child { border-right: 0; }
+  .step-number {
+    display: grid; width: 28px; height: 28px; place-items: center;
+    border: 1px solid var(--line-strong); border-radius: 50%;
+    font-family: "DM Mono", ui-monospace, monospace; font-size: 0.73rem;
   }
-
-  .process-steps span {
-    grid-row: 1 / 3;
-    display: grid;
-    width: 26px;
-    height: 26px;
-    place-items: center;
-    border: 1px solid var(--line-strong);
-    border-radius: 50%;
-    font-family: "DM Mono", ui-monospace, monospace;
-    font-size: 0.74rem;
+  .code-steps h3 { margin: 3px 0 8px; font-size: 0.88rem; }
+  .code-steps p { margin: 0; color: var(--muted-strong); font-size: 0.78rem; line-height: 1.5; }
+  .command-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .command-row code {
+    padding: 5px 7px; border: 1px solid var(--line); border-radius: 4px;
+    background: var(--panel-soft); font-size: 0.69rem;
   }
-
-  .process-steps strong {
-    font-size: 0.86rem;
+  .acceptance-note {
+    display: grid; grid-template-columns: auto 1fr; gap: 12px; padding: 15px 20px;
+    border-top: 1px solid var(--line); background: var(--panel-soft);
+    color: var(--muted-strong); font-size: 0.78rem;
   }
-
-  .process-steps small {
-    color: var(--muted);
-    font-size: 0.76rem;
-    line-height: 1.35;
+  .acceptance-note strong { color: var(--positive); }
+  form { padding: 20px; border-top: 1px solid var(--line); }
+  .metadata-layout {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;
   }
-
-  .submission-heading,
-  .output-heading {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 20px;
+  .model-metadata-layout, .dataset-metadata-layout { grid-template-columns: 1fr; }
+  .metadata-section {
+    min-width: 0; margin: 0; padding: 16px; border: 1px solid var(--line);
+    border-radius: 7px; background: hsl(33 31% 98%);
   }
-
-  .privacy-note {
-    flex: 0 0 auto;
-    padding: 5px 8px;
-    border: 1px solid var(--line-strong);
-    border-radius: 999px;
-    color: var(--muted);
-    font-size: 0.72rem !important;
+  .metadata-section legend {
+    display: grid; gap: 2px; max-width: calc(100% - 16px); padding: 0 6px;
   }
-
-  .submission-tabs {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
+  .metadata-section legend span {
+    font-family: var(--display-serif); font-size: 1.04rem; line-height: 1.2;
   }
-
-  .submission-tabs button {
-    display: grid;
-    gap: 2px;
-    padding: 15px 20px;
-    border: 0;
-    border-right: 1px solid var(--line);
-    background: var(--panel);
-    color: var(--muted-strong);
-    text-align: left;
-    cursor: pointer;
+  .metadata-section legend small {
+    color: var(--muted); font-family: inherit; font-size: 0.68rem; line-height: 1.35;
   }
-
-  .submission-tabs button:last-child {
-    border-right: 0;
+  .metadata-section .field-grid { margin-top: 10px; }
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .three-column-grid { grid-template-columns: repeat(3, 1fr); }
+  .field-grid label, .eligibility-check { display: grid; gap: 6px; }
+  .field-grid label > span { color: var(--muted-strong); font-size: 0.74rem; font-weight: 700; }
+  .field-grid label > small { color: var(--muted); font-size: 0.68rem; }
+  .wide-field { grid-column: 1 / -1; }
+  input, select, textarea {
+    width: 100%; border: 1px solid var(--line-strong); border-radius: 6px;
+    background: var(--panel); color: var(--ink); font-size: 0.82rem;
   }
-
-  .submission-tabs button:hover,
-  .submission-tabs button:focus-visible,
-  .submission-tabs button.is-active {
-    background: var(--panel-soft);
-    color: var(--ink);
-    outline: none;
+  input, select { min-height: 39px; padding: 0 10px; }
+  textarea { min-height: 76px; padding: 9px 10px; resize: vertical; }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--ink); outline: 2px solid hsl(24 6% 17% / 0.09);
   }
-
-  .submission-tabs button.is-active {
-    box-shadow: inset 0 -2px var(--ink);
+  .architecture-picker { display: grid; gap: 9px; }
+  .field-label-row {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
   }
-
-  .submission-tabs span {
-    font-size: 0.9rem;
-    font-weight: 700;
+  .field-label-row > span { color: var(--muted-strong); font-size: 0.74rem; font-weight: 700; }
+  .field-label-row > small, .field-help { color: var(--muted); font-size: 0.68rem; }
+  .architecture-options { display: flex; flex-wrap: wrap; gap: 7px; }
+  .architecture-options label { position: relative; cursor: pointer; }
+  .architecture-options input {
+    position: absolute; width: 1px; height: 1px; min-height: 0; opacity: 0; pointer-events: none;
   }
-
-  .submission-tabs small {
-    color: var(--muted);
-    font-size: 0.74rem;
+  .architecture-options span {
+    display: inline-flex; min-height: 31px; align-items: center; padding: 0 10px;
+    border: 1px solid var(--line-strong); border-radius: 999px; background: var(--panel);
+    color: var(--muted-strong); font-size: 0.72rem; font-weight: 600;
   }
-
-  .submission-layout {
-    display: grid;
-    grid-template-columns: minmax(270px, 0.72fr) minmax(0, 1.8fr);
+  .architecture-options input:checked + span {
+    border-color: var(--ink); background: var(--ink); color: var(--panel);
   }
-
-  .requirements {
-    padding: 22px;
-    border-right: 1px solid var(--line);
-    background: var(--panel-soft);
+  .architecture-options input:focus-visible + span { outline: 2px solid hsl(24 6% 17% / 0.18); }
+  .architecture-options label.is-custom span::after { margin-left: 5px; content: "custom"; opacity: 0.55; font-size: 0.58rem; }
+  .custom-architecture-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 7px; }
+  .custom-architecture-row button {
+    min-height: 39px; padding: 0 11px; border: 1px solid var(--line-strong);
+    border-radius: 6px; background: var(--panel); color: var(--ink);
+    font-size: 0.72rem; font-weight: 700; cursor: pointer;
   }
-
-  .requirements h3,
-  .form-heading h3 {
-    margin: 0;
-    font-family: var(--display-serif);
-    font-size: 1.08rem;
-    font-weight: 500;
+  .custom-architecture-row button:hover, .custom-architecture-row button:focus-visible {
+    border-color: var(--ink); background: var(--panel-soft); outline: none;
   }
-
-  .requirements p,
-  .requirements li,
-  .form-heading p {
-    color: var(--muted-strong);
-    font-size: 0.8rem;
-  }
-
-  .requirements ol {
-    display: grid;
-    gap: 10px;
-    margin: 18px 0;
-    padding-left: 20px;
-  }
-
-  .requirements a {
-    font-weight: 700;
-  }
-
-  .requirements code,
-  .pr-note code {
-    font-family: "DM Mono", ui-monospace, monospace;
-    font-size: 0.75rem;
-  }
-
-  .after-merge {
-    padding-top: 15px;
-    border-top: 1px solid var(--line-strong);
-  }
-
-  .builder-panel {
-    min-width: 0;
-    padding: 22px;
-  }
-
-  .form-heading {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 18px;
-  }
-
-  .form-heading p {
-    margin: 0;
-    color: var(--muted);
-  }
-
-  .field-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-  }
-
-  .field-grid label,
   .eligibility-check {
-    display: grid;
-    gap: 6px;
+    grid-template-columns: auto 1fr; align-items: start;
+    color: var(--muted-strong); font-size: 0.78rem;
   }
-
-  .field-grid label > span {
-    color: var(--muted-strong);
-    font-size: 0.74rem;
-    font-weight: 700;
+  .eligibility-check input { width: 16px; min-height: 16px; margin: 2px 0 0; }
+  .form-footer {
+    display: flex; align-items: center; justify-content: space-between; gap: 18px;
+    margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line);
   }
-
-  .field-grid label > small {
-    color: var(--muted);
-    font-size: 0.68rem;
+  .form-footer p { margin: 0; color: var(--muted); font-size: 0.72rem; }
+  .form-footer p strong { color: var(--danger); }
+  .dataset-form-footer { align-items: flex-start; }
+  .prepare-button, .primary-action {
+    border-color: var(--ink) !important; background: var(--ink) !important;
+    color: var(--panel) !important;
   }
-
-  .wide-field {
-    grid-column: 1 / -1;
-  }
-
-  input,
-  select,
-  textarea {
-    width: 100%;
-    border: 1px solid var(--line-strong);
-    border-radius: 6px;
-    background: var(--panel);
-    color: var(--ink);
-    font-size: 0.82rem;
-  }
-
-  input,
-  select {
-    min-height: 39px;
-    padding: 0 10px;
-  }
-
-  textarea {
-    min-height: 76px;
-    padding: 9px 10px;
-    resize: vertical;
-  }
-
-  input:focus,
-  select:focus,
-  textarea:focus {
-    border-color: var(--ink);
-    outline: 2px solid hsl(24 6% 17% / 0.09);
-  }
-
-  .eligibility-check {
-    grid-template-columns: auto 1fr;
-    align-items: start;
-    margin-top: 16px;
-    color: var(--muted-strong);
-    font-size: 0.78rem;
-  }
-
-  .eligibility-check input {
-    width: 16px;
-    min-height: 16px;
-    margin: 2px 0 0;
-  }
-
-  .generate-button,
-  .output-actions button,
-  .output-actions a {
-    display: inline-flex;
-    min-height: 38px;
-    align-items: center;
-    justify-content: center;
-    padding: 0 13px;
-    border: 1px solid var(--ink);
-    border-radius: 6px;
-    background: var(--ink);
-    color: var(--panel);
-    font-size: 0.78rem;
-    font-weight: 700;
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  .generate-button {
-    margin-top: 18px;
-  }
-
-  .output-panel {
-    scroll-margin-top: 16px;
-  }
-
-  .output-heading {
-    align-items: center;
-    border-bottom: 1px solid var(--line);
-    background: var(--panel-soft);
-  }
-
-  .output-heading > span {
-    color: var(--positive);
-    font-size: 0.76rem;
-    font-weight: 700;
-  }
-
-  .output-guidance,
-  .pr-note {
-    padding: 0 20px;
-  }
-
+  .prepare-button { flex: 0 0 auto; }
+  .output-panel { scroll-margin-top: 16px; }
+  .output-heading { align-items: center; border-bottom: 1px solid var(--line); background: var(--panel-soft); }
+  .output-heading > span { color: var(--positive); font-size: 0.75rem; font-weight: 700; }
+  .output-panel > p, .pr-note { padding: 0 20px; }
   .output-panel pre {
-    margin: 16px 20px;
-    padding: 16px;
-    overflow-x: auto;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    background: hsl(33 31% 97%);
-    font-size: 0.78rem;
+    margin: 16px 20px; padding: 16px; overflow-x: auto; border: 1px solid var(--line);
+    border-radius: 6px; background: hsl(33 31% 97%);
+    font-family: "DM Mono", ui-monospace, monospace; font-size: 0.75rem; line-height: 1.5;
   }
-
-  .output-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 0 20px;
-  }
-
-  .output-actions button,
-  .output-actions a {
-    border-color: var(--line-strong);
-    background: var(--panel);
-    color: var(--ink);
-  }
-
-  .output-actions a:last-child {
-    border-color: var(--ink);
-    background: var(--ink);
-    color: var(--panel);
-  }
-
-  .output-actions button:hover,
-  .output-actions button:focus-visible,
-  .output-actions a:hover,
-  .output-actions a:focus-visible {
-    background: var(--panel-soft);
-    color: var(--ink);
-    outline: none;
-  }
-
-  .pr-note {
-    margin-bottom: 20px;
-  }
-
-  [hidden] {
-    display: none !important;
-  }
+  .output-actions { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px; }
+  .pr-note { margin: 12px 0 20px !important; color: var(--muted) !important; font-size: 0.74rem !important; }
+  [hidden] { display: none !important; }
 
   @media (max-width: 900px) {
-    .process-steps {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .process-steps li:nth-child(2) {
-      border-right: 0;
-    }
-
-    .process-steps li:nth-child(-n + 2) {
-      border-bottom: 1px solid var(--line);
-    }
-
-    .submission-layout {
-      grid-template-columns: 1fr;
-    }
-
-    .requirements {
-      border-right: 0;
-      border-bottom: 1px solid var(--line);
-    }
+    .code-steps { grid-template-columns: 1fr; }
+    .code-steps li { border-right: 0; border-bottom: 1px solid var(--line); }
+    .code-steps li:last-child { border-bottom: 0; }
+    .metadata-layout { grid-template-columns: 1fr; }
+    .dataset-metadata-layout .metadata-section:nth-child(3) { grid-column: auto; }
   }
-
   @media (max-width: 620px) {
-    .process-steps,
-    .submission-tabs,
-    .field-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .process-steps li,
-    .process-steps li:nth-child(2) {
-      border-right: 0;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .process-steps li:last-child {
-      border-bottom: 0;
-    }
-
-    .submission-heading,
-    .output-heading,
-    .form-heading {
-      align-items: flex-start;
-      flex-direction: column;
-    }
-
-    .submission-tabs button {
-      border-right: 0;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .wide-field {
-      grid-column: auto;
-    }
-
-    .builder-panel,
-    .requirements,
-    .section-heading,
-    .output-heading {
-      padding: 16px;
-    }
-
-    .output-guidance,
-    .pr-note,
-    .output-actions {
-      padding-right: 16px;
-      padding-left: 16px;
-    }
-
-    .output-panel pre {
-      margin-right: 16px;
-      margin-left: 16px;
-    }
+    .type-switch, .field-grid, .three-column-grid { grid-template-columns: 1fr; }
+    .type-switch button { border-right: 0; border-bottom: 1px solid var(--line); }
+    .type-switch button:last-child { border-bottom: 0; }
+    .path-intro, .output-heading, .brief-heading { align-items: flex-start; flex-direction: column; }
+    .wide-field { grid-column: auto; }
+    .section-heading, .path-intro, .output-heading, form { padding: 16px; }
+    .code-steps li { padding: 16px; }
+    .acceptance-note { grid-template-columns: 1fr; padding: 14px 16px; }
+    .form-footer { align-items: stretch; flex-direction: column; }
+    .custom-architecture-row { grid-template-columns: 1fr; }
+    .output-panel > p, .pr-note, .output-actions { padding-right: 16px; padding-left: 16px; }
+    .output-panel pre { margin-right: 16px; margin-left: 16px; }
   }
 </style>

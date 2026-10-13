@@ -82,12 +82,11 @@ function getFamilyParts(family: string): string[] {
 function formatFamily(family: string): string {
   const labels: Record<string, string> = {
     attn: "Attention",
-    cnn: "CNN",
+    cnn: "Convolutional",
     dense: "Dense",
-    fe: "Features",
+    fe: "Handcrafted",
     graph: "Graph",
-    neural: "Neural",
-    rnn: "RNN",
+    rnn: "Recurrent",
     spec: "Spectral",
   };
   const parts = getFamilyParts(family);
@@ -109,7 +108,7 @@ function describeFamily(family: string): string {
     spec: "Frequency-domain preprocessing or representations are used before classification.",
   };
 
-  return definitions[family] ?? "Architecture category used to group related model designs.";
+  return definitions[family] ?? "Model component used to describe an architecture.";
 }
 
 const models = benchmark.catalog.models.map((model) => {
@@ -220,23 +219,31 @@ function formatScaledMetric(value: number) {
     <section class="arena-panel filter-panel">
       <div class="panel-header">
         <h2>Filters</h2>
+        <button type="button" class="filter-reset-all" data-reset-all-filters>Reset all</button>
       </div>
 
       <div class="filter-content">
         <div class="model-filter">
-          <span class="filter-label">Architecture</span>
+          <span class="filter-label">Components</span>
           <details>
-            <summary aria-label="Architecture">
-              <span data-filter-summary="architecture">All architectures</span>
+            <summary aria-label="Components">
+              <span data-filter-summary="architecture">All components</span>
               <span class="filter-count" data-filter-count="architecture">
                 {architectureOptions.length}/{architectureOptions.length}
               </span>
             </summary>
             <div class="filter-menu">
-              <div class="filter-actions" aria-label="Architecture selection actions">
+              <div class="filter-actions component-actions" aria-label="Component selection actions">
                 <button type="button" data-filter-action="all-architecture">All</button>
                 <button type="button" data-filter-action="none-architecture">None</button>
+                <label class="component-match-toggle">
+                  <input type="checkbox" data-component-match-exact />
+                  <span>Exact combination</span>
+                </label>
               </div>
+              <p class="component-match-help" data-component-match-help>
+                Show models containing any selected component.
+              </p>
               <div class="filter-options">
                 {architectureOptions.map((item) => (
                   <div class="filter-option" data-filter-option="architecture">
@@ -326,37 +333,35 @@ function formatScaledMetric(value: number) {
               <span class="filter-count" data-range-count="params">range</span>
             </summary>
             <div class="filter-menu range-menu">
-              <div class="range-fields">
-                <label>
-                  <span>Min</span>
-                  <input
-                    id="model-params-min"
-                    type="number"
-                    min="0"
-                    max={paramsMax}
-                    step="1000"
-                    value="0"
-                    inputmode="numeric"
-                    data-range-kind="params"
-                    data-range-bound="min"
-                    data-range-default="0"
-                  />
-                </label>
-                <label>
-                  <span>Max</span>
-                  <input
-                    id="model-params-max"
-                    type="number"
-                    min="0"
-                    max={paramsMax}
-                    step="1000"
-                    value={paramsMax}
-                    inputmode="numeric"
-                    data-range-kind="params"
-                    data-range-bound="max"
-                    data-range-default={paramsMax}
-                  />
-                </label>
+              <div class="range-values" aria-live="polite">
+                <span>Min <strong data-range-value="params-min">0</strong></span>
+                <span>Max <strong data-range-value="params-max">{formatCompactMetric(paramsMax)}</strong></span>
+              </div>
+              <div class="dual-range" data-range-track="params">
+                <input
+                  id="model-params-min"
+                  type="range"
+                  min="0"
+                  max={paramsMax}
+                  step="1000"
+                  value="0"
+                  aria-label="Minimum parameters"
+                  data-range-kind="params"
+                  data-range-bound="min"
+                  data-range-default="0"
+                />
+                <input
+                  id="model-params-max"
+                  type="range"
+                  min="0"
+                  max={paramsMax}
+                  step="1000"
+                  value={paramsMax}
+                  aria-label="Maximum parameters"
+                  data-range-kind="params"
+                  data-range-bound="max"
+                  data-range-default={paramsMax}
+                />
               </div>
               <button type="button" class="range-reset" data-range-reset="params">Reset</button>
             </div>
@@ -371,37 +376,35 @@ function formatScaledMetric(value: number) {
               <span class="filter-count" data-range-count="flops">range</span>
             </summary>
             <div class="filter-menu range-menu">
-              <div class="range-fields">
-                <label>
-                  <span>Min</span>
-                  <input
-                    id="model-flops-min"
-                    type="number"
-                    min="0"
-                    max={flopsMax}
-                    step="100000"
-                    value="0"
-                    inputmode="numeric"
-                    data-range-kind="flops"
-                    data-range-bound="min"
-                    data-range-default="0"
-                  />
-                </label>
-                <label>
-                  <span>Max</span>
-                  <input
-                    id="model-flops-max"
-                    type="number"
-                    min="0"
-                    max={flopsMax}
-                    step="100000"
-                    value={flopsMax}
-                    inputmode="numeric"
-                    data-range-kind="flops"
-                    data-range-bound="max"
-                    data-range-default={flopsMax}
-                  />
-                </label>
+              <div class="range-values" aria-live="polite">
+                <span>Min <strong data-range-value="flops-min">0</strong></span>
+                <span>Max <strong data-range-value="flops-max">{formatCompactMetric(flopsMax)}</strong></span>
+              </div>
+              <div class="dual-range" data-range-track="flops">
+                <input
+                  id="model-flops-min"
+                  type="range"
+                  min="0"
+                  max={flopsMax}
+                  step="100000"
+                  value="0"
+                  aria-label="Minimum FLOPs"
+                  data-range-kind="flops"
+                  data-range-bound="min"
+                  data-range-default="0"
+                />
+                <input
+                  id="model-flops-max"
+                  type="range"
+                  min="0"
+                  max={flopsMax}
+                  step="100000"
+                  value={flopsMax}
+                  aria-label="Maximum FLOPs"
+                  data-range-kind="flops"
+                  data-range-bound="max"
+                  data-range-default={flopsMax}
+                />
               </div>
               <button type="button" class="range-reset" data-range-reset="flops">Reset</button>
             </div>
@@ -435,7 +438,7 @@ function formatScaledMetric(value: number) {
                   </span>
                 </button>
               </th>
-              <th>Architecture</th>
+              <th>Components</th>
               <th aria-sort="none">
                 <button
                   class="sort-button"
@@ -514,7 +517,7 @@ function formatScaledMetric(value: number) {
                   <strong class="metric">{model.year ?? "-"}</strong>
                 </td>
                 <td>
-                  <div class="pill-list" aria-label={`Architecture: ${model.architecture.join(" ")}`}>
+                  <div class="pill-list" aria-label={`Components: ${model.architecture.join(" ")}`}>
                     {model.architectureParts.map((part) => (
                       <span class="pill">
                         {part.name}
@@ -644,6 +647,8 @@ function formatScaledMetric(value: number) {
     flops: modelModal?.querySelector('[data-model-modal-field="flops"]'),
   };
   const visibleModelCount = document.querySelector("[data-visible-model-count]");
+  const componentMatchInput = document.querySelector("[data-component-match-exact]");
+  const componentMatchHelp = document.querySelector("[data-component-match-help]");
   const architectureTooltip = document.createElement("div");
   architectureTooltip.className = "architecture-pill-tooltip";
   architectureTooltip.id = "architecture-pill-tooltip";
@@ -676,9 +681,9 @@ function formatScaledMetric(value: number) {
   };
   const groups = {
     architecture: {
-      allLabel: "All architectures",
-      noneLabel: "No architectures",
-      plural: "architectures",
+      allLabel: "All components",
+      noneLabel: "No components",
+      plural: "components",
       inputs: Array.from(document.querySelectorAll('[data-filter-kind="architecture"]')),
       summary: document.querySelector('[data-filter-summary="architecture"]'),
       count: document.querySelector('[data-filter-count="architecture"]'),
@@ -698,12 +703,18 @@ function formatScaledMetric(value: number) {
       max: document.querySelector('[data-range-kind="params"][data-range-bound="max"]'),
       summary: document.querySelector('[data-range-summary="params"]'),
       count: document.querySelector('[data-range-count="params"]'),
+      minValue: document.querySelector('[data-range-value="params-min"]'),
+      maxValue: document.querySelector('[data-range-value="params-max"]'),
+      track: document.querySelector('[data-range-track="params"]'),
     },
     flops: {
       min: document.querySelector('[data-range-kind="flops"][data-range-bound="min"]'),
       max: document.querySelector('[data-range-kind="flops"][data-range-bound="max"]'),
       summary: document.querySelector('[data-range-summary="flops"]'),
       count: document.querySelector('[data-range-count="flops"]'),
+      minValue: document.querySelector('[data-range-value="flops-min"]'),
+      maxValue: document.querySelector('[data-range-value="flops-max"]'),
+      track: document.querySelector('[data-range-track="flops"]'),
     },
   };
 
@@ -885,6 +896,15 @@ function formatScaledMetric(value: number) {
     } else {
       group.summary.textContent = `${selectedCount} ${group.plural}`;
     }
+
+    if (
+      kind === "architecture" &&
+      componentMatchInput?.checked &&
+      selectedCount > 0 &&
+      selectedCount < total
+    ) {
+      group.summary.textContent += " · exact";
+    }
   }
 
   function compactMetric(value) {
@@ -927,6 +947,14 @@ function formatScaledMetric(value: number) {
     }
     if (range.count) {
       range.count.textContent = state.isDefault ? "range" : "filtered";
+    }
+    if (range.minValue) range.minValue.textContent = compactMetric(state.min);
+    if (range.maxValue) range.maxValue.textContent = compactMetric(state.max);
+    if (range.track && state.defaultMax > state.defaultMin) {
+      const start = ((state.min - state.defaultMin) / (state.defaultMax - state.defaultMin)) * 100;
+      const end = ((state.max - state.defaultMin) / (state.defaultMax - state.defaultMin)) * 100;
+      range.track.style.setProperty("--range-start", `${start}%`);
+      range.track.style.setProperty("--range-end", `${end}%`);
     }
   }
 
@@ -1014,9 +1042,14 @@ function formatScaledMetric(value: number) {
       const architectureParts = (row.dataset.architectureParts ?? "")
         .split(" ")
         .filter(Boolean);
-      const isArchitectureVisible = architectureParts.every((part) =>
-        selectedArchitecture.has(part),
-      );
+      const allComponentsSelected = selectedArchitecture.size === groups.architecture.inputs.length;
+      const isArchitectureVisible =
+        selectedArchitecture.size > 0 &&
+        (allComponentsSelected ||
+          (componentMatchInput?.checked
+            ? architectureParts.length === selectedArchitecture.size &&
+              architectureParts.every((part) => selectedArchitecture.has(part))
+            : architectureParts.some((part) => selectedArchitecture.has(part))));
       const isFrameworkVisible = selectedFramework.has(row.dataset.framework ?? "");
       const isParamsVisible = isMetricInRange(row.dataset.paramsValue, paramsRange);
       const isFlopsVisible = isMetricInRange(row.dataset.flopsValue, flopsRange);
@@ -1060,6 +1093,23 @@ function formatScaledMetric(value: number) {
     });
   });
 
+  document.querySelector("[data-reset-all-filters]")?.addEventListener("click", () => {
+    Object.values(groups).forEach((group) => {
+      group.inputs.forEach((input) => {
+        input.checked = true;
+      });
+    });
+    Object.values(ranges).forEach((range) => {
+      range.min.value = range.min.dataset.rangeDefault;
+      range.max.value = range.max.dataset.rangeDefault;
+    });
+    if (componentMatchInput) componentMatchInput.checked = false;
+    if (componentMatchHelp) {
+      componentMatchHelp.textContent = "Show models containing any selected component.";
+    }
+    updateModelFilters();
+  });
+
   document.querySelectorAll(".model-filter details").forEach((details) => {
     details.addEventListener("toggle", () => {
       if (!details.open) return;
@@ -1075,9 +1125,26 @@ function formatScaledMetric(value: number) {
     });
   });
 
+  componentMatchInput?.addEventListener("change", () => {
+    if (componentMatchHelp) {
+      componentMatchHelp.textContent = componentMatchInput.checked
+        ? "Show models with exactly the selected components."
+        : "Show models containing any selected component.";
+    }
+    updateModelFilters();
+  });
+
   Object.values(ranges).forEach((range) => {
     [range.min, range.max].forEach((input) => {
-      input.addEventListener("input", updateModelFilters);
+      input.addEventListener("input", () => {
+        if (input === range.min && Number(range.min.value) > Number(range.max.value)) {
+          range.min.value = range.max.value;
+        }
+        if (input === range.max && Number(range.max.value) < Number(range.min.value)) {
+          range.max.value = range.min.value;
+        }
+        updateModelFilters();
+      });
       input.addEventListener("change", updateModelFilters);
     });
   });
@@ -1136,7 +1203,31 @@ function formatScaledMetric(value: number) {
   }
 
   .filter-panel > .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     border-radius: 7px 7px 0 0;
+  }
+
+  .filter-reset-all {
+    flex: 0 0 auto;
+    min-height: 30px;
+    border: 1px solid var(--line-strong);
+    border-radius: 7px;
+    background: var(--panel);
+    color: var(--muted-strong);
+    padding: 0 10px;
+    font: inherit;
+    font-size: 0.76rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .filter-reset-all:hover,
+  .filter-reset-all:focus-visible {
+    border-color: var(--accent);
+    color: var(--ink);
+    outline: none;
   }
 
   .filter-content {
@@ -1163,10 +1254,13 @@ function formatScaledMetric(value: number) {
 
   .model-filter details {
     position: relative;
+    width: 100%;
+    min-width: 0;
   }
 
   .model-filter summary {
     display: flex;
+    width: 100%;
     min-height: 36px;
     align-items: center;
     justify-content: space-between;
@@ -1224,9 +1318,11 @@ function formatScaledMetric(value: number) {
   .filter-menu {
     position: absolute;
     top: calc(100% + 6px);
+    left: 0;
     right: 0;
     z-index: 10;
-    width: min(360px, calc(100vw - 48px));
+    width: auto;
+    max-width: none;
     max-height: min(560px, 72vh);
     overflow: auto;
     border: 1px solid lightgray;
@@ -1261,41 +1357,143 @@ function formatScaledMetric(value: number) {
     color: var(--ink);
   }
 
+  .component-actions {
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .component-match-toggle {
+    display: inline-flex;
+    min-height: 28px;
+    align-items: center;
+    gap: 7px;
+    margin-left: auto;
+    color: var(--muted-strong);
+    cursor: pointer;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+
+  .component-match-toggle input {
+    width: 15px;
+    height: 15px;
+    margin: 0;
+    accent-color: var(--accent);
+  }
+
+  .component-match-help {
+    margin: 0;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.7rem;
+    line-height: 1.35;
+  }
+
   .range-menu {
     padding: 10px;
   }
 
-  .range-fields {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+  .range-values {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
   }
 
-  .range-fields label {
-    display: grid;
-    gap: 5px;
-  }
-
-  .range-fields label span {
+  .range-values span {
     color: var(--muted);
     font-size: 0.68rem;
     font-weight: 600;
     text-transform: uppercase;
   }
 
-  .range-fields input {
-    width: 100%;
-    min-height: 32px;
-    border: 1px solid var(--line-strong);
-    border-radius: 7px;
-    background: var(--panel-soft);
+  .range-values strong {
     color: var(--ink);
     font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.78rem;
-    padding: 0 8px;
+    font-size: 0.76rem;
+    font-weight: 500;
+    text-transform: none;
   }
 
-  .range-fields input:focus-visible {
+  .dual-range {
+    --range-start: 0%;
+    --range-end: 100%;
+    position: relative;
+    height: 34px;
+    margin-top: 4px;
+  }
+
+  .dual-range::before {
+    position: absolute;
+    top: 15px;
+    right: 0;
+    left: 0;
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(
+      to right,
+      var(--line-strong) 0 var(--range-start),
+      var(--accent) var(--range-start) var(--range-end),
+      var(--line-strong) var(--range-end) 100%
+    );
+    content: "";
+  }
+
+  .dual-range input[type="range"] {
+    appearance: none;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 34px;
+    margin: 0;
+    background: transparent;
+    pointer-events: none;
+  }
+
+  .dual-range input[type="range"]:last-child {
+    z-index: 2;
+  }
+
+  .dual-range input[type="range"]::-webkit-slider-runnable-track {
+    height: 4px;
+    background: transparent;
+  }
+
+  .dual-range input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 17px;
+    height: 17px;
+    margin-top: -6.5px;
+    border: 2px solid var(--panel);
+    border-radius: 50%;
+    background: var(--accent-strong);
+    box-shadow: 0 0 0 1px var(--line-strong);
+    pointer-events: auto;
+    cursor: grab;
+  }
+
+  .dual-range input[type="range"]::-moz-range-track {
+    height: 4px;
+    background: transparent;
+  }
+
+  .dual-range input[type="range"]::-moz-range-thumb {
+    width: 13px;
+    height: 13px;
+    border: 2px solid var(--panel);
+    border-radius: 50%;
+    background: var(--accent-strong);
+    box-shadow: 0 0 0 1px var(--line-strong);
+    pointer-events: auto;
+    cursor: grab;
+  }
+
+  .dual-range input[type="range"]:active::-webkit-slider-thumb {
+    cursor: grabbing;
+  }
+
+  .dual-range input[type="range"]:focus-visible {
     outline: 2px solid hsl(24 6% 17% / 0.28);
     outline-offset: 2px;
   }

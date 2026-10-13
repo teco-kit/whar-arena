@@ -272,6 +272,7 @@ function formatInstitutionSummary(institutions: string[]) {
     <section class="arena-panel filter-panel">
       <div class="panel-header">
         <h2>Filters</h2>
+        <button type="button" class="filter-reset-all" data-reset-all-filters>Reset all</button>
       </div>
 
       <div class="filter-content">
@@ -283,37 +284,35 @@ function formatInstitutionSummary(institutions: string[]) {
               <span class="filter-count" data-range-count="subjects">range</span>
             </summary>
             <div class="filter-menu range-menu">
-              <div class="range-fields">
-                <label>
-                  <span>Min</span>
-                  <input
-                    id="dataset-subjects-min"
-                    type="number"
-                    min="0"
-                    max={subjectsMax}
-                    step="1"
-                    value="0"
-                    inputmode="numeric"
-                    data-range-kind="subjects"
-                    data-range-bound="min"
-                    data-range-default="0"
-                  />
-                </label>
-                <label>
-                  <span>Max</span>
-                  <input
-                    id="dataset-subjects-max"
-                    type="number"
-                    min="0"
-                    max={subjectsMax}
-                    step="1"
-                    value={subjectsMax}
-                    inputmode="numeric"
-                    data-range-kind="subjects"
-                    data-range-bound="max"
-                    data-range-default={subjectsMax}
-                  />
-                </label>
+              <div class="range-values" aria-live="polite">
+                <span>Min <strong data-range-value="subjects-min">0</strong></span>
+                <span>Max <strong data-range-value="subjects-max">{formatRangeMetric(subjectsMax)}</strong></span>
+              </div>
+              <div class="dual-range" data-range-track="subjects">
+                <input
+                  id="dataset-subjects-min"
+                  type="range"
+                  min="0"
+                  max={subjectsMax}
+                  step="1"
+                  value="0"
+                  aria-label="Minimum subjects"
+                  data-range-kind="subjects"
+                  data-range-bound="min"
+                  data-range-default="0"
+                />
+                <input
+                  id="dataset-subjects-max"
+                  type="range"
+                  min="0"
+                  max={subjectsMax}
+                  step="1"
+                  value={subjectsMax}
+                  aria-label="Maximum subjects"
+                  data-range-kind="subjects"
+                  data-range-bound="max"
+                  data-range-default={subjectsMax}
+                />
               </div>
               <button type="button" class="range-reset" data-range-reset="subjects">Reset</button>
             </div>
@@ -328,37 +327,35 @@ function formatInstitutionSummary(institutions: string[]) {
               <span class="filter-count" data-range-count="activities">range</span>
             </summary>
             <div class="filter-menu range-menu">
-              <div class="range-fields">
-                <label>
-                  <span>Min</span>
-                  <input
-                    id="dataset-activities-min"
-                    type="number"
-                    min="0"
-                    max={activitiesMax}
-                    step="1"
-                    value="0"
-                    inputmode="numeric"
-                    data-range-kind="activities"
-                    data-range-bound="min"
-                    data-range-default="0"
-                  />
-                </label>
-                <label>
-                  <span>Max</span>
-                  <input
-                    id="dataset-activities-max"
-                    type="number"
-                    min="0"
-                    max={activitiesMax}
-                    step="1"
-                    value={activitiesMax}
-                    inputmode="numeric"
-                    data-range-kind="activities"
-                    data-range-bound="max"
-                    data-range-default={activitiesMax}
-                  />
-                </label>
+              <div class="range-values" aria-live="polite">
+                <span>Min <strong data-range-value="activities-min">0</strong></span>
+                <span>Max <strong data-range-value="activities-max">{formatRangeMetric(activitiesMax)}</strong></span>
+              </div>
+              <div class="dual-range" data-range-track="activities">
+                <input
+                  id="dataset-activities-min"
+                  type="range"
+                  min="0"
+                  max={activitiesMax}
+                  step="1"
+                  value="0"
+                  aria-label="Minimum activities"
+                  data-range-kind="activities"
+                  data-range-bound="min"
+                  data-range-default="0"
+                />
+                <input
+                  id="dataset-activities-max"
+                  type="range"
+                  min="0"
+                  max={activitiesMax}
+                  step="1"
+                  value={activitiesMax}
+                  aria-label="Maximum activities"
+                  data-range-kind="activities"
+                  data-range-bound="max"
+                  data-range-default={activitiesMax}
+                />
               </div>
               <button type="button" class="range-reset" data-range-reset="activities">Reset</button>
             </div>
@@ -373,37 +370,35 @@ function formatInstitutionSummary(institutions: string[]) {
               <span class="filter-count" data-range-count="channels">range</span>
             </summary>
             <div class="filter-menu range-menu">
-              <div class="range-fields">
-                <label>
-                  <span>Min</span>
-                  <input
-                    id="dataset-channels-min"
-                    type="number"
-                    min="0"
-                    max={channelsMax}
-                    step="1"
-                    value="0"
-                    inputmode="numeric"
-                    data-range-kind="channels"
-                    data-range-bound="min"
-                    data-range-default="0"
-                  />
-                </label>
-                <label>
-                  <span>Max</span>
-                  <input
-                    id="dataset-channels-max"
-                    type="number"
-                    min="0"
-                    max={channelsMax}
-                    step="1"
-                    value={channelsMax}
-                    inputmode="numeric"
-                    data-range-kind="channels"
-                    data-range-bound="max"
-                    data-range-default={channelsMax}
-                  />
-                </label>
+              <div class="range-values" aria-live="polite">
+                <span>Min <strong data-range-value="channels-min">0</strong></span>
+                <span>Max <strong data-range-value="channels-max">{formatRangeMetric(channelsMax)}</strong></span>
+              </div>
+              <div class="dual-range" data-range-track="channels">
+                <input
+                  id="dataset-channels-min"
+                  type="range"
+                  min="0"
+                  max={channelsMax}
+                  step="1"
+                  value="0"
+                  aria-label="Minimum channels"
+                  data-range-kind="channels"
+                  data-range-bound="min"
+                  data-range-default="0"
+                />
+                <input
+                  id="dataset-channels-max"
+                  type="range"
+                  min="0"
+                  max={channelsMax}
+                  step="1"
+                  value={channelsMax}
+                  aria-label="Maximum channels"
+                  data-range-kind="channels"
+                  data-range-bound="max"
+                  data-range-default={channelsMax}
+                />
               </div>
               <button type="button" class="range-reset" data-range-reset="channels">Reset</button>
             </div>
@@ -964,18 +959,27 @@ function formatInstitutionSummary(institutions: string[]) {
       max: document.querySelector('[data-range-kind="subjects"][data-range-bound="max"]'),
       summary: document.querySelector('[data-range-summary="subjects"]'),
       count: document.querySelector('[data-range-count="subjects"]'),
+      minValue: document.querySelector('[data-range-value="subjects-min"]'),
+      maxValue: document.querySelector('[data-range-value="subjects-max"]'),
+      track: document.querySelector('[data-range-track="subjects"]'),
     },
     activities: {
       min: document.querySelector('[data-range-kind="activities"][data-range-bound="min"]'),
       max: document.querySelector('[data-range-kind="activities"][data-range-bound="max"]'),
       summary: document.querySelector('[data-range-summary="activities"]'),
       count: document.querySelector('[data-range-count="activities"]'),
+      minValue: document.querySelector('[data-range-value="activities-min"]'),
+      maxValue: document.querySelector('[data-range-value="activities-max"]'),
+      track: document.querySelector('[data-range-track="activities"]'),
     },
     channels: {
       min: document.querySelector('[data-range-kind="channels"][data-range-bound="min"]'),
       max: document.querySelector('[data-range-kind="channels"][data-range-bound="max"]'),
       summary: document.querySelector('[data-range-summary="channels"]'),
       count: document.querySelector('[data-range-count="channels"]'),
+      minValue: document.querySelector('[data-range-value="channels-min"]'),
+      maxValue: document.querySelector('[data-range-value="channels-max"]'),
+      track: document.querySelector('[data-range-track="channels"]'),
     },
   };
 
@@ -1242,6 +1246,14 @@ function formatInstitutionSummary(institutions: string[]) {
     if (range.count) {
       range.count.textContent = state.isDefault ? "range" : "filtered";
     }
+    if (range.minValue) range.minValue.textContent = formatRangeValue(state.min);
+    if (range.maxValue) range.maxValue.textContent = formatRangeValue(state.max);
+    if (range.track && state.defaultMax > state.defaultMin) {
+      const start = ((state.min - state.defaultMin) / (state.defaultMax - state.defaultMin)) * 100;
+      const end = ((state.max - state.defaultMin) / (state.defaultMax - state.defaultMin)) * 100;
+      range.track.style.setProperty("--range-start", `${start}%`);
+      range.track.style.setProperty("--range-end", `${end}%`);
+    }
   }
 
   function isMetricInRange(rawValue, state) {
@@ -1394,6 +1406,19 @@ function formatInstitutionSummary(institutions: string[]) {
     });
   });
 
+  document.querySelector("[data-reset-all-filters]")?.addEventListener("click", () => {
+    Object.values(groups).forEach((group) => {
+      group.inputs.forEach((input) => {
+        input.checked = true;
+      });
+    });
+    Object.values(ranges).forEach((range) => {
+      range.min.value = range.min.dataset.rangeDefault;
+      range.max.value = range.max.dataset.rangeDefault;
+    });
+    updateDatasetFilters();
+  });
+
   document.querySelectorAll(".dataset-filter details").forEach((details) => {
     details.addEventListener("toggle", () => {
       if (!details.open) return;
@@ -1411,7 +1436,15 @@ function formatInstitutionSummary(institutions: string[]) {
 
   Object.values(ranges).forEach((range) => {
     [range.min, range.max].forEach((input) => {
-      input.addEventListener("input", updateDatasetFilters);
+      input.addEventListener("input", () => {
+        if (input === range.min && Number(range.min.value) > Number(range.max.value)) {
+          range.min.value = range.max.value;
+        }
+        if (input === range.max && Number(range.max.value) < Number(range.min.value)) {
+          range.max.value = range.min.value;
+        }
+        updateDatasetFilters();
+      });
       input.addEventListener("change", updateDatasetFilters);
     });
   });
@@ -1473,7 +1506,31 @@ function formatInstitutionSummary(institutions: string[]) {
   }
 
   .filter-panel > .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     border-radius: 7px 7px 0 0;
+  }
+
+  .filter-reset-all {
+    flex: 0 0 auto;
+    min-height: 30px;
+    border: 1px solid var(--line-strong);
+    border-radius: 7px;
+    background: var(--panel);
+    color: var(--muted-strong);
+    padding: 0 10px;
+    font: inherit;
+    font-size: 0.76rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .filter-reset-all:hover,
+  .filter-reset-all:focus-visible {
+    border-color: var(--accent);
+    color: var(--ink);
+    outline: none;
   }
 
   .filter-content {
@@ -1517,10 +1574,13 @@ function formatInstitutionSummary(institutions: string[]) {
 
   .dataset-filter details {
     position: relative;
+    width: 100%;
+    min-width: 0;
   }
 
   .dataset-filter summary {
     display: flex;
+    width: 100%;
     min-height: 36px;
     align-items: center;
     justify-content: space-between;
@@ -1578,9 +1638,11 @@ function formatInstitutionSummary(institutions: string[]) {
   .filter-menu {
     position: absolute;
     top: calc(100% + 6px);
+    left: 0;
     right: 0;
     z-index: 10;
-    width: min(360px, calc(100vw - 48px));
+    width: auto;
+    max-width: none;
     max-height: min(560px, 72vh);
     overflow: auto;
     border: 1px solid lightgray;
@@ -1619,37 +1681,106 @@ function formatInstitutionSummary(institutions: string[]) {
     padding: 10px;
   }
 
-  .range-fields {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+  .range-values {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
   }
 
-  .range-fields label {
-    display: grid;
-    gap: 5px;
-  }
-
-  .range-fields label span {
+  .range-values span {
     color: var(--muted);
     font-size: 0.68rem;
     font-weight: 600;
     text-transform: uppercase;
   }
 
-  .range-fields input {
-    width: 100%;
-    min-height: 32px;
-    border: 1px solid var(--line-strong);
-    border-radius: 7px;
-    background: var(--panel-soft);
+  .range-values strong {
     color: var(--ink);
     font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.78rem;
-    padding: 0 8px;
+    font-size: 0.76rem;
+    font-weight: 500;
+    text-transform: none;
   }
 
-  .range-fields input:focus-visible {
+  .dual-range {
+    --range-start: 0%;
+    --range-end: 100%;
+    position: relative;
+    height: 34px;
+    margin-top: 4px;
+  }
+
+  .dual-range::before {
+    position: absolute;
+    top: 15px;
+    right: 0;
+    left: 0;
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(
+      to right,
+      var(--line-strong) 0 var(--range-start),
+      var(--accent) var(--range-start) var(--range-end),
+      var(--line-strong) var(--range-end) 100%
+    );
+    content: "";
+  }
+
+  .dual-range input[type="range"] {
+    appearance: none;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 34px;
+    margin: 0;
+    background: transparent;
+    pointer-events: none;
+  }
+
+  .dual-range input[type="range"]:last-child {
+    z-index: 2;
+  }
+
+  .dual-range input[type="range"]::-webkit-slider-runnable-track {
+    height: 4px;
+    background: transparent;
+  }
+
+  .dual-range input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 17px;
+    height: 17px;
+    margin-top: -6.5px;
+    border: 2px solid var(--panel);
+    border-radius: 50%;
+    background: var(--accent-strong);
+    box-shadow: 0 0 0 1px var(--line-strong);
+    pointer-events: auto;
+    cursor: grab;
+  }
+
+  .dual-range input[type="range"]::-moz-range-track {
+    height: 4px;
+    background: transparent;
+  }
+
+  .dual-range input[type="range"]::-moz-range-thumb {
+    width: 13px;
+    height: 13px;
+    border: 2px solid var(--panel);
+    border-radius: 50%;
+    background: var(--accent-strong);
+    box-shadow: 0 0 0 1px var(--line-strong);
+    pointer-events: auto;
+    cursor: grab;
+  }
+
+  .dual-range input[type="range"]:active::-webkit-slider-thumb {
+    cursor: grabbing;
+  }
+
+  .dual-range input[type="range"]:focus-visible {
     outline: 2px solid hsl(24 6% 17% / 0.28);
     outline-offset: 2px;
   }
