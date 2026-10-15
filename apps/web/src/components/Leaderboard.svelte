@@ -46,6 +46,17 @@
     efficiencyPeakMemory: number | null;
     efficiencyLatency: number | null;
   };
+  type EfficiencyValues = {
+    efficiencyCombined: number | null;
+    efficiencyModelSize: number | null;
+    efficiencyPeakMemory: number | null;
+    efficiencyLatency: number | null;
+  };
+  type DatasetDeploymentMeasurement = {
+    latencyMs?: number;
+    peakMemoryMb?: number;
+    modelSizeMb?: number;
+  };
   type MatrixCell = {
     modelId: string;
     modelName: string;
@@ -130,13 +141,19 @@
     | "efficiency_peak_memory"
     | "efficiency_latency";
   type SortDirection = "asc" | "desc";
-  type ViewId = "leaderboard" | "matrix" | "pareto";
+  type ViewId = "leaderboard" | "matrix" | "profiles" | "pareto";
   type ComponentMatchMode = "inclusive" | "exact";
   type ScatterScale = "log" | "linear";
   type ScatterMetric =
     | "mean_latency_ms"
     | "mean_peak_pss_delta_mb"
     | "exported_model_size_mb";
+  type ProfileMetric =
+    | "macro_f1"
+    | "efficiency_latency"
+    | "efficiency_peak_memory"
+    | "efficiency_model_size"
+    | "efficiency_combined";
   type ScatterConfig = {
     metric: ScatterMetric;
     title: string;
@@ -179,11 +196,13 @@
 
   let {
     catalog,
+    datasetMeasurements = {},
     defaultWindowSizeSeconds = 3,
     deploymentTradeoffs = null,
     results,
   }: {
     catalog: Catalog;
+    datasetMeasurements?: Record<string, Record<string, DatasetDeploymentMeasurement>>;
     defaultWindowSizeSeconds?: number;
     deploymentTradeoffs?: DeploymentTradeoffs | null;
     results: Result[];
@@ -218,6 +237,8 @@
   let selectedDetailModelId = $state<string | null>(null);
   let selectedDetailDatasetId = $state<string | null>(null);
   let activeView = $state<ViewId>("leaderboard");
+  let highlightedProfileModelId = $state<string | null>(null);
+  let activeProfileMetric = $state<ProfileMetric>("macro_f1");
   let activeScatterMetric = $state<ScatterMetric>("mean_latency_ms");
   let scatterScale = $state<ScatterScale>("log");
   let showParetoFrontier = $state(true);
@@ -252,6 +273,14 @@
     top: 30,
     bottom: 64,
   };
+  const profileBox = {
+    width: 1120,
+    height: 900,
+    centerX: 560,
+    centerY: 420,
+    radius: 290,
+    labelRadius: 350,
+  };
   const scatterConfigs: ScatterConfig[] = [
     {
       metric: "mean_latency_ms",
@@ -269,6 +298,33 @@
       xLabel: "Exported model size (MB)",
     },
   ];
+  const profileMetricConfigs: Array<{
+    metric: ProfileMetric;
+    label: string;
+    shortLabel: string;
+  }> = [
+    { metric: "macro_f1", label: "Test Macro-F1", shortLabel: "Macro-F1" },
+    {
+      metric: "efficiency_latency",
+      label: "Latency Efficiency Index",
+      shortLabel: "Latency index",
+    },
+    {
+      metric: "efficiency_peak_memory",
+      label: "Peak Memory Efficiency Index",
+      shortLabel: "Memory index",
+    },
+    {
+      metric: "efficiency_model_size",
+      label: "Model Size Efficiency Index",
+      shortLabel: "Model size index",
+    },
+    {
+      metric: "efficiency_combined",
+      label: "Joint Efficiency Index",
+      shortLabel: "Joint index",
+    },
+  ];
   const numberFormatter = new Intl.NumberFormat("en-US");
   const metricInfo = {
     netImprovement:
@@ -276,13 +332,13 @@
     macroF1:
       "Performance for the selected window size. Arithmetic mean of stored test LKSO Macro-F1 values across all benchmark datasets, with equal weight per dataset. Dataset, model, and component filters only control visibility; higher is better.",
     efficiencyCombined:
-      "Joint Efficiency Index for the selected window size. Uses Mean Macro-F1 plus log latency, peak-memory delta, and model size, normalized across all models with every input. Model, dataset, and component filters do not change it.",
+      "Mean of this model’s available dataset-level Joint Efficiency Indices. Each dataset combines Macro-F1 with log1p-transformed latency, peak-memory delta, and model size, normalized across models with every required measurement. Missing model–dataset values are excluded; filters do not recalculate it.",
     efficiencyModelSize:
-      "Storage Efficiency Index for the selected window size. Mean Macro-F1 and log model size are normalized across all models with both values. Model, dataset, and component filters do not change it.",
+      "Mean of this model’s available dataset-level Model Size Efficiency Indices. Each dataset normalizes Macro-F1 and log1p-transformed model size across models with both measurements. Missing model–dataset values are excluded; filters do not recalculate it.",
     efficiencyPeakMemory:
-      "Memory Efficiency Index for the selected window size. Mean Macro-F1 and log peak PSS increase are normalized across all models with both values. Model, dataset, and component filters do not change it.",
+      "Mean of this model’s available dataset-level Peak Memory Efficiency Indices. Each dataset normalizes Macro-F1 and log1p-transformed peak PSS increase across models with both measurements. Missing model–dataset values are excluded; filters do not recalculate it.",
     efficiencyLatency:
-      "Latency Efficiency Index for the selected window size. Mean Macro-F1 and log latency are normalized across all models with both values. Latency was measured with ExecuTorch on a Pixel 8; model, dataset, and component filters do not change it.",
+      "Mean of this model’s available dataset-level Latency Efficiency Indices. Each dataset normalizes Macro-F1 and log1p-transformed latency across models with both measurements. Missing model–dataset values are excluded; filters do not recalculate it.",
   };
 
   const completeResults = $derived(
@@ -349,8 +405,8 @@
     ),
   );
 
+  const datasetEfficiencyScores = $derived(calculateDatasetEfficiencyScores());
   const benchmarkRows = $derived(
-    withEfficiencyIndices(
       catalog.models.map((model) => {
         const deploymentPoint = deploymentPointByModelId.get(model.id);
 
@@ -363,13 +419,12 @@
           latencyMs: deploymentPoint?.mean_latency_ms ?? null,
           peakMemoryMb: deploymentPoint?.mean_peak_pss_delta_mb ?? null,
           modelSizeMb: deploymentPoint?.exported_model_size_mb ?? null,
-          efficiencyCombined: null,
-          efficiencyModelSize: null,
-          efficiencyPeakMemory: null,
-          efficiencyLatency: null,
+          efficiencyCombined: averageDatasetEfficiency(model.id, "efficiencyCombined"),
+          efficiencyModelSize: averageDatasetEfficiency(model.id, "efficiencyModelSize"),
+          efficiencyPeakMemory: averageDatasetEfficiency(model.id, "efficiencyPeakMemory"),
+          efficiencyLatency: averageDatasetEfficiency(model.id, "efficiencyLatency"),
         };
       }),
-    ),
   );
 
   const rows = $derived(
@@ -434,6 +489,27 @@
   const matrixGrandMean = $derived(
     averageAvailable(matrixRows.flatMap((row) => row.cells.map((cell) => cell.macroF1))),
   );
+  const activeProfileMetricConfig = $derived(
+    profileMetricConfigs.find((config) => config.metric === activeProfileMetric) ??
+      profileMetricConfigs[0],
+  );
+  const profileRows = $derived(
+    matrixRows.map((row) => ({
+      id: row.id,
+      name: row.name,
+      values: visibleModels.map((model, modelIndex) =>
+        profileMetricValue(model.id, row.id, row.cells[modelIndex]?.macroF1 ?? null),
+      ),
+    })),
+  );
+  const profileSeries = $derived(
+    visibleModels.map((model, modelIndex) => ({
+      ...model,
+      marker: modelMarker(model.id),
+      values: profileRows.map((row) => row.values[modelIndex] ?? null),
+    })),
+  );
+  const profileScaleMax = 1;
 
   function averageMetric(items: Result[], metric: string) {
     const values = items
@@ -736,39 +812,99 @@
       .map((model) => model.id);
   }
 
-  function withEfficiencyIndices(baseRows: LeaderboardRow[]) {
-    const modelSizeScores = efficiencyScores(baseRows, "modelSizeMb");
-    const peakMemoryScores = efficiencyScores(baseRows, "peakMemoryMb");
-    const latencyScores = efficiencyScores(baseRows, "latencyMs");
-    const combinedScores = combinedEfficiencyScores(baseRows);
+  function datasetDeploymentCost(
+    modelId: string,
+    datasetId: string,
+    costKey: "modelSizeMb" | "peakMemoryMb" | "latencyMs",
+  ) {
+    const measured = datasetMeasurements[datasetId]?.[modelId]?.[costKey];
+    if (typeof measured === "number" && Number.isFinite(measured)) return measured;
 
-    return baseRows.map((row) => ({
-      ...row,
-      efficiencyCombined: combinedScores.get(row.id) ?? null,
-      efficiencyModelSize: modelSizeScores.get(row.id) ?? null,
-      efficiencyPeakMemory: peakMemoryScores.get(row.id) ?? null,
-      efficiencyLatency: latencyScores.get(row.id) ?? null,
-    }));
+    const resultMetricKeys = {
+      modelSizeMb: ["exported_model_size_mb", "model_size_mb"],
+      peakMemoryMb: ["peak_pss_delta_mb", "mean_peak_pss_delta_mb"],
+      latencyMs: ["latency_ms", "mean_latency_ms"],
+    } as const;
+    const scopedResults = validResults.filter(
+      (result) => result.model_id === modelId && result.dataset_id === datasetId,
+    );
+
+    for (const metric of resultMetricKeys[costKey]) {
+      const value = averageMetric(scopedResults, metric);
+      if (value !== null) return value;
+    }
+    return null;
   }
 
-  function efficiencyScores(
-    rows: LeaderboardRow[],
+  function calculateDatasetEfficiencyScores() {
+    const byDataset = new Map<string, Map<string, EfficiencyValues>>();
+
+    catalog.datasets.forEach((dataset) => {
+      const rows = catalog.models.map((model) => ({
+        id: model.id,
+        macroF1: averageMetric(
+          validResults.filter(
+            (result) => result.model_id === model.id && result.dataset_id === dataset.id,
+          ),
+          "macro_f1",
+        ),
+        modelSizeMb: datasetDeploymentCost(model.id, dataset.id, "modelSizeMb"),
+        peakMemoryMb: datasetDeploymentCost(model.id, dataset.id, "peakMemoryMb"),
+        latencyMs: datasetDeploymentCost(model.id, dataset.id, "latencyMs"),
+      }));
+      const modelSizeScores = datasetEfficiencyIndexScores(rows, "modelSizeMb");
+      const peakMemoryScores = datasetEfficiencyIndexScores(rows, "peakMemoryMb");
+      const latencyScores = datasetEfficiencyIndexScores(rows, "latencyMs");
+      const combinedScores = datasetCombinedEfficiencyScores(rows);
+      const modelScores = new Map<string, EfficiencyValues>();
+
+      catalog.models.forEach((model) => {
+        modelScores.set(model.id, {
+          efficiencyCombined: combinedScores.get(model.id) ?? null,
+          efficiencyModelSize: modelSizeScores.get(model.id) ?? null,
+          efficiencyPeakMemory: peakMemoryScores.get(model.id) ?? null,
+          efficiencyLatency: latencyScores.get(model.id) ?? null,
+        });
+      });
+      byDataset.set(dataset.id, modelScores);
+    });
+
+    return byDataset;
+  }
+
+  function averageDatasetEfficiency(modelId: string, key: keyof EfficiencyValues) {
+    const values = catalog.datasets.map(
+      (dataset) => datasetEfficiencyScores.get(dataset.id)?.get(modelId)?.[key] ?? null,
+    );
+    return averageAvailable(values);
+  }
+
+  function datasetEfficiencyIndexScores<
+    Row extends {
+      id: string;
+      macroF1: number | null;
+      modelSizeMb: number | null;
+      peakMemoryMb: number | null;
+      latencyMs: number | null;
+    },
+  >(
+    rows: Row[],
     costKey: "modelSizeMb" | "peakMemoryMb" | "latencyMs",
   ) {
     const eligible = rows.filter(
-      (row) => row.macroF1 !== null && isPositiveFinite(row[costKey]),
+      (row) => row.macroF1 !== null && isNonNegativeFinite(row[costKey]),
     );
     const scores = new Map<string, number>();
 
     if (eligible.length === 0) return scores;
 
     const f1Extent = extent(eligible.map((row) => row.macroF1 as number));
-    const costExtent = extent(eligible.map((row) => Math.log(row[costKey] as number)));
+    const costExtent = extent(eligible.map((row) => Math.log1p(row[costKey] as number)));
 
     eligible.forEach((row) => {
       const f1Norm = normalize(row.macroF1 as number, f1Extent.min, f1Extent.max, 1);
       const costNorm = normalize(
-        Math.log(row[costKey] as number),
+        Math.log1p(row[costKey] as number),
         costExtent.min,
         costExtent.max,
         0,
@@ -779,39 +915,47 @@
     return scores;
   }
 
-  function combinedEfficiencyScores(rows: LeaderboardRow[]) {
+  function datasetCombinedEfficiencyScores<
+    Row extends {
+      id: string;
+      macroF1: number | null;
+      modelSizeMb: number | null;
+      peakMemoryMb: number | null;
+      latencyMs: number | null;
+    },
+  >(rows: Row[]) {
     const eligible = rows.filter(
       (row) =>
         row.macroF1 !== null &&
-        isPositiveFinite(row.latencyMs) &&
-        isPositiveFinite(row.peakMemoryMb) &&
-        isPositiveFinite(row.modelSizeMb),
+        isNonNegativeFinite(row.latencyMs) &&
+        isNonNegativeFinite(row.peakMemoryMb) &&
+        isNonNegativeFinite(row.modelSizeMb),
     );
     const scores = new Map<string, number>();
 
     if (eligible.length === 0) return scores;
 
     const f1Extent = extent(eligible.map((row) => row.macroF1 as number));
-    const latencyExtent = extent(eligible.map((row) => Math.log(row.latencyMs as number)));
-    const memoryExtent = extent(eligible.map((row) => Math.log(row.peakMemoryMb as number)));
-    const sizeExtent = extent(eligible.map((row) => Math.log(row.modelSizeMb as number)));
+    const latencyExtent = extent(eligible.map((row) => Math.log1p(row.latencyMs as number)));
+    const memoryExtent = extent(eligible.map((row) => Math.log1p(row.peakMemoryMb as number)));
+    const sizeExtent = extent(eligible.map((row) => Math.log1p(row.modelSizeMb as number)));
 
     eligible.forEach((row) => {
       const f1Norm = normalize(row.macroF1 as number, f1Extent.min, f1Extent.max, 1);
       const latencyNorm = normalize(
-        Math.log(row.latencyMs as number),
+        Math.log1p(row.latencyMs as number),
         latencyExtent.min,
         latencyExtent.max,
         0,
       );
       const memoryNorm = normalize(
-        Math.log(row.peakMemoryMb as number),
+        Math.log1p(row.peakMemoryMb as number),
         memoryExtent.min,
         memoryExtent.max,
         0,
       );
       const sizeNorm = normalize(
-        Math.log(row.modelSizeMb as number),
+        Math.log1p(row.modelSizeMb as number),
         sizeExtent.min,
         sizeExtent.max,
         0,
@@ -832,8 +976,8 @@
     return scores;
   }
 
-  function isPositiveFinite(value: number | null) {
-    return typeof value === "number" && Number.isFinite(value) && value > 0;
+  function isNonNegativeFinite(value: number | null) {
+    return typeof value === "number" && Number.isFinite(value) && value >= 0;
   }
 
   function extent(values: number[]) {
@@ -851,6 +995,94 @@
   function formatPercent(score: number | null) {
     if (score === null) return "pending";
     return `${(score * 100).toFixed(1)}%`;
+  }
+
+  function profileAngle(index: number, count: number) {
+    return -Math.PI / 2 + (index * Math.PI * 2) / Math.max(1, count);
+  }
+
+  function profilePolarPoint(radius: number, index: number, count: number) {
+    const angle = profileAngle(index, count);
+    return {
+      x: profileBox.centerX + Math.cos(angle) * radius,
+      y: profileBox.centerY + Math.sin(angle) * radius,
+    };
+  }
+
+  function profileMetricValue(
+    modelId: string,
+    datasetId: string,
+    macroF1: number | null,
+  ) {
+    if (activeProfileMetric === "macro_f1") return macroF1;
+    const values = datasetEfficiencyScores.get(datasetId)?.get(modelId);
+    if (!values) return null;
+
+    const indexValues: Record<Exclude<ProfileMetric, "macro_f1">, number | null> = {
+      efficiency_latency: values.efficiencyLatency,
+      efficiency_peak_memory: values.efficiencyPeakMemory,
+      efficiency_model_size: values.efficiencyModelSize,
+      efficiency_combined: values.efficiencyCombined,
+    };
+    return indexValues[activeProfileMetric];
+  }
+
+  function profileNormalizedValue(value: number | null) {
+    if (value === null || profileScaleMax <= 0) return 0;
+    return Math.max(0, Math.min(1, value / profileScaleMax));
+  }
+
+  function profileValuePoint(value: number | null, index: number, count: number) {
+    const normalized = profileNormalizedValue(value);
+    return profilePolarPoint(profileBox.radius * normalized, index, count);
+  }
+
+  function profileSeriesPath(values: Array<number | null>) {
+    if (values.length === 0) return "";
+    const firstMissing = values.findIndex((value) => value === null);
+    const startIndex = firstMissing === -1 ? 0 : (firstMissing + 1) % values.length;
+    const commands: string[] = [];
+    let segmentOpen = false;
+
+    for (let offset = 0; offset < values.length; offset += 1) {
+      const index = (startIndex + offset) % values.length;
+      const value = values[index];
+      if (value === null) {
+        segmentOpen = false;
+        continue;
+      }
+      const point = profileValuePoint(value, index, values.length);
+      commands.push(`${segmentOpen ? "L" : "M"} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`);
+      segmentOpen = true;
+    }
+
+    if (firstMissing === -1) commands.push("Z");
+    return commands.join(" ");
+  }
+
+  function profileGridPoints(level: number, count: number) {
+    return Array.from({ length: count }, (_, index) => {
+      const point = profilePolarPoint(profileBox.radius * level, index, count);
+      return `${point.x.toFixed(2)},${point.y.toFixed(2)}`;
+    }).join(" ");
+  }
+
+  function profileLabelAnchor(x: number) {
+    if (Math.abs(x - profileBox.centerX) < 24) return "middle";
+    return x < profileBox.centerX ? "end" : "start";
+  }
+
+  function profileLineDash(index: number) {
+    return ["", "8 5", "3 4", "11 4 2 4"][index % 4];
+  }
+
+  function formatProfileValue(value: number | null) {
+    if (value === null) return "pending";
+    return `${(value * 100).toFixed(1)}%`;
+  }
+
+  function profileScaleLabel(level: number) {
+    return `${Math.round(level * 100)}%`;
   }
 
   function formatNetImprovement(score: number | null) {
@@ -1084,6 +1316,13 @@
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       openModelDetail(id);
+    }
+  }
+
+  function handleDatasetKeydown(event: KeyboardEvent, id: string) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openDatasetDetail(id);
     }
   }
 
@@ -1605,6 +1844,17 @@
       Score Matrix
     </button>
     <button
+      id="profiles-tab"
+      type="button"
+      role="tab"
+      aria-selected={activeView === "profiles"}
+      aria-controls="profiles-view"
+      class:active={activeView === "profiles"}
+      onclick={() => (activeView = "profiles")}
+    >
+      Performance Profiles
+    </button>
+    <button
       id="pareto-tab"
       type="button"
       role="tab"
@@ -2043,6 +2293,175 @@
     {:else}
       <div class="empty-view">
         Select at least one dataset and model to populate the score matrix.
+      </div>
+    {/if}
+  </div>
+  {/if}
+
+  {#if activeView === "profiles"}
+  <div
+    id="profiles-view"
+    class="arena-panel profile-panel"
+    role="tabpanel"
+    aria-labelledby="profiles-tab"
+  >
+    <div class="panel-header">
+      <div>
+        <h2>Dataset Performance Profiles</h2>
+        <p>
+          Datasets form the outer axes; models form the inner profiles.
+          Farther from the center means a higher score.
+        </p>
+      </div>
+      <label class="profile-metric-field">
+        <span>Metric</span>
+        <span class="profile-select">
+          <select bind:value={activeProfileMetric} aria-label="Profile metric">
+            {#each profileMetricConfigs as config}
+              <option value={config.metric}>{config.label}</option>
+            {/each}
+          </select>
+        </span>
+      </label>
+    </div>
+
+    {#if profileRows.length >= 3 && profileSeries.length > 0}
+      <div class="profile-layout">
+        <div class="profile-chart-wrap">
+          <svg
+            class="profile-chart"
+            viewBox={`0 0 ${profileBox.width} ${profileBox.height}`}
+            role="img"
+            aria-label={`${activeProfileMetricConfig.label} profiles for ${profileSeries.length} models across ${profileRows.length} datasets`}
+          >
+            <g class="profile-grid" aria-hidden="true">
+              {#each [0.2, 0.4, 0.6, 0.8, 1] as level}
+                <polygon points={profileGridPoints(level, profileRows.length)}></polygon>
+                <text
+                  x={profileBox.centerX + 7}
+                  y={profileBox.centerY - profileBox.radius * level + 13}
+                >{profileScaleLabel(level)}</text>
+              {/each}
+              {#each profileRows as row, index}
+                {@const axisPoint = profilePolarPoint(profileBox.radius, index, profileRows.length)}
+                <line
+                  x1={profileBox.centerX}
+                  y1={profileBox.centerY}
+                  x2={axisPoint.x}
+                  y2={axisPoint.y}
+                ></line>
+              {/each}
+            </g>
+
+            <g class="profile-series">
+              {#each profileSeries as series, seriesIndex}
+                <g
+                  class="profile-series-item"
+                  class:highlighted={highlightedProfileModelId === series.id}
+                  class:dimmed={highlightedProfileModelId !== null && highlightedProfileModelId !== series.id}
+                  role="button"
+                  tabindex="0"
+                  aria-label={`Open model details: ${series.name}`}
+                  onmouseenter={() => (highlightedProfileModelId = series.id)}
+                  onmouseleave={() => (highlightedProfileModelId = null)}
+                  onfocus={() => (highlightedProfileModelId = series.id)}
+                  onblur={() => (highlightedProfileModelId = null)}
+                  onclick={() => openModelDetail(series.id)}
+                  onkeydown={(event) => handleModelRowKeydown(event, series.id)}
+                >
+                  <title>{series.name} · {activeProfileMetricConfig.label}</title>
+                  <path
+                    class="profile-series-area"
+                    d={profileSeriesPath(series.values)}
+                    fill={series.values.some((value) => value === null) ? "none" : series.marker.color}
+                    stroke={series.marker.color}
+                    stroke-dasharray={profileLineDash(seriesIndex)}
+                  ></path>
+                  {#each series.values as value, valueIndex}
+                    {#if value !== null}
+                      {@const point = profileValuePoint(value, valueIndex, series.values.length)}
+                      <g transform={`translate(${point.x} ${point.y}) scale(0.68)`}>
+                        <title>{series.name} × {profileRows[valueIndex]?.name}: {formatProfileValue(value)}</title>
+                        <path
+                          class="profile-series-marker"
+                          d={getMarkerPath(series.marker.shape)}
+                          fill={series.marker.color}
+                          fill-rule="evenodd"
+                        ></path>
+                      </g>
+                    {/if}
+                  {/each}
+                </g>
+              {/each}
+            </g>
+
+            <g class="profile-labels">
+              {#each profileRows as row, index}
+                {@const labelPoint = profilePolarPoint(profileBox.labelRadius, index, profileRows.length)}
+                {@const marker = datasetMarker(row.id)}
+                <g
+                  class="profile-dataset-label"
+                  role="button"
+                  tabindex="0"
+                  aria-label={`Open dataset details: ${row.name}`}
+                  onclick={() => openDatasetDetail(row.id)}
+                  onkeydown={(event) => handleDatasetKeydown(event, row.id)}
+                >
+                  <title>{row.name}</title>
+                  <g transform={`translate(${labelPoint.x} ${labelPoint.y - 11}) scale(0.68)`}>
+                    <path d={getMarkerPath(marker.shape)} fill={marker.color} fill-rule="evenodd"></path>
+                  </g>
+                  <text
+                    x={labelPoint.x}
+                    y={labelPoint.y + 9}
+                    text-anchor={profileLabelAnchor(labelPoint.x)}
+                  >{row.name}</text>
+                </g>
+              {/each}
+            </g>
+          </svg>
+        </div>
+
+        <div class="profile-legend" aria-label="Visible model profiles">
+          {#each profileSeries as series, seriesIndex}
+            <button
+              type="button"
+              class:highlighted={highlightedProfileModelId === series.id}
+              class:dimmed={highlightedProfileModelId !== null && highlightedProfileModelId !== series.id}
+              onmouseenter={() => (highlightedProfileModelId = series.id)}
+              onmouseleave={() => (highlightedProfileModelId = null)}
+              onfocus={() => (highlightedProfileModelId = series.id)}
+              onblur={() => (highlightedProfileModelId = null)}
+              onclick={() => openModelDetail(series.id)}
+            >
+              <svg class="entity-marker" viewBox="-10 -10 20 20" aria-hidden="true">
+                <path d={getMarkerPath(series.marker.shape)} fill={series.marker.color} fill-rule="evenodd"></path>
+              </svg>
+              <span>{series.name}</span>
+              <svg class="profile-line-key" viewBox="0 0 30 4" aria-hidden="true">
+                <line
+                  x1="0"
+                  y1="2"
+                  x2="30"
+                  y2="2"
+                  stroke={series.marker.color}
+                  stroke-dasharray={profileLineDash(seriesIndex)}
+                ></line>
+              </svg>
+            </button>
+          {/each}
+        </div>
+      </div>
+      {#if activeProfileMetric !== "macro_f1"}
+        <p class="profile-measurement-note">
+          Each index is calculated independently for every dataset using models with the required
+          raw measurements. Rankings average each model’s available dataset-level indices. A missing
+          input affects only that model–dataset value; no model-wide fallback is substituted.
+        </p>
+      {/if}
+    {:else}
+      <div class="empty-view">
+        Select at least three datasets and one model to populate the performance profiles.
       </div>
     {/if}
   </div>
@@ -2502,7 +2921,7 @@
 
   .view-switcher {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 6px;
     min-width: 0;
     border: 1px solid lightgray;
@@ -3602,6 +4021,219 @@
     outline-offset: -2px;
   }
 
+  .profile-metric-field {
+    display: grid;
+    flex: 0 0 220px;
+    gap: 5px;
+  }
+
+  .profile-metric-field > span:first-child {
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .profile-select {
+    position: relative;
+    display: block;
+  }
+
+  .profile-select::after {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    width: 7px;
+    height: 7px;
+    border-right: 1.5px solid var(--muted);
+    border-bottom: 1.5px solid var(--muted);
+    content: "";
+    pointer-events: none;
+    transform: translateY(-70%) rotate(45deg);
+  }
+
+  .profile-select select {
+    width: 100%;
+    min-height: 36px;
+    appearance: none;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    background: var(--panel-soft);
+    color: var(--ink);
+    padding: 0 34px 0 10px;
+    font: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+
+  .profile-select select:hover {
+    border-color: var(--accent);
+    background: var(--panel);
+  }
+
+  .profile-select select:focus-visible {
+    outline: 2px solid hsl(24 6% 17% / 0.28);
+    outline-offset: 2px;
+  }
+
+  .profile-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 220px;
+    gap: 8px;
+    padding: 8px 12px 12px;
+  }
+
+  .profile-chart-wrap {
+    min-width: 0;
+    overflow-x: auto;
+  }
+
+  .profile-chart {
+    display: block;
+    width: 100%;
+    min-width: 820px;
+    height: auto;
+  }
+
+  .profile-grid polygon,
+  .profile-grid line {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 1;
+  }
+
+  .profile-grid polygon:last-of-type {
+    stroke: var(--line-strong);
+    stroke-width: 1.4;
+  }
+
+  .profile-grid text {
+    fill: var(--muted);
+    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 10px;
+  }
+
+  .profile-series-item {
+    cursor: pointer;
+    opacity: 0.82;
+    transition: opacity 120ms ease;
+  }
+
+  .profile-series-area {
+    fill-opacity: 0.035;
+    stroke-width: 2;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    transition:
+      fill-opacity 120ms ease,
+      stroke-width 120ms ease;
+  }
+
+  .profile-series-marker {
+    stroke: var(--panel);
+    stroke-width: 1.8;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .profile-series-item.highlighted {
+    opacity: 1;
+  }
+
+  .profile-series-item.highlighted .profile-series-area {
+    fill-opacity: 0.13;
+    stroke-width: 3;
+  }
+
+  .profile-series-item.dimmed {
+    opacity: 0.1;
+  }
+
+  .profile-dataset-label {
+    cursor: pointer;
+    outline: none;
+  }
+
+  .profile-dataset-label path {
+    stroke: var(--panel);
+    stroke-width: 1.8;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .profile-dataset-label text {
+    fill: var(--muted-strong);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .profile-dataset-label:hover text,
+  .profile-dataset-label:focus-visible text {
+    fill: var(--ink);
+    text-decoration: underline;
+  }
+
+  .profile-legend {
+    display: grid;
+    align-content: start;
+    gap: 4px;
+    max-height: 720px;
+    padding: 14px 4px 14px 8px;
+    overflow-y: auto;
+  }
+
+  .profile-legend button {
+    display: grid;
+    grid-template-columns: 16px minmax(0, 1fr) 30px;
+    align-items: center;
+    gap: 7px;
+    min-height: 34px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--muted-strong);
+    padding: 4px 6px;
+    font: inherit;
+    font-size: 0.76rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      border-color 120ms ease,
+      background-color 120ms ease,
+      opacity 120ms ease;
+  }
+
+  .profile-legend button:hover,
+  .profile-legend button:focus-visible,
+  .profile-legend button.highlighted {
+    border-color: var(--line-strong);
+    background: var(--panel-soft);
+    color: var(--ink);
+    outline: none;
+  }
+
+  .profile-legend button.dimmed {
+    opacity: 0.28;
+  }
+
+  .profile-line-key {
+    width: 30px;
+    height: 4px;
+    overflow: visible;
+  }
+
+  .profile-line-key line {
+    stroke-width: 2;
+  }
+
+  .profile-measurement-note {
+    margin: 0;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    padding: 11px 16px 13px;
+    font-size: 0.76rem;
+    line-height: 1.45;
+  }
+
   .scatter-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -4110,6 +4742,16 @@
     .scatter-grid {
       grid-template-columns: 1fr;
     }
+
+    .profile-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .profile-legend {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      max-height: none;
+      padding: 0 4px 12px;
+    }
   }
 
   @media (max-width: 900px) {
@@ -4132,6 +4774,18 @@
       min-height: 46px;
       padding: 5px 8px;
       font-size: 0.76rem;
+    }
+
+    .view-switcher {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .profile-metric-field {
+      width: 100%;
+    }
+
+    .profile-legend {
+      grid-template-columns: 1fr;
     }
 
     .pareto-controls {

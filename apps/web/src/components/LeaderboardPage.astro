@@ -1,6 +1,9 @@
 ---
 import BenchmarkPage from "./BenchmarkPage.astro";
 import Leaderboard from "./Leaderboard.svelte";
+import latencyMeasurementsCsv from "../../../../measurements/model_dataset_matrix_latency.csv?raw";
+import memoryMeasurementsCsv from "../../../../measurements/model_dataset_matrix_memory.csv?raw";
+import modelSizeMeasurementsCsv from "../../../../measurements/model_dataset_matrix_model_size.csv?raw";
 import catalog from "../generated/catalog.json";
 import deploymentTradeoffs from "../generated/deployment-tradeoffs.json";
 import paperBenchmark from "../generated/paper-benchmark.json";
@@ -15,6 +18,62 @@ const leaderboardDateTime = "2026-05-01";
 const trainingRuns = 4760;
 const modelCount = benchmark.catalog.models.length;
 const datasetCount = benchmark.catalog.datasets.length;
+
+type MeasurementKey = "latencyMs" | "peakMemoryMb" | "modelSizeMb";
+type DatasetMeasurements = Record<
+  string,
+  Record<string, Partial<Record<MeasurementKey, number>>>
+>;
+
+const modelIdByMeasurementName: Record<string, string> = {
+  AttendDiscriminate: "attend_discriminate",
+  CNNHAR: "cnn_har",
+  DANA: "dana",
+  DeepConvLSTM: "deepconv_lstm",
+  DeepConvLSTMAttention: "deepconv_lstm_attention",
+  DeepConvLSTM_ISWC: "deepconv_lstm_iswc",
+  DynamicWHAR: "dynamic_whar",
+  KNN: "knn",
+  LSTMsEnsemble: "lstms_ensemble",
+  MLPHAR: "mlp_har",
+  MLPMixer: "mlp_mixer",
+  RandomForest: "random_forest",
+  SA_HAR: "sa_har",
+  SVM: "svm",
+  TinierHAR: "tinierhar",
+  TinyHAR: "tinyhar",
+  TripleCrossDomainAttention: "triple_cross_domain_attention",
+};
+
+const datasetMeasurements: DatasetMeasurements = {};
+const measurementFiles: Array<[string, MeasurementKey]> = [
+  [latencyMeasurementsCsv, "latencyMs"],
+  [memoryMeasurementsCsv, "peakMemoryMb"],
+  [modelSizeMeasurementsCsv, "modelSizeMb"],
+];
+
+for (const [source, key] of measurementFiles) {
+  const csv = source.trim();
+  const [headerLine, ...lines] = csv.split(/\r?\n/);
+  const headers = headerLine.split(",");
+
+  for (const line of lines) {
+    const cells = line.split(",");
+    const datasetId = cells[0];
+    if (!datasetId || datasetId === "Mean") continue;
+
+    headers.slice(1).forEach((header, index) => {
+      if (header === "Mean") return;
+      const modelId = modelIdByMeasurementName[header];
+      const value = Number(cells[index + 1]);
+      if (!modelId || !Number.isFinite(value)) return;
+
+      datasetMeasurements[datasetId] ??= {};
+      datasetMeasurements[datasetId][modelId] ??= {};
+      datasetMeasurements[datasetId][modelId][key] = value;
+    });
+  }
+}
 ---
 
 <BenchmarkPage
@@ -32,6 +91,7 @@ const datasetCount = benchmark.catalog.datasets.length;
     client:load
     catalog={benchmark.catalog}
     defaultWindowSizeSeconds={protocol.data.window.duration_seconds}
+    datasetMeasurements={datasetMeasurements}
     deploymentTradeoffs={deploymentTradeoffs}
     results={benchmark.results}
   />
