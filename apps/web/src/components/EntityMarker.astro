@@ -1,16 +1,7 @@
 ---
 import {
   getEntityMarker,
-  markerCircleRadius,
-  markerCrescentPath,
-  markerDiamondPoints,
-  markerHexagonPoints,
-  markerPentagonPoints,
-  markerPacmanPath,
-  markerQuatrefoilPath,
-  markerStarPoints,
-  markerSquareHalfSize,
-  markerTrianglePoints,
+  getMarkerPath,
   type MarkerPalette,
 } from "../lib/entityMarkers";
 
@@ -33,16 +24,7 @@ const marker = getEntityMarker(id, markerIndex, palette);
   aria-hidden="true"
   focusable="false"
 >
-  {marker.shape === "circle" && <circle cx="0" cy="0" r={markerCircleRadius} fill={marker.color}></circle>}
-  {marker.shape === "square" && <rect x={-markerSquareHalfSize} y={-markerSquareHalfSize} width={markerSquareHalfSize * 2} height={markerSquareHalfSize * 2} rx="1" fill={marker.color}></rect>}
-  {marker.shape === "triangle" && <polygon points={markerTrianglePoints} fill={marker.color}></polygon>}
-  {marker.shape === "diamond" && <polygon points={markerDiamondPoints} fill={marker.color}></polygon>}
-  {marker.shape === "star" && <polygon points={markerStarPoints} fill={marker.color}></polygon>}
-  {marker.shape === "pentagon" && <polygon points={markerPentagonPoints} fill={marker.color}></polygon>}
-  {marker.shape === "hexagon" && <polygon points={markerHexagonPoints} fill={marker.color}></polygon>}
-  {marker.shape === "crescent" && <path d={markerCrescentPath} fill={marker.color} fill-rule="evenodd"></path>}
-  {marker.shape === "quatrefoil" && <path d={markerQuatrefoilPath} fill={marker.color}></path>}
-  {marker.shape === "pacman" && <path d={markerPacmanPath} fill={marker.color}></path>}
+  <path d={getMarkerPath(marker.shape)} fill={marker.color} fill-rule="evenodd"></path>
 </svg>
 
 <style>

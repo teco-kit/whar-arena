@@ -5,16 +5,7 @@
   import paperLinks from "../generated/paper-links.json";
   import {
     getEntityMarker,
-    markerCircleRadius,
-    markerCrescentPath,
-    markerDiamondPoints,
-    markerHexagonPoints,
-    markerPentagonPoints,
-    markerPacmanPath,
-    markerQuatrefoilPath,
-    markerStarPoints,
-    markerSquareHalfSize,
-    markerTrianglePoints,
+    getMarkerPath,
   } from "../lib/entityMarkers";
 
   type Dataset = {
@@ -967,6 +958,10 @@
     return getEntityMarker(id, catalog.models.findIndex((model) => model.id === id), "model");
   }
 
+  function datasetMarker(id: string) {
+    return getEntityMarker(id, catalog.datasets.findIndex((dataset) => dataset.id === id), "dataset");
+  }
+
   function formatFamily(family: string) {
     const labels: Record<string, string> = {
       attn: "Attention",
@@ -1815,27 +1810,7 @@
               <td class="model-cell">
                 <span class="model-name-line">
                   <svg class="entity-marker" viewBox="-10 -10 20 20" aria-hidden="true">
-                    {#if marker.shape === "circle"}
-                      <circle cx="0" cy="0" r={markerCircleRadius} fill={marker.color}></circle>
-                    {:else if marker.shape === "square"}
-                      <rect x={-markerSquareHalfSize} y={-markerSquareHalfSize} width={markerSquareHalfSize * 2} height={markerSquareHalfSize * 2} rx="1" fill={marker.color}></rect>
-                    {:else if marker.shape === "triangle"}
-                      <polygon points={markerTrianglePoints} fill={marker.color}></polygon>
-                    {:else if marker.shape === "diamond"}
-                      <polygon points={markerDiamondPoints} fill={marker.color}></polygon>
-                    {:else if marker.shape === "star"}
-                      <polygon points={markerStarPoints} fill={marker.color}></polygon>
-                    {:else if marker.shape === "pentagon"}
-                      <polygon points={markerPentagonPoints} fill={marker.color}></polygon>
-                    {:else if marker.shape === "hexagon"}
-                      <polygon points={markerHexagonPoints} fill={marker.color}></polygon>
-                    {:else if marker.shape === "crescent"}
-                      <path d={markerCrescentPath} fill={marker.color} fill-rule="evenodd"></path>
-                    {:else if marker.shape === "quatrefoil"}
-                      <path d={markerQuatrefoilPath} fill={marker.color}></path>
-                    {:else}
-                      <path d={markerPacmanPath} fill={marker.color}></path>
-                    {/if}
+                    <path d={getMarkerPath(marker.shape)} fill={marker.color} fill-rule="evenodd"></path>
                   </svg>
                   <span class="model-title-button">{row.name}</span>
                 </span>
@@ -1976,6 +1951,7 @@
           <tr>
             <th class="sticky-col">Dataset</th>
             {#each visibleModels as model}
+              {@const marker = modelMarker(model.id)}
               <th
                 class="matrix-model-heading"
                 title={`Open model details: ${model.name}`}
@@ -1987,6 +1963,9 @@
                     type="button"
                     onclick={() => openModelDetail(model.id)}
                   >
+                    <svg class="entity-marker matrix-model-marker" viewBox="-10 -10 20 20" aria-hidden="true">
+                      <path d={getMarkerPath(marker.shape)} fill={marker.color} fill-rule="evenodd"></path>
+                    </svg>
                     {model.name}
                   </button>
                 </span>
@@ -2002,14 +1981,18 @@
         </thead>
         <tbody>
           {#each matrixRows as row}
+            {@const marker = datasetMarker(row.id)}
             <tr>
               <th class="sticky-col dataset-cell" title={`${row.name} · ${row.id}`}>
                 <button
-                  class="dataset-title-button"
+                  class="dataset-title-button matrix-dataset-title-button"
                   type="button"
                   title={`Open dataset details: ${row.name}`}
                   onclick={() => openDatasetDetail(row.id)}
                 >
+                  <svg class="entity-marker matrix-dataset-marker" viewBox="-10 -10 20 20" aria-hidden="true">
+                    <path d={getMarkerPath(marker.shape)} fill={marker.color} fill-rule="evenodd"></path>
+                  </svg>
                   {row.name}
                 </button>
               </th>
@@ -2221,27 +2204,7 @@
                       class="scatter-marker"
                       transform={`translate(${plotX(point.x, scatterPlot)} ${plotY(point.y, scatterPlot)})`}
                     >
-                      {#if marker.shape === "circle"}
-                        <circle class="scatter-marker-shape" cx="0" cy="0" r={markerCircleRadius} fill={marker.color}></circle>
-                      {:else if marker.shape === "square"}
-                        <rect class="scatter-marker-shape" x={-markerSquareHalfSize} y={-markerSquareHalfSize} width={markerSquareHalfSize * 2} height={markerSquareHalfSize * 2} rx="1" fill={marker.color}></rect>
-                      {:else if marker.shape === "triangle"}
-                        <polygon class="scatter-marker-shape" points={markerTrianglePoints} fill={marker.color}></polygon>
-                      {:else if marker.shape === "diamond"}
-                        <polygon class="scatter-marker-shape" points={markerDiamondPoints} fill={marker.color}></polygon>
-                      {:else if marker.shape === "star"}
-                        <polygon class="scatter-marker-shape" points={markerStarPoints} fill={marker.color}></polygon>
-                      {:else if marker.shape === "pentagon"}
-                        <polygon class="scatter-marker-shape" points={markerPentagonPoints} fill={marker.color}></polygon>
-                      {:else if marker.shape === "hexagon"}
-                        <polygon class="scatter-marker-shape" points={markerHexagonPoints} fill={marker.color}></polygon>
-                      {:else if marker.shape === "crescent"}
-                        <path class="scatter-marker-shape" d={markerCrescentPath} fill={marker.color} fill-rule="evenodd"></path>
-                      {:else if marker.shape === "quatrefoil"}
-                        <path class="scatter-marker-shape" d={markerQuatrefoilPath} fill={marker.color}></path>
-                      {:else}
-                        <path class="scatter-marker-shape" d={markerPacmanPath} fill={marker.color}></path>
-                      {/if}
+                      <path class="scatter-marker-shape" d={getMarkerPath(marker.shape)} fill={marker.color} fill-rule="evenodd"></path>
                     </g>
                   </g>
                 {/each}
@@ -3487,6 +3450,9 @@
   }
 
   .matrix-model-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     border: 0;
     background: transparent;
     color: inherit;
@@ -3499,6 +3465,12 @@
     text-decoration-thickness: 1px;
     text-underline-offset: 4px;
     cursor: pointer;
+  }
+
+  .matrix-model-marker {
+    width: 13px;
+    height: 13px;
+    transform: rotate(180deg);
   }
 
   .matrix-model-heading:hover .matrix-model-button,
@@ -3605,6 +3577,17 @@
     text-transform: none;
     white-space: nowrap;
     cursor: pointer;
+  }
+
+  .matrix-dataset-title-button {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .matrix-dataset-marker {
+    width: 14px;
+    height: 14px;
   }
 
   .dataset-cell:hover .dataset-title-button,

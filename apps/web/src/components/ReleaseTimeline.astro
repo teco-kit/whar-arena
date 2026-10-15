@@ -1,16 +1,7 @@
 ---
 import {
   getEntityMarker,
-  markerCircleRadius,
-  markerCrescentPath,
-  markerDiamondPoints,
-  markerHexagonPoints,
-  markerPentagonPoints,
-  markerPacmanPath,
-  markerQuatrefoilPath,
-  markerStarPoints,
-  markerSquareHalfSize,
-  markerTrianglePoints,
+  getMarkerPath,
   type MarkerPalette,
 } from "../lib/entityMarkers";
 
@@ -97,36 +88,7 @@ const noun = datedItems.length === 1 ? itemLabel : `${itemLabel}s`;
           data-timeline-color={point.marker.color}
           aria-label={`${point.name}, released ${point.year}. Open details.`}
         >
-          {point.marker.shape === "circle" && (
-            <circle class="timeline-point-shape" cx="0" cy="0" r={markerCircleRadius} fill={point.marker.color}></circle>
-          )}
-          {point.marker.shape === "square" && (
-            <rect class="timeline-point-shape" x={-markerSquareHalfSize} y={-markerSquareHalfSize} width={markerSquareHalfSize * 2} height={markerSquareHalfSize * 2} rx="1" fill={point.marker.color}></rect>
-          )}
-          {point.marker.shape === "triangle" && (
-            <polygon class="timeline-point-shape" points={markerTrianglePoints} fill={point.marker.color}></polygon>
-          )}
-          {point.marker.shape === "diamond" && (
-            <polygon class="timeline-point-shape" points={markerDiamondPoints} fill={point.marker.color}></polygon>
-          )}
-          {point.marker.shape === "star" && (
-            <polygon class="timeline-point-shape" points={markerStarPoints} fill={point.marker.color}></polygon>
-          )}
-          {point.marker.shape === "pentagon" && (
-            <polygon class="timeline-point-shape" points={markerPentagonPoints} fill={point.marker.color}></polygon>
-          )}
-          {point.marker.shape === "hexagon" && (
-            <polygon class="timeline-point-shape" points={markerHexagonPoints} fill={point.marker.color}></polygon>
-          )}
-          {point.marker.shape === "crescent" && (
-            <path class="timeline-point-shape" d={markerCrescentPath} fill={point.marker.color} fill-rule="evenodd"></path>
-          )}
-          {point.marker.shape === "quatrefoil" && (
-            <path class="timeline-point-shape" d={markerQuatrefoilPath} fill={point.marker.color}></path>
-          )}
-          {point.marker.shape === "pacman" && (
-            <path class="timeline-point-shape" d={markerPacmanPath} fill={point.marker.color}></path>
-          )}
+          <path class="timeline-point-shape" d={getMarkerPath(point.marker.shape)} fill={point.marker.color} fill-rule="evenodd"></path>
         </g>
       ))}
     </svg>
