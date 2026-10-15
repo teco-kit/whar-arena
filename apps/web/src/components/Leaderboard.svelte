@@ -239,6 +239,7 @@
   let activeView = $state<ViewId>("leaderboard");
   let highlightedProfileModelId = $state<string | null>(null);
   let activeProfileMetric = $state<ProfileMetric>("macro_f1");
+  let profileScale = $state<ScatterScale>("log");
   let activeScatterMetric = $state<ScatterMetric>("mean_latency_ms");
   let scatterScale = $state<ScatterScale>("log");
   let showParetoFrontier = $state(true);
@@ -510,6 +511,7 @@
     })),
   );
   const profileScaleMax = 1;
+  const profileLogStrength = 4;
 
   function averageMetric(items: Result[], metric: string) {
     const values = items
@@ -1029,6 +1031,14 @@
 
   function profileNormalizedValue(value: number | null) {
     if (value === null || profileScaleMax <= 0) return 0;
+    if (profileScale === "log") {
+      const clamped = Math.max(0, Math.min(1, value));
+      return (
+        1 -
+        Math.log1p(profileLogStrength * (1 - clamped)) /
+          Math.log1p(profileLogStrength)
+      );
+    }
     return Math.max(0, Math.min(1, value / profileScaleMax));
   }
 
@@ -1082,6 +1092,13 @@
   }
 
   function profileScaleLabel(level: number) {
+    if (profileScale === "log") {
+      const gap =
+        ((1 + profileLogStrength) ** (1 - level) - 1) /
+        profileLogStrength;
+      const value = 1 - gap;
+      return `${Math.round(value * 100)}%`;
+    }
     return `${Math.round(level * 100)}%`;
   }
 
@@ -1833,15 +1850,15 @@
       Rankings
     </button>
     <button
-      id="matrix-tab"
+      id="pareto-tab"
       type="button"
       role="tab"
-      aria-selected={activeView === "matrix"}
-      aria-controls="matrix-view"
-      class:active={activeView === "matrix"}
-      onclick={() => (activeView = "matrix")}
+      aria-selected={activeView === "pareto"}
+      aria-controls="pareto-view"
+      class:active={activeView === "pareto"}
+      onclick={() => (activeView = "pareto")}
     >
-      Score Matrix
+      Efficiency Trade-offs
     </button>
     <button
       id="profiles-tab"
@@ -1855,15 +1872,15 @@
       Performance Profiles
     </button>
     <button
-      id="pareto-tab"
+      id="matrix-tab"
       type="button"
       role="tab"
-      aria-selected={activeView === "pareto"}
-      aria-controls="pareto-view"
-      class:active={activeView === "pareto"}
-      onclick={() => (activeView = "pareto")}
+      aria-selected={activeView === "matrix"}
+      aria-controls="matrix-view"
+      class:active={activeView === "matrix"}
+      onclick={() => (activeView = "matrix")}
     >
-      Efficiency Trade-offs
+      Score Matrix
     </button>
   </div>
 
@@ -2313,16 +2330,27 @@
           Farther from the center means a higher score.
         </p>
       </div>
-      <label class="profile-metric-field">
-        <span>Metric</span>
-        <span class="profile-select">
-          <select bind:value={activeProfileMetric} aria-label="Profile metric">
-            {#each profileMetricConfigs as config}
-              <option value={config.metric}>{config.label}</option>
-            {/each}
-          </select>
-        </span>
-      </label>
+      <div class="profile-controls">
+        <label class="profile-field profile-metric-field">
+          <span>Metric</span>
+          <span class="profile-select">
+            <select bind:value={activeProfileMetric} aria-label="Profile metric">
+              {#each profileMetricConfigs as config}
+                <option value={config.metric}>{config.label}</option>
+              {/each}
+            </select>
+          </span>
+        </label>
+        <label class="profile-field profile-scale-field">
+          <span>Scale</span>
+          <span class="profile-select">
+            <select bind:value={profileScale} aria-label="Profile radial scale">
+              <option value="log">Focused</option>
+              <option value="linear">Linear</option>
+            </select>
+          </span>
+        </label>
+      </div>
     </div>
 
     {#if profileRows.length >= 3 && profileSeries.length > 0}
@@ -4021,13 +4049,28 @@
     outline-offset: -2px;
   }
 
-  .profile-metric-field {
+  .profile-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: flex-end;
+    gap: 10px 16px;
+  }
+
+  .profile-field {
     display: grid;
-    flex: 0 0 220px;
     gap: 5px;
   }
 
-  .profile-metric-field > span:first-child {
+  .profile-metric-field {
+    width: 220px;
+  }
+
+  .profile-scale-field {
+    width: 132px;
+  }
+
+  .profile-field > span:first-child {
     color: var(--muted);
     font-size: 0.68rem;
     font-weight: 600;
@@ -4780,7 +4823,13 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .profile-metric-field {
+    .profile-controls {
+      width: 100%;
+      align-items: stretch;
+      justify-content: start;
+    }
+
+    .profile-field {
       width: 100%;
     }
 
