@@ -275,12 +275,12 @@
     bottom: 64,
   };
   const profileBox = {
-    width: 1120,
-    height: 900,
-    centerX: 560,
-    centerY: 420,
-    radius: 290,
-    labelRadius: 350,
+    width: 1020,
+    height: 820,
+    centerX: 510,
+    centerY: 385,
+    radius: 275,
+    labelRadius: 335,
   };
   const scatterConfigs: ScatterConfig[] = [
     {
@@ -304,7 +304,7 @@
     label: string;
     shortLabel: string;
   }> = [
-    { metric: "macro_f1", label: "Test Macro-F1", shortLabel: "Macro-F1" },
+    { metric: "macro_f1", label: "Mean LKSO Macro-f1", shortLabel: "Macro-F1" },
     {
       metric: "efficiency_latency",
       label: "Latency Efficiency Index",
@@ -2274,7 +2274,7 @@
                 <td
                   class:pending-cell={cell.macroF1 === null}
                   style={scoreStyle(cell.macroF1)}
-                  title={`${row.name} × ${cell.modelName}: test Macro-F1 ${formatPercent(cell.macroF1)}`}
+                  title={`${row.name} × ${cell.modelName}: Mean LKSO Macro-f1 ${formatPercent(cell.macroF1)}`}
                 >
                   <strong>{formatMatrixScore(cell.macroF1)}</strong>
                 </td>
@@ -2359,6 +2359,40 @@
 
     {#if profileRows.length >= 3 && profileSeries.length > 0}
       <div class="profile-layout">
+        <aside class="profile-models" aria-label="Visible model profiles">
+          <h3>Models</h3>
+          <div class="profile-legend">
+            {#each profileSeries as series, seriesIndex}
+              <button
+                type="button"
+                title={series.name}
+                class:highlighted={highlightedProfileModelId === series.id}
+                class:dimmed={highlightedProfileModelId !== null && highlightedProfileModelId !== series.id}
+                onmouseenter={() => (highlightedProfileModelId = series.id)}
+                onmouseleave={() => (highlightedProfileModelId = null)}
+                onfocus={() => (highlightedProfileModelId = series.id)}
+                onblur={() => (highlightedProfileModelId = null)}
+                onclick={() => openModelDetail(series.id)}
+              >
+                <svg class="entity-marker" viewBox="-10 -10 20 20" aria-hidden="true">
+                  <path d={getMarkerPath(series.marker.shape)} fill={series.marker.color} fill-rule="evenodd"></path>
+                </svg>
+                <span>{series.name}</span>
+                <svg class="profile-line-key" viewBox="0 0 30 4" aria-hidden="true">
+                  <line
+                    x1="0"
+                    y1="2"
+                    x2="30"
+                    y2="2"
+                    stroke={series.marker.color}
+                    stroke-dasharray={profileLineDash(seriesIndex)}
+                  ></line>
+                </svg>
+              </button>
+            {/each}
+          </div>
+        </aside>
+
         <div class="profile-chart-wrap">
           <svg
             class="profile-chart"
@@ -2452,36 +2486,6 @@
               {/each}
             </g>
           </svg>
-        </div>
-
-        <div class="profile-legend" aria-label="Visible model profiles">
-          {#each profileSeries as series, seriesIndex}
-            <button
-              type="button"
-              class:highlighted={highlightedProfileModelId === series.id}
-              class:dimmed={highlightedProfileModelId !== null && highlightedProfileModelId !== series.id}
-              onmouseenter={() => (highlightedProfileModelId = series.id)}
-              onmouseleave={() => (highlightedProfileModelId = null)}
-              onfocus={() => (highlightedProfileModelId = series.id)}
-              onblur={() => (highlightedProfileModelId = null)}
-              onclick={() => openModelDetail(series.id)}
-            >
-              <svg class="entity-marker" viewBox="-10 -10 20 20" aria-hidden="true">
-                <path d={getMarkerPath(series.marker.shape)} fill={series.marker.color} fill-rule="evenodd"></path>
-              </svg>
-              <span>{series.name}</span>
-              <svg class="profile-line-key" viewBox="0 0 30 4" aria-hidden="true">
-                <line
-                  x1="0"
-                  y1="2"
-                  x2="30"
-                  y2="2"
-                  stroke={series.marker.color}
-                  stroke-dasharray={profileLineDash(seriesIndex)}
-                ></line>
-              </svg>
-            </button>
-          {/each}
         </div>
       </div>
       {#if activeProfileMetric !== "macro_f1"}
@@ -4220,21 +4224,44 @@
 
   .profile-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 220px;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 16px;
+    align-items: center;
+    padding: 16px;
+  }
+
+  .profile-models {
+    display: grid;
+    min-width: 0;
+    align-self: center;
     gap: 8px;
-    padding: 8px 12px 12px;
+    border-right: 1px solid var(--line);
+    padding-right: 12px;
+  }
+
+  .profile-models h3 {
+    margin: 0;
+    color: var(--ink);
+    font-size: 0.76rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
 
   .profile-chart-wrap {
+    display: flex;
     min-width: 0;
+    align-items: center;
+    justify-content: center;
     overflow-x: auto;
   }
 
   .profile-chart {
     display: block;
-    width: 100%;
-    min-width: 820px;
+    width: min(100%, 1020px);
+    min-width: 680px;
     height: auto;
+    margin: 0 auto;
   }
 
   .profile-grid polygon,
@@ -4317,8 +4344,8 @@
     display: grid;
     align-content: start;
     gap: 4px;
-    max-height: 720px;
-    padding: 14px 4px 14px 8px;
+    max-height: 650px;
+    padding: 0 4px 0 0;
     overflow-y: auto;
   }
 
@@ -4357,9 +4384,17 @@
     opacity: 0.28;
   }
 
+  .profile-legend button > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .profile-line-key {
     width: 30px;
     height: 4px;
+    justify-self: end;
     overflow: visible;
   }
 
@@ -4502,7 +4537,9 @@
   }
 
   .pareto-plot {
-    padding: 16px;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
   }
 
   .pareto-plot h3 {
@@ -4887,13 +4924,15 @@
     }
 
     .profile-layout {
-      grid-template-columns: 1fr;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 10px;
+      padding: 12px;
     }
 
     .profile-legend {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      max-height: none;
-      padding: 0 4px 12px;
+      grid-template-columns: 1fr;
+      max-height: 590px;
+      padding: 0 4px 0 0;
     }
   }
 
@@ -4934,8 +4973,23 @@
       width: 100%;
     }
 
+    .profile-layout {
+      grid-template-columns: 1fr;
+      gap: 12px;
+      padding: 12px 8px;
+    }
+
+    .profile-models {
+      align-self: stretch;
+      border-right: 0;
+      border-bottom: 1px solid var(--line);
+      padding: 0 4px 10px;
+    }
+
     .profile-legend {
       grid-template-columns: 1fr;
+      max-height: 260px;
+      padding: 0 4px 0 0;
     }
 
     .pareto-controls {
