@@ -285,17 +285,17 @@
   const scatterConfigs: ScatterConfig[] = [
     {
       metric: "mean_latency_ms",
-      title: "Mean Macro-F1 vs. Latency",
+      title: "Mean LKSO Macro-f1 vs. Latency",
       xLabel: "Mean latency (ms)",
     },
     {
       metric: "mean_peak_pss_delta_mb",
-      title: "Mean Macro-F1 vs. Peak PSS Delta",
+      title: "Mean LKSO Macro-f1 vs. Peak PSS Delta",
       xLabel: "Mean peak PSS delta (MB)",
     },
     {
       metric: "exported_model_size_mb",
-      title: "Mean Macro-F1 vs. Exported Model Size",
+      title: "Mean LKSO Macro-f1 vs. Exported Model Size",
       xLabel: "Exported model size (MB)",
     },
   ];
@@ -1837,6 +1837,7 @@
     </div>
   </section>
 
+  <div class="benchmark-view-shell">
   <div class="view-switcher" aria-label="Benchmark views" role="tablist">
     <button
       id="leaderboard-tab"
@@ -1892,7 +1893,10 @@
     aria-labelledby="leaderboard-tab"
   >
       <div class="panel-header">
+        <div class="panel-heading">
         <h2>Rankings</h2>
+          <p>Compare overall predictive performance and deployment efficiency across models.</p>
+        </div>
       </div>
 
     <div class="table-wrap leaderboard-wrap">
@@ -2205,9 +2209,9 @@
     aria-labelledby="matrix-tab"
   >
     <div class="panel-header">
-      <div>
+      <div class="panel-heading">
         <h2>Dataset × Model Matrix</h2>
-        <p>{matrixRows.length} selected datasets × {visibleModels.length} visible models</p>
+        <p>Inspect per-dataset Macro-F1 scores and compare means across models and datasets.</p>
       </div>
     </div>
 
@@ -2216,7 +2220,10 @@
       <table class="matrix-table">
         <thead>
           <tr>
-            <th class="sticky-col">Dataset</th>
+            <th class="sticky-col matrix-corner" aria-label="Datasets by models">
+              <span class="matrix-corner-label matrix-corner-models">Models</span>
+              <span class="matrix-corner-label matrix-corner-datasets">Datasets</span>
+            </th>
             {#each visibleModels as model}
               {@const marker = modelMarker(model.id)}
               <th
@@ -2323,12 +2330,9 @@
     aria-labelledby="profiles-tab"
   >
     <div class="panel-header">
-      <div>
+      <div class="panel-heading">
         <h2>Dataset Performance Profiles</h2>
-        <p>
-          Datasets form the outer axes; models form the inner profiles.
-          Farther from the center means a higher score.
-        </p>
+        <p>Compare each model across datasets using Macro-F1 or dataset-level efficiency indices.</p>
       </div>
       <div class="profile-controls">
         <label class="profile-field profile-metric-field">
@@ -2503,9 +2507,9 @@
       aria-labelledby="pareto-tab"
     >
       <div class="panel-header">
-        <div>
+        <div class="panel-heading">
           <h2>Performance–Efficiency Trade-offs</h2>
-          <p>Lower deployment cost and higher Macro-F1 are better.</p>
+          <p>Explore how predictive performance trades off against latency, peak memory, or model size.</p>
         </div>
         <div class="pareto-controls">
           <label class="pareto-field pareto-metric-field">
@@ -2619,7 +2623,7 @@
                 text-anchor="middle"
                 transform={`translate(14 ${(plotBox.top + plotBox.height - plotBox.bottom) / 2}) rotate(-90)`}
               >
-                Mean test Macro-F1
+                Mean LKSO Macro-f1
               </text>
               {#if showParetoFrontier && scatterPlot.frontierPoints.length > 1}
                 <path
@@ -2666,6 +2670,7 @@
       {/if}
     </div>
   {/if}
+  </div>
 
   {#if scatterTooltip}
     <div
@@ -2919,6 +2924,24 @@
     overflow: visible;
   }
 
+  .benchmark-view-shell {
+    min-width: 0;
+    border: 1px solid lightgray;
+    border-radius: 14px 14px 8px 8px;
+    background: var(--panel);
+    overflow: hidden;
+  }
+
+  .benchmark-view-shell > .arena-panel {
+    border: 0;
+    border-radius: 0;
+  }
+
+  .benchmark-view-shell > .arena-panel > .panel-header {
+    min-height: 92px;
+    background: var(--panel);
+  }
+
   .filter-panel > .panel-header {
     display: flex;
     align-items: center;
@@ -2950,19 +2973,21 @@
   .view-switcher {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 6px;
+    gap: 0;
     min-width: 0;
-    border: 1px solid lightgray;
-    border-radius: 8px;
+    border: 0;
+    border-bottom: 1px solid var(--line-strong);
+    border-radius: 0;
     background: var(--panel-soft);
-    padding: 5px;
+    padding: 4px 4px 0;
   }
 
   .view-switcher button {
     position: relative;
-    min-height: 42px;
+    z-index: 0;
+    min-height: 44px;
     border: 1px solid transparent;
-    border-radius: 6px;
+    border-radius: 10px;
     background: transparent;
     color: var(--muted-strong);
     padding: 0 14px;
@@ -2974,6 +2999,22 @@
       border-color 120ms ease,
       background-color 120ms ease,
       color 120ms ease;
+  }
+
+  .view-switcher button:not(:first-child)::before {
+    position: absolute;
+    top: 10px;
+    bottom: 10px;
+    left: -1px;
+    width: 1px;
+    background: var(--line-strong);
+    content: "";
+    transition: opacity 120ms ease;
+  }
+
+  .view-switcher button.active::before,
+  .view-switcher button.active + button::before {
+    opacity: 0;
   }
 
   .view-switcher button:hover,
@@ -2989,10 +3030,16 @@
   }
 
   .view-switcher button.active {
+    z-index: 1;
     border-color: var(--line-strong);
+    border-bottom-color: var(--panel);
+    border-radius: 10px 10px 0 0;
     background: var(--panel);
     color: var(--ink);
-    box-shadow: 0 1px 3px hsl(24 6% 17% / 0.08);
+    transform: translateY(1px);
+    box-shadow:
+      0 -1px 2px hsl(24 6% 17% / 0.04),
+      0 2px 7px hsl(24 6% 17% / 0.05);
   }
 
   .panel-header {
@@ -3006,8 +3053,14 @@
     background: var(--panel-soft);
   }
 
+  .panel-heading {
+    display: grid;
+    min-width: 0;
+    gap: 5px;
+  }
+
   .panel-header p {
-    margin-top: 5px;
+    margin: 0;
     color: var(--muted-strong);
     font-size: 0.8rem;
   }
@@ -3842,6 +3895,7 @@
 
   .matrix-wrap {
     max-height: none;
+    background: var(--panel);
     overflow-x: auto;
     overflow-y: visible;
     overscroll-behavior-x: contain;
@@ -3862,7 +3916,7 @@
   }
 
   .matrix-table thead th {
-    background: var(--panel-strong);
+    background: var(--panel);
   }
 
   .matrix-table thead th:not(.sticky-col) {
@@ -3877,6 +3931,51 @@
   .matrix-model-heading {
     position: relative;
     cursor: pointer;
+  }
+
+  .matrix-corner {
+    position: sticky;
+    min-width: 150px !important;
+    padding: 0 !important;
+    overflow: hidden;
+  }
+
+  .matrix-corner::after {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(
+      to top right,
+      transparent calc(50% - 0.75px),
+      var(--line-strong) calc(50% - 0.75px),
+      var(--line-strong) calc(50% + 0.75px),
+      transparent calc(50% + 0.75px)
+    );
+    content: "";
+    pointer-events: none;
+  }
+
+  .matrix-table thead th .matrix-corner-label {
+    position: absolute;
+    z-index: 1;
+    color: var(--muted-strong);
+    font-size: 0.68rem;
+    font-weight: 600;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    writing-mode: horizontal-tb;
+    transform: none;
+  }
+
+  .matrix-corner-models {
+    top: 12px;
+    right: 10px;
+  }
+
+  .matrix-corner-datasets {
+    bottom: 12px;
+    left: 10px;
   }
 
   .matrix-mean-heading,
@@ -3988,7 +4087,7 @@
     z-index: 2;
     width: 1% !important;
     min-width: max-content !important;
-    background: var(--panel-strong);
+    background: var(--panel);
   }
 
   .matrix-table thead .sticky-col {
@@ -4388,7 +4487,7 @@
     align-content: start;
     border: 1px solid lightgray;
     border-radius: 8px;
-    background: var(--panel-soft);
+    background: var(--panel);
     padding: 12px;
   }
 
@@ -4414,6 +4513,7 @@
     display: block;
     width: 100%;
     height: auto;
+    background: var(--panel);
     overflow: visible;
   }
 
@@ -4814,13 +4914,14 @@
     }
 
     .view-switcher button {
-      min-height: 46px;
-      padding: 5px 8px;
-      font-size: 0.76rem;
+      min-height: 52px;
+      padding: 5px 3px;
+      font-size: 0.68rem;
+      line-height: 1.18;
     }
 
     .view-switcher {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
     .profile-controls {
