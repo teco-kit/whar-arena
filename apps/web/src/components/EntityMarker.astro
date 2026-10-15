@@ -1,0 +1,56 @@
+---
+import {
+  getEntityMarker,
+  markerCircleRadius,
+  markerCrescentPath,
+  markerDiamondPoints,
+  markerHexagonPoints,
+  markerPentagonPoints,
+  markerPacmanPath,
+  markerQuatrefoilPath,
+  markerStarPoints,
+  markerSquareHalfSize,
+  markerTrianglePoints,
+  type MarkerPalette,
+} from "../lib/entityMarkers";
+
+interface Props {
+  id: string;
+  markerIndex?: number;
+  palette?: MarkerPalette;
+  size?: number;
+}
+
+const { id, markerIndex, palette = "model", size = 15 } = Astro.props;
+const marker = getEntityMarker(id, markerIndex, palette);
+---
+
+<svg
+  class="entity-marker"
+  width={size}
+  height={size}
+  viewBox="-10 -10 20 20"
+  aria-hidden="true"
+  focusable="false"
+>
+  {marker.shape === "circle" && <circle cx="0" cy="0" r={markerCircleRadius} fill={marker.color}></circle>}
+  {marker.shape === "square" && <rect x={-markerSquareHalfSize} y={-markerSquareHalfSize} width={markerSquareHalfSize * 2} height={markerSquareHalfSize * 2} rx="1" fill={marker.color}></rect>}
+  {marker.shape === "triangle" && <polygon points={markerTrianglePoints} fill={marker.color}></polygon>}
+  {marker.shape === "diamond" && <polygon points={markerDiamondPoints} fill={marker.color}></polygon>}
+  {marker.shape === "star" && <polygon points={markerStarPoints} fill={marker.color}></polygon>}
+  {marker.shape === "pentagon" && <polygon points={markerPentagonPoints} fill={marker.color}></polygon>}
+  {marker.shape === "hexagon" && <polygon points={markerHexagonPoints} fill={marker.color}></polygon>}
+  {marker.shape === "crescent" && <path d={markerCrescentPath} fill={marker.color} fill-rule="evenodd"></path>}
+  {marker.shape === "quatrefoil" && <path d={markerQuatrefoilPath} fill={marker.color}></path>}
+  {marker.shape === "pacman" && <path d={markerPacmanPath} fill={marker.color}></path>}
+</svg>
+
+<style>
+  .entity-marker {
+    display: block;
+    flex: 0 0 auto;
+    overflow: visible;
+    stroke: var(--panel);
+    stroke-width: 1.25;
+  }
+</style>

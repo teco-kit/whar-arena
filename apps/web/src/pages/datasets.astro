@@ -1,5 +1,7 @@
 ---
 import BenchmarkPage from "../components/BenchmarkPage.astro";
+import EntityMarker from "../components/EntityMarker.astro";
+import ReleaseTimeline from "../components/ReleaseTimeline.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import datasetDetailsData from "../generated/dataset-details.json";
 import datasetPaperDetailsData from "../generated/dataset-paper-details.json";
@@ -57,6 +59,9 @@ const datasetPaperDetails = datasetPaperDetailsData as {
 };
 const benchmark = paperBenchmark as { catalog: { datasets: Dataset[] } };
 const links = paperLinks as { datasets: Record<string, PaperLink> };
+const datasetMarkerIndexById = new Map(
+  benchmark.catalog.datasets.map((dataset, index) => [dataset.id, index]),
+);
 const datasetNames = new Map(benchmark.catalog.datasets.map((dataset) => [dataset.id, dataset.name]));
 const settingLabels: Record<string, string> = {
   ADL: "Activities of Daily Living",
@@ -269,6 +274,16 @@ function formatInstitutionSummary(institutions: string[]) {
       { icon: "datasets", label: "Datasets", value: datasets.length },
     ]}
   >
+    <ReleaseTimeline
+      itemLabel="dataset"
+      items={datasets.map((dataset) => ({
+        id: dataset.id,
+        name: dataset.name,
+        year: dataset.detail.year,
+        markerIndex: datasetMarkerIndexById.get(dataset.id),
+        markerPalette: "dataset" as const,
+      }))}
+    />
 
     <section class="arena-panel filter-panel">
       <div class="panel-header">
@@ -663,6 +678,7 @@ function formatInstitutionSummary(institutions: string[]) {
             {datasets.map((dataset, index) => (
               <tr
                 data-dataset-row
+                data-dataset-id={dataset.id}
                 data-dataset-name={dataset.name}
                 data-dataset-paper-title={dataset.paperLink?.title ?? dataset.name}
                 data-dataset-paper-url={dataset.paperLink?.url ?? ""}
@@ -696,8 +712,11 @@ function formatInstitutionSummary(institutions: string[]) {
                 aria-label={`Open dataset details: ${dataset.name}`}
               >
                 <td class="name-cell">
-                  <strong>{dataset.name}</strong>
-                  <span>{dataset.institutionSummary}</span>
+                  <span class="name-title">
+                    <EntityMarker id={dataset.id} markerIndex={datasetMarkerIndexById.get(dataset.id)} palette="dataset" />
+                    <strong>{dataset.name}</strong>
+                  </span>
+                  <span class="name-meta">{dataset.institutionSummary}</span>
                 </td>
                 <td>
                   <strong class="metric">{dataset.detail.year}</strong>
@@ -774,10 +793,6 @@ function formatInstitutionSummary(institutions: string[]) {
         </table>
       </div>
     </section>
-
-    <p class="dataset-source-note">
-      <strong>Source.</strong> {datasetDetails.source.note} <strong>Abbreviations.</strong> {datasetDetails.source.abbreviations}
-    </p>
 
     <div class="modal-layer" data-dataset-modal hidden role="presentation">
       <button
@@ -883,6 +898,8 @@ function formatInstitutionSummary(institutions: string[]) {
   const datasetTableBody = document.querySelector("[data-dataset-table-body]");
   const datasetSortButtons = Array.from(document.querySelectorAll("[data-sort-key]"));
   const datasetRows = Array.from(document.querySelectorAll("[data-dataset-row]"));
+  const datasetTimelinePoints = Array.from(document.querySelectorAll("[data-timeline-point]"));
+  const datasetTimelineVisibleCount = document.querySelector("[data-timeline-visible-count]");
   const visibleDatasetCount = document.querySelector("[data-visible-dataset-count]");
   const pillTooltip = document.createElement("div");
   pillTooltip.className = "dataset-pill-tooltip";
@@ -1369,10 +1386,19 @@ function formatInstitutionSummary(institutions: string[]) {
         isChannelsVisible;
 
       row.hidden = !isVisible;
+      const timelinePoint = datasetTimelinePoints.find(
+        (point) => point.dataset.timelineId === row.dataset.datasetId,
+      );
+      timelinePoint?.classList.toggle("is-filtered-out", !isVisible);
       if (isVisible) visibleCount += 1;
     });
 
     if (visibleDatasetCount) visibleDatasetCount.textContent = String(visibleCount);
+    if (datasetTimelineVisibleCount) {
+      datasetTimelineVisibleCount.textContent = String(
+        datasetTimelinePoints.filter((point) => !point.classList.contains("is-filtered-out")).length,
+      );
+    }
     updateSummary("settings");
     updateSummary("deviceTypes");
     updateSummary("sensorModalities");
@@ -1477,6 +1503,22 @@ function formatInstitutionSummary(institutions: string[]) {
       if (event.key !== "Enter" && event.key !== " ") return;
       event.preventDefault();
       openDatasetModal(row);
+    });
+  });
+
+  datasetTimelinePoints.forEach((point) => {
+    const openTimelineDataset = () => {
+      const row = datasetRows.find(
+        (candidate) => candidate.dataset.datasetId === point.dataset.timelineId,
+      );
+      if (row) openDatasetModal(row);
+    };
+
+    point.addEventListener("click", openTimelineDataset);
+    point.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      openTimelineDataset();
     });
   });
 
@@ -2001,8 +2043,14 @@ function formatInstitutionSummary(institutions: string[]) {
   }
 
   .name-cell strong,
-  .name-cell span {
+  .name-meta {
     display: block;
+  }
+
+  .name-title {
+    display: flex !important;
+    align-items: center;
+    gap: 7px;
   }
 
   .name-cell strong {
@@ -2023,7 +2071,7 @@ function formatInstitutionSummary(institutions: string[]) {
     text-decoration-style: solid;
   }
 
-  .name-cell span {
+  .name-meta {
     margin-top: 4px;
     color: var(--muted);
     font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;

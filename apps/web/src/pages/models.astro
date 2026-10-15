@@ -1,5 +1,7 @@
 ---
 import BenchmarkPage from "../components/BenchmarkPage.astro";
+import EntityMarker from "../components/EntityMarker.astro";
+import ReleaseTimeline from "../components/ReleaseTimeline.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import modelDetailsData from "../generated/model-details.json";
 import paperBenchmark from "../generated/paper-benchmark.json";
@@ -44,6 +46,9 @@ const modelDetails = modelDetailsData as {
 };
 const benchmark = paperBenchmark as { catalog: { models: Model[] } };
 const links = paperLinks as { models: Record<string, PaperLink> };
+const modelMarkerIndexById = new Map(
+  benchmark.catalog.models.map((model, index) => [model.id, index]),
+);
 const familyPartsById: Record<string, string[]> = {
   attn_cnn_dense: ["attn", "cnn", "dense"],
   attn_cnn_dense_rnn: ["attn", "cnn", "dense", "rnn"],
@@ -228,6 +233,16 @@ function formatScaledMetric(value: number) {
       { icon: "models", label: "Models", value: models.length },
     ]}
   >
+    <ReleaseTimeline
+      itemLabel="model"
+      items={models.map((model) => ({
+        id: model.id,
+        name: model.name,
+        year: model.year,
+        markerIndex: modelMarkerIndexById.get(model.id),
+        markerPalette: "model" as const,
+      }))}
+    />
 
     <section class="arena-panel filter-panel">
       <div class="panel-header">
@@ -500,6 +515,7 @@ function formatScaledMetric(value: number) {
             {models.map((model, index) => (
               <tr
                 data-model-row
+                data-model-id={model.id}
                 data-model-name={model.name}
                 data-model-paper-title={model.paperLink?.title ?? model.name}
                 data-model-paper-url={model.paperLink?.url ?? ""}
@@ -520,8 +536,11 @@ function formatScaledMetric(value: number) {
                 aria-label={`Open model details: ${model.name}`}
               >
                 <td class="name-cell">
-                  <strong>{model.name}</strong>
-                  <span>{model.institutionSummary}</span>
+                  <span class="name-title">
+                    <EntityMarker id={model.id} markerIndex={modelMarkerIndexById.get(model.id)} palette="model" />
+                    <strong>{model.name}</strong>
+                  </span>
+                  <span class="name-meta">{model.institutionSummary}</span>
                 </td>
                 <td>
                   <strong class="metric">{model.year ?? "-"}</strong>
@@ -639,6 +658,8 @@ function formatScaledMetric(value: number) {
 
 <script is:inline>
   const modelRows = Array.from(document.querySelectorAll("[data-model-row]"));
+  const modelTimelinePoints = Array.from(document.querySelectorAll("[data-timeline-point]"));
+  const modelTimelineVisibleCount = document.querySelector("[data-timeline-visible-count]");
   const modelModal = document.querySelector("[data-model-modal]");
   const modelDialog = modelModal?.querySelector(".model-modal");
   const modelModalTitle = modelModal?.querySelector("[data-model-modal-title]");
@@ -1066,10 +1087,19 @@ function formatScaledMetric(value: number) {
         isArchitectureVisible && isFrameworkVisible && isParamsVisible && isFlopsVisible;
 
       row.hidden = !isVisible;
+      const timelinePoint = modelTimelinePoints.find(
+        (point) => point.dataset.timelineId === row.dataset.modelId,
+      );
+      timelinePoint?.classList.toggle("is-filtered-out", !isVisible);
       if (isVisible) visibleCount += 1;
     });
 
     if (visibleModelCount) visibleModelCount.textContent = String(visibleCount);
+    if (modelTimelineVisibleCount) {
+      modelTimelineVisibleCount.textContent = String(
+        modelTimelinePoints.filter((point) => !point.classList.contains("is-filtered-out")).length,
+      );
+    }
     updateSummary("architecture");
     updateSummary("framework");
     updateRangeSummary("params", paramsRange);
@@ -1177,6 +1207,20 @@ function formatScaledMetric(value: number) {
       if (event.key !== "Enter" && event.key !== " ") return;
       event.preventDefault();
       openModelModal(row);
+    });
+  });
+
+  modelTimelinePoints.forEach((point) => {
+    const openTimelineModel = () => {
+      const row = modelRows.find((candidate) => candidate.dataset.modelId === point.dataset.timelineId);
+      if (row) openModelModal(row);
+    };
+
+    point.addEventListener("click", openTimelineModel);
+    point.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      openTimelineModel();
     });
   });
 
@@ -1707,8 +1751,14 @@ function formatScaledMetric(value: number) {
   }
 
   .name-cell strong,
-  .name-cell span {
+  .name-meta {
     display: block;
+  }
+
+  .name-title {
+    display: flex !important;
+    align-items: center;
+    gap: 7px;
   }
 
   .name-cell strong {
@@ -1729,7 +1779,7 @@ function formatScaledMetric(value: number) {
     text-decoration-style: solid;
   }
 
-  .name-cell span {
+  .name-meta {
     margin-top: 4px;
     color: var(--muted);
     font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;

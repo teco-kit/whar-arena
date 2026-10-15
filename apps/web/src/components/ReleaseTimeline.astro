@@ -1,0 +1,340 @@
+---
+import {
+  getEntityMarker,
+  markerCircleRadius,
+  markerCrescentPath,
+  markerDiamondPoints,
+  markerHexagonPoints,
+  markerPentagonPoints,
+  markerPacmanPath,
+  markerQuatrefoilPath,
+  markerStarPoints,
+  markerSquareHalfSize,
+  markerTrianglePoints,
+  type MarkerPalette,
+} from "../lib/entityMarkers";
+
+type TimelineItem = {
+  id: string;
+  name: string;
+  year: number | null;
+  markerIndex?: number;
+  markerPalette?: MarkerPalette;
+};
+
+interface Props {
+  items: TimelineItem[];
+  itemLabel: string;
+}
+
+const { items, itemLabel } = Astro.props;
+const datedItems = items
+  .filter((item): item is TimelineItem & { year: number } => Number.isFinite(item.year))
+  .sort((a, b) => a.year - b.year || a.name.localeCompare(b.name));
+const years = datedItems.map((item) => item.year);
+const minYear = Math.min(...years);
+const maxYear = Math.max(...years);
+const yearSpan = Math.max(1, maxYear - minYear);
+const tickStep = Math.max(1, Math.ceil(yearSpan / 8));
+const tickYears = Array.from({ length: yearSpan + 1 }, (_, index) => minYear + index);
+const stackByYear = new Map<number, number>();
+const width = 1000;
+const height = 180;
+const left = 50;
+const right = 30;
+const axisY = 132;
+const plotWidth = width - left - right;
+const points = datedItems.map((item) => {
+  const stackIndex = stackByYear.get(item.year) ?? 0;
+  stackByYear.set(item.year, stackIndex + 1);
+  return {
+    ...item,
+    x: minYear === maxYear ? left + plotWidth / 2 : left + ((item.year - minYear) / yearSpan) * plotWidth,
+    y: axisY - 18 - stackIndex * 20,
+    marker: getEntityMarker(item.id, item.markerIndex, item.markerPalette),
+  };
+});
+const noun = datedItems.length === 1 ? itemLabel : `${itemLabel}s`;
+---
+
+<section class="timeline-panel" data-release-timeline aria-labelledby={`${itemLabel}-timeline-title`}>
+  <div class="timeline-header">
+    <div>
+      <h2 id={`${itemLabel}-timeline-title`}>Release Timeline</h2>
+    </div>
+    <p class="timeline-count" aria-live="polite">
+      <strong data-timeline-visible-count>{datedItems.length}</strong>/{datedItems.length} dated {noun}
+    </p>
+  </div>
+  <div class="timeline-chart-wrap">
+    <svg
+      class="timeline-chart"
+      viewBox={`0 0 ${width} ${height}`}
+      role="img"
+      aria-label={`${itemLabel} releases from ${minYear} to ${maxYear}`}
+    >
+      <line class="timeline-axis" x1={left} y1={axisY} x2={width - right} y2={axisY}></line>
+      {tickYears.map((year) => {
+        const x = minYear === maxYear ? left + plotWidth / 2 : left + ((year - minYear) / yearSpan) * plotWidth;
+        const showLabel = year === minYear || year === maxYear || (year - minYear) % tickStep === 0;
+        return (
+          <g class="timeline-tick">
+            <line x1={x} y1={axisY} x2={x} y2={axisY + 6}></line>
+            {showLabel && <text x={x} y={axisY + 25}>{year}</text>}
+          </g>
+        );
+      })}
+      {points.map((point) => (
+        <g
+          class="timeline-point"
+          transform={`translate(${point.x} ${point.y})`}
+          role="button"
+          tabindex="0"
+          data-timeline-point
+          data-timeline-id={point.id}
+          data-timeline-name={point.name}
+          data-timeline-year={point.year}
+          data-timeline-color={point.marker.color}
+          aria-label={`${point.name}, released ${point.year}. Open details.`}
+        >
+          {point.marker.shape === "circle" && (
+            <circle class="timeline-point-shape" cx="0" cy="0" r={markerCircleRadius} fill={point.marker.color}></circle>
+          )}
+          {point.marker.shape === "square" && (
+            <rect class="timeline-point-shape" x={-markerSquareHalfSize} y={-markerSquareHalfSize} width={markerSquareHalfSize * 2} height={markerSquareHalfSize * 2} rx="1" fill={point.marker.color}></rect>
+          )}
+          {point.marker.shape === "triangle" && (
+            <polygon class="timeline-point-shape" points={markerTrianglePoints} fill={point.marker.color}></polygon>
+          )}
+          {point.marker.shape === "diamond" && (
+            <polygon class="timeline-point-shape" points={markerDiamondPoints} fill={point.marker.color}></polygon>
+          )}
+          {point.marker.shape === "star" && (
+            <polygon class="timeline-point-shape" points={markerStarPoints} fill={point.marker.color}></polygon>
+          )}
+          {point.marker.shape === "pentagon" && (
+            <polygon class="timeline-point-shape" points={markerPentagonPoints} fill={point.marker.color}></polygon>
+          )}
+          {point.marker.shape === "hexagon" && (
+            <polygon class="timeline-point-shape" points={markerHexagonPoints} fill={point.marker.color}></polygon>
+          )}
+          {point.marker.shape === "crescent" && (
+            <path class="timeline-point-shape" d={markerCrescentPath} fill={point.marker.color} fill-rule="evenodd"></path>
+          )}
+          {point.marker.shape === "quatrefoil" && (
+            <path class="timeline-point-shape" d={markerQuatrefoilPath} fill={point.marker.color}></path>
+          )}
+          {point.marker.shape === "pacman" && (
+            <path class="timeline-point-shape" d={markerPacmanPath} fill={point.marker.color}></path>
+          )}
+        </g>
+      ))}
+    </svg>
+  </div>
+  <div class="timeline-tooltip" data-timeline-tooltip role="tooltip" hidden>
+    <strong data-timeline-tooltip-name></strong>
+    <span data-timeline-tooltip-year></span>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-release-timeline]").forEach((timeline) => {
+    if (timeline.dataset.timelineBound === "true") return;
+    timeline.dataset.timelineBound = "true";
+
+    const tooltip = timeline.querySelector<HTMLElement>("[data-timeline-tooltip]");
+    const tooltipName = tooltip?.querySelector<HTMLElement>("[data-timeline-tooltip-name]");
+    const tooltipYear = tooltip?.querySelector<HTMLElement>("[data-timeline-tooltip-year]");
+    if (!tooltip || !tooltipName || !tooltipYear) return;
+    document.body.append(tooltip);
+
+    const positionTooltip = (x: number, y: number) => {
+      const halfWidth = tooltip.offsetWidth / 2;
+      const clampedX = Math.min(
+        Math.max(x, halfWidth + 8),
+        window.innerWidth - halfWidth - 8,
+      );
+      tooltip.style.left = `${clampedX}px`;
+      tooltip.style.top = `${y}px`;
+    };
+
+    const showTooltip = (point: SVGGraphicsElement, x: number, y: number) => {
+      tooltipName.textContent = point.dataset.timelineName ?? "";
+      tooltipYear.textContent = `Released ${point.dataset.timelineYear ?? "year unknown"}`;
+      tooltip.style.borderLeftColor = point.dataset.timelineColor ?? "var(--panel)";
+      tooltip.hidden = false;
+      positionTooltip(x, y);
+    };
+
+    timeline.querySelectorAll<SVGGraphicsElement>("[data-timeline-point]").forEach((point) => {
+      point.addEventListener("mouseenter", (event) => {
+        showTooltip(point, event.clientX, event.clientY);
+      });
+      point.addEventListener("mousemove", (event) => {
+        positionTooltip(event.clientX, event.clientY);
+      });
+      point.addEventListener("mouseleave", () => {
+        tooltip.hidden = true;
+      });
+      point.addEventListener("focus", () => {
+        const bounds = point.getBoundingClientRect();
+        showTooltip(point, bounds.left + bounds.width / 2, bounds.top);
+      });
+      point.addEventListener("blur", () => {
+        tooltip.hidden = true;
+      });
+    });
+  });
+</script>
+
+<style>
+  .timeline-panel {
+    min-width: 0;
+    margin-bottom: 14px;
+    overflow: hidden;
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    background: var(--panel);
+  }
+
+  .timeline-header {
+    display: flex;
+    min-height: 65px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel-soft);
+  }
+
+  .timeline-header h2,
+  .timeline-header p {
+    margin: 0;
+  }
+
+  .timeline-header h2 {
+    color: var(--ink);
+    font-family: var(--display-serif);
+    font-size: 1.3rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.05;
+  }
+
+  .timeline-header > div p,
+  .timeline-count {
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+
+  .timeline-count {
+    flex: 0 0 auto;
+  }
+
+  .timeline-count strong {
+    color: var(--ink);
+    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-weight: 600;
+  }
+
+  .timeline-chart-wrap {
+    padding: 10px 16px 8px;
+    overflow-x: auto;
+  }
+
+  .timeline-chart {
+    display: block;
+    width: 100%;
+    min-width: 680px;
+    height: auto;
+  }
+
+  .timeline-axis,
+  .timeline-tick line {
+    stroke: var(--line-strong);
+    stroke-width: 1.2;
+  }
+
+  .timeline-tick text {
+    fill: var(--muted);
+    font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    text-anchor: middle;
+  }
+
+  .timeline-point {
+    cursor: pointer;
+    outline: none;
+    transition: opacity 120ms ease;
+  }
+
+  .timeline-point-shape {
+    stroke: var(--panel);
+    stroke-width: 2;
+    transform-box: fill-box;
+    transform-origin: center;
+    transition:
+      transform 120ms ease,
+      stroke-width 120ms ease;
+  }
+
+  .timeline-point:hover .timeline-point-shape,
+  .timeline-point:focus-visible .timeline-point-shape {
+    stroke: var(--ink);
+    stroke-width: 2.5;
+    transform: scale(1.22);
+  }
+
+  .timeline-point.is-filtered-out {
+    opacity: 0.16;
+  }
+
+  .timeline-point.is-filtered-out:hover,
+  .timeline-point.is-filtered-out:focus-visible {
+    opacity: 0.55;
+  }
+
+  .timeline-tooltip {
+    position: fixed;
+    z-index: 120;
+    display: grid;
+    gap: 2px;
+    width: max-content;
+    max-width: min(19rem, calc(100vw - 24px));
+    padding: 0.55rem 0.65rem;
+    transform: translate(-50%, calc(-100% - 0.55rem));
+    border: 1px solid var(--ink);
+    border-left-width: 4px;
+    border-radius: 8px;
+    background: var(--ink);
+    color: var(--panel);
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.2;
+    pointer-events: none;
+    text-align: left;
+  }
+
+  .timeline-tooltip[hidden] {
+    display: none;
+  }
+
+  .timeline-tooltip strong {
+    color: var(--panel);
+    font-size: 0.78rem;
+  }
+
+  .timeline-tooltip span {
+    color: hsl(33 31% 94% / 0.78);
+    font-weight: 500;
+  }
+
+  @media (max-width: 760px) {
+    .timeline-header {
+      display: grid;
+      align-items: start;
+    }
+  }
+</style>

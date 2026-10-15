@@ -3,6 +3,19 @@
   import datasetPaperDetailsData from "../generated/dataset-paper-details.json";
   import modelDetailsData from "../generated/model-details.json";
   import paperLinks from "../generated/paper-links.json";
+  import {
+    getEntityMarker,
+    markerCircleRadius,
+    markerCrescentPath,
+    markerDiamondPoints,
+    markerHexagonPoints,
+    markerPentagonPoints,
+    markerPacmanPath,
+    markerQuatrefoilPath,
+    markerStarPoints,
+    markerSquareHalfSize,
+    markerTrianglePoints,
+  } from "../lib/entityMarkers";
 
   type Dataset = {
     id: string;
@@ -950,6 +963,10 @@
     return fallback;
   }
 
+  function modelMarker(id: string) {
+    return getEntityMarker(id, catalog.models.findIndex((model) => model.id === id), "model");
+  }
+
   function formatFamily(family: string) {
     const labels: Record<string, string> = {
       attn: "Attention",
@@ -1125,7 +1142,6 @@
   function createScatterPlot(config: ScatterConfig, scale: ScatterScale): ScatterPlot {
     const rawPoints = rows.flatMap((row) => {
       const metricValue = scatterMetricValue(row, config.metric);
-      const deploymentPoint = deploymentPointByModelId.get(row.id);
 
       if (
         typeof metricValue !== "number" ||
@@ -1142,7 +1158,7 @@
           model_id: row.id,
           name: row.name,
           family: row.family,
-          color: deploymentPoint?.color ?? "#6f6a64",
+          color: modelMarker(row.id).color,
           x: metricValue,
           y: row.macroF1,
         },
@@ -1787,6 +1803,7 @@
         </thead>
         <tbody>
           {#each rows as row}
+            {@const marker = modelMarker(row.id)}
             <tr
               class="clickable-row"
               role="button"
@@ -1796,8 +1813,31 @@
               onkeydown={(event) => handleModelRowKeydown(event, row.id)}
             >
               <td class="model-cell">
-                <span class="model-title-button">
-                  {row.name}
+                <span class="model-name-line">
+                  <svg class="entity-marker" viewBox="-10 -10 20 20" aria-hidden="true">
+                    {#if marker.shape === "circle"}
+                      <circle cx="0" cy="0" r={markerCircleRadius} fill={marker.color}></circle>
+                    {:else if marker.shape === "square"}
+                      <rect x={-markerSquareHalfSize} y={-markerSquareHalfSize} width={markerSquareHalfSize * 2} height={markerSquareHalfSize * 2} rx="1" fill={marker.color}></rect>
+                    {:else if marker.shape === "triangle"}
+                      <polygon points={markerTrianglePoints} fill={marker.color}></polygon>
+                    {:else if marker.shape === "diamond"}
+                      <polygon points={markerDiamondPoints} fill={marker.color}></polygon>
+                    {:else if marker.shape === "star"}
+                      <polygon points={markerStarPoints} fill={marker.color}></polygon>
+                    {:else if marker.shape === "pentagon"}
+                      <polygon points={markerPentagonPoints} fill={marker.color}></polygon>
+                    {:else if marker.shape === "hexagon"}
+                      <polygon points={markerHexagonPoints} fill={marker.color}></polygon>
+                    {:else if marker.shape === "crescent"}
+                      <path d={markerCrescentPath} fill={marker.color} fill-rule="evenodd"></path>
+                    {:else if marker.shape === "quatrefoil"}
+                      <path d={markerQuatrefoilPath} fill={marker.color}></path>
+                    {:else}
+                      <path d={markerPacmanPath} fill={marker.color}></path>
+                    {/if}
+                  </svg>
+                  <span class="model-title-button">{row.name}</span>
                 </span>
                 <span class="institution-list">
                   {#each modelInstitutionSummary(row.id) as institution, index}
@@ -2160,6 +2200,7 @@
               {/if}
               <g class="scatter-points">
                 {#each scatterPlot.points as point}
+                  {@const marker = modelMarker(point.model_id)}
                   <g
                     class="scatter-point"
                     class:pareto-point={point.isPareto}
@@ -2176,12 +2217,32 @@
                     onmouseleave={hideScatterTooltip}
                   >
                     <title>{point.name}: {point.isPareto ? "Pareto optimal" : "dominated"}</title>
-                    <circle
-                      cx={plotX(point.x, scatterPlot)}
-                      cy={plotY(point.y, scatterPlot)}
-                      r={point.isPareto ? 7 : 5.5}
-                      fill={point.color}
-                    ></circle>
+                    <g
+                      class="scatter-marker"
+                      transform={`translate(${plotX(point.x, scatterPlot)} ${plotY(point.y, scatterPlot)})`}
+                    >
+                      {#if marker.shape === "circle"}
+                        <circle class="scatter-marker-shape" cx="0" cy="0" r={markerCircleRadius} fill={marker.color}></circle>
+                      {:else if marker.shape === "square"}
+                        <rect class="scatter-marker-shape" x={-markerSquareHalfSize} y={-markerSquareHalfSize} width={markerSquareHalfSize * 2} height={markerSquareHalfSize * 2} rx="1" fill={marker.color}></rect>
+                      {:else if marker.shape === "triangle"}
+                        <polygon class="scatter-marker-shape" points={markerTrianglePoints} fill={marker.color}></polygon>
+                      {:else if marker.shape === "diamond"}
+                        <polygon class="scatter-marker-shape" points={markerDiamondPoints} fill={marker.color}></polygon>
+                      {:else if marker.shape === "star"}
+                        <polygon class="scatter-marker-shape" points={markerStarPoints} fill={marker.color}></polygon>
+                      {:else if marker.shape === "pentagon"}
+                        <polygon class="scatter-marker-shape" points={markerPentagonPoints} fill={marker.color}></polygon>
+                      {:else if marker.shape === "hexagon"}
+                        <polygon class="scatter-marker-shape" points={markerHexagonPoints} fill={marker.color}></polygon>
+                      {:else if marker.shape === "crescent"}
+                        <path class="scatter-marker-shape" d={markerCrescentPath} fill={marker.color} fill-rule="evenodd"></path>
+                      {:else if marker.shape === "quatrefoil"}
+                        <path class="scatter-marker-shape" d={markerQuatrefoilPath} fill={marker.color}></path>
+                      {:else}
+                        <path class="scatter-marker-shape" d={markerPacmanPath} fill={marker.color}></path>
+                      {/if}
+                    </g>
                   </g>
                 {/each}
               </g>
@@ -3156,6 +3217,22 @@
     white-space: nowrap;
   }
 
+  .model-name-line {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .entity-marker {
+    display: block;
+    flex: 0 0 auto;
+    width: 15px;
+    height: 15px;
+    overflow: visible;
+    stroke: var(--panel);
+    stroke-width: 1.25;
+  }
+
   .clickable-row:hover .model-title-button,
   .clickable-row:focus-visible .model-title-button {
     text-decoration-color: currentColor;
@@ -3724,7 +3801,7 @@
     outline: none;
   }
 
-  .scatter-point circle {
+  .scatter-marker-shape {
     stroke: var(--panel);
     stroke-width: 1.6;
     transition:
@@ -3732,17 +3809,17 @@
       stroke-width 120ms ease;
   }
 
-  .scatter-point.dominated-point circle {
+  .scatter-point.dominated-point .scatter-marker-shape {
     opacity: 0.52;
   }
 
-  .scatter-point.pareto-point circle {
+  .scatter-point.pareto-point .scatter-marker-shape {
     stroke: var(--ink);
     stroke-width: 2.2;
   }
 
-  .scatter-point:hover circle,
-  .scatter-point:focus-visible circle {
+  .scatter-point:hover .scatter-marker-shape,
+  .scatter-point:focus-visible .scatter-marker-shape {
     opacity: 1;
     stroke: var(--ink);
     stroke-width: 3;
