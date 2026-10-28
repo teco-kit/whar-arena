@@ -20,9 +20,9 @@ const normalizePath = (path: string) => {
 };
 const activePath = normalizePath(Astro.url.pathname);
 const tabListInitialStyle =
-  "display:inline-flex;justify-self:center;gap:20px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;";
+  "display:inline-flex;justify-self:center;gap:8px;padding:0;border:0;background:transparent;box-shadow:none;";
 const tabInitialStyle =
-  "position:relative;display:inline-flex;min-height:34px;align-items:center;justify-content:center;border:0;border-radius:0;background:transparent;box-shadow:none;padding:0 1px;font-size:0.82rem;font-weight:600;line-height:1;text-decoration:none;";
+  "position:relative;display:inline-flex;min-height:40px;align-items:center;justify-content:center;border:1px solid transparent;border-radius:999px;background:transparent;box-shadow:none;padding:0 14px;font-size:0.88rem;font-weight:600;line-height:1;text-decoration:none;";
 const tabs = [
   {
     href: withBase("/leadboard"),
@@ -102,8 +102,8 @@ const acknowledgementLogos = [
           <img
             class="brand-icon"
             src={withBase("/whar-arena-icon.png")}
-            width="42"
-            height="22"
+            width="64"
+            height="36"
             alt=""
             aria-hidden="true"
           />
@@ -329,9 +329,13 @@ const acknowledgementLogos = [
   }
 
   .site-nav {
-    border-bottom: 1px solid var(--line);
-    background: hsl(36 45% 98% / 0.88);
-    backdrop-filter: blur(14px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--line-strong);
+    background: hsl(0 0% 100% / 0.94);
+    box-shadow: 0 4px 18px hsl(24 6% 17% / 0.06);
+    backdrop-filter: blur(18px);
   }
 
   .site-nav nav {
@@ -340,7 +344,7 @@ const acknowledgementLogos = [
     gap: 14px;
     align-items: center;
     width: min(1440px, calc(100vw - 24px));
-    min-height: 52px;
+    min-height: 74px;
     margin: 0 auto;
   }
 
@@ -348,81 +352,73 @@ const acknowledgementLogos = [
     display: inline-flex;
     align-items: center;
     justify-self: start;
-    gap: 10px;
+    gap: 13px;
     color: var(--ink);
-    font-family: var(--display-serif);
-    font-size: 1rem;
-    font-weight: 400;
-    letter-spacing: 0;
+    font-family: "Montserrat", "baselGrotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+    font-size: 1.38rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1;
     text-decoration: none;
+  }
+
+  .brand:hover,
+  .brand:focus-visible {
+    opacity: 0.74;
+    outline: none;
   }
 
   .brand-icon {
     display: block;
     flex: 0 0 auto;
-    width: 42px;
+    width: 64px;
     height: auto;
   }
 
   .site-tabs {
     display: inline-flex;
     justify-self: center;
-    gap: 20px;
+    gap: 8px;
   }
 
   .site-tab {
     position: relative;
     display: inline-flex;
-    min-height: 34px;
+    min-height: 40px;
     align-items: center;
     justify-content: center;
     color: var(--muted-strong);
-    padding: 0 1px;
-    font-size: 0.82rem;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    padding: 0 14px;
+    font-size: 0.88rem;
     font-weight: 600;
     line-height: 1;
     text-decoration: none;
   }
 
-  .site-tab::after {
-    position: absolute;
-    right: 0;
-    bottom: 5px;
-    left: 0;
-    height: 1px;
-    background: currentColor;
-    content: "";
-    opacity: 0;
-    transform: scaleX(0.4);
-    transition:
-      opacity 120ms ease,
-      transform 120ms ease;
-  }
-
   .site-tab:hover,
   .site-tab:focus-visible {
+    border-color: var(--line-strong) !important;
+    background: var(--panel-soft) !important;
     color: var(--ink) !important;
     outline: none;
   }
 
   .site-tab.is-active {
+    border-color: var(--line-strong) !important;
+    background: var(--panel-soft) !important;
     color: var(--ink) !important;
-  }
-
-  .site-tab.is-active::after,
-  .site-tab:hover::after,
-  .site-tab:focus-visible::after {
-    opacity: 1;
-    transform: scaleX(1);
+    box-shadow: 0 1px 3px hsl(24 6% 17% / 0.06) !important;
   }
 
   .github-link {
     display: inline-grid;
     justify-self: end;
-    width: 34px;
-    height: 34px;
+    width: 42px;
+    height: 42px;
     place-items: center;
-    border: 1px solid transparent;
+    border: 1px solid var(--line-strong);
     border-radius: 999px;
     color: var(--ink);
     text-decoration: none;
@@ -437,8 +433,8 @@ const acknowledgementLogos = [
 
   .github-link svg {
     display: block;
-    width: 18px;
-    height: 18px;
+    width: 21px;
+    height: 21px;
   }
 
   .citation-section {
@@ -625,20 +621,38 @@ const acknowledgementLogos = [
     .site-nav nav {
       grid-template-columns: minmax(0, 1fr) auto;
       min-height: 0;
-      row-gap: 8px;
-      padding: 8px 0;
+      row-gap: 10px;
+      padding: 10px 0;
+    }
+
+    .brand {
+      gap: 10px;
+      font-size: 1.16rem;
+    }
+
+    .brand-icon {
+      width: 52px;
     }
 
     .site-tabs {
       grid-column: 1 / -1;
       grid-row: 2;
       width: 100%;
-      justify-content: center;
+      gap: 6px;
+      justify-content: flex-start;
       overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .site-tabs::-webkit-scrollbar {
+      display: none;
     }
 
     .site-tab {
       flex: 0 0 auto;
+      min-height: 38px;
+      padding: 0 12px;
+      font-size: 0.82rem;
     }
 
     .citation-section {

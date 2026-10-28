@@ -1,67 +1,423 @@
 ---
 import BenchmarkPage from "../components/BenchmarkPage.astro";
+import catalog from "../generated/catalog.json";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 const modelRepository = "https://github.com/teco-kit/whar-models";
 const datasetRepository = "https://github.com/teco-kit/whar-datasets";
+const basePath = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+
+const existingEntries = {
+  model: catalog.models.map(({ id, name }) => ({ id, name })),
+  dataset: catalog.datasets.map(({ id, name }) => ({ id, name })),
+  pages: { model: `${basePath}models`, dataset: `${basePath}datasets` },
+};
 ---
 
 <BaseLayout title="HARena | Contribute">
   <BenchmarkPage
     title="Contribute"
     headingId="contribute-heading"
-    description="Contribute code and metadata through one pull request to the model or dataset library. HARena discovers accepted contributions and benchmarks them using the official protocol."
+    description="Propose a new model or dataset for HARena. Every contribution starts as a GitHub issue, so it can be discussed before anyone writes code. You, the maintainers or another contributor can then implement it."
   >
-    <section class="start-panel" aria-labelledby="start-heading">
+    <script is:inline type="application/json" id="existing-entries" set:html={JSON.stringify(existingEntries)} />
+
+    <section class="panel flow-panel" aria-labelledby="flow-heading">
       <div class="section-heading">
-        <p class="step-label">Step 1</p>
-        <h2 id="start-heading">Choose what you are adding</h2>
-        <p>Select a contribution type to see the exact repository, files and checks involved.</p>
+        <p class="step-label">How it works</p>
+        <h2 id="flow-heading">From proposal to leaderboard</h2>
+        <p>
+          Proposing something does not require writing code. The form below only prepares a GitHub
+          issue; implementation happens afterwards through a pull request.
+        </p>
       </div>
 
-      <div class="type-switch" aria-label="Contribution type">
-        <button type="button" class="is-active" data-kind-button="model" aria-pressed="true">
-          <span class="type-icon" aria-hidden="true">M</span>
-          <span>
-            <strong>Add a model</strong>
-            <small>Implement an architecture in whar-models</small>
-          </span>
-        </button>
-        <button type="button" data-kind-button="dataset" aria-pressed="false">
-          <span class="type-icon" aria-hidden="true">D</span>
-          <span>
-            <strong>Add a dataset</strong>
-            <small>Add downloading, parsing and configuration in whar-datasets</small>
-          </span>
-        </button>
+      <ol class="flow-steps">
+        <li class="is-current">
+          <span class="step-number">1</span>
+          <div>
+            <span class="flow-where">On this page</span>
+            <h3>Propose</h3>
+            <p>Describe the model or dataset. HARena turns it into a pre-filled GitHub issue that you confirm with one click.</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-number">2</span>
+          <div>
+            <span class="flow-where">GitHub issue</span>
+            <h3>Discuss</h3>
+            <p>Maintainers check scope and duplicates and agree on the ID before anyone invests time in code.</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-number">3</span>
+          <div>
+            <span class="flow-where">Pull request</span>
+            <h3>Implement</h3>
+            <p>You, a maintainer or another contributor adds the code to <code>whar-models</code> or <code>whar-datasets</code> and links the issue.</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-number">4</span>
+          <div>
+            <span class="flow-where">After merge</span>
+            <h3>Benchmark</h3>
+            <p>Maintainers train and measure it under the official protocol. Results then appear on the leaderboard.</p>
+          </div>
+        </li>
+      </ol>
+
+      <p class="flow-shortcut">
+        <strong>Already implemented it?</strong>
+        You can skip the issue and open a pull request directly. Follow the
+        <a href="#implement">implementation guide</a>.
+      </p>
+    </section>
+
+    <section class="panel proposal-panel" aria-labelledby="proposal-heading">
+      <div class="section-heading">
+        <p class="step-label">Step 1 · Propose</p>
+        <h2 id="proposal-heading">Describe your proposal</h2>
+        <p>
+          Only fields marked <em class="req-inline">Required</em> are needed. Everything else helps
+          reviewers and can still be added in the issue later.
+        </p>
+      </div>
+
+      <div class="question">
+        <p class="question-label"><span class="question-number">A</span>What would you like to add?</p>
+        <div class="choice-grid" role="group" aria-label="Contribution type">
+          <button type="button" class="choice-card is-active" data-kind-button="model" aria-pressed="true">
+            <span class="type-icon" aria-hidden="true">M</span>
+            <span>
+              <strong>A model</strong>
+              <small>A HAR architecture or classical baseline, added to <code>whar-models</code></small>
+            </span>
+          </button>
+          <button type="button" class="choice-card" data-kind-button="dataset" aria-pressed="false">
+            <span class="type-icon" aria-hidden="true">D</span>
+            <span>
+              <strong>A dataset</strong>
+              <small>A wearable sensor dataset, added as an adapter to <code>whar-datasets</code></small>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div class="question">
+        <p class="question-label" id="intent-label"><span class="question-number">B</span>Who will implement it?</p>
+        <div class="choice-grid" role="radiogroup" aria-labelledby="intent-label">
+          <label class="choice-card intent-card">
+            <input type="radio" name="intent" value="self" checked />
+            <span class="radio-dot" aria-hidden="true"></span>
+            <span>
+              <strong>I'll implement it</strong>
+              <small>You open the pull request yourself. The issue lets maintainers confirm the approach first.</small>
+            </span>
+          </label>
+          <label class="choice-card intent-card">
+            <input type="radio" name="intent" value="request" />
+            <span class="radio-dot" aria-hidden="true"></span>
+            <span>
+              <strong>I'm requesting it</strong>
+              <small>Maintainers or other contributors may pick it up. Requests are not guaranteed to be added.</small>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div class="question question-details">
+        <p class="question-label"><span class="question-number">C</span>Tell us about it</p>
+
+        <div class="proposal-layout">
+          <div class="proposal-forms">
+            <form data-contribution-form="model" id="model-form">
+              <fieldset class="metadata-section">
+                <legend>
+                  <span>The model</span>
+                  <small>What it is called and which publication introduced it.</small>
+                </legend>
+                <div class="field-grid">
+                  <label class="field">
+                    <span class="field-label">Model name <em class="req">Required</em></span>
+                    <input name="name" required placeholder="e.g. TinyHAR" autocomplete="off" data-name-input />
+                  </label>
+                  <label class="field">
+                    <span class="field-label">Model ID</span>
+                    <input name="id" pattern="[a-z0-9]+(?:_[a-z0-9]+)*" placeholder="tinyhar" autocomplete="off" data-id-input />
+                    <small>Generated from the name. Lowercase letters, digits and underscores.</small>
+                  </label>
+                  <p class="field-warning wide-field" data-duplicate-warning hidden></p>
+                  <label class="field wide-field">
+                    <span class="field-label">Paper title <em class="req">Required</em></span>
+                    <input name="paper_title" required placeholder="Full title of the publication that introduced the model" />
+                  </label>
+                  <label class="field">
+                    <span class="field-label">Paper link</span>
+                    <input name="paper_url" type="url" placeholder="https://doi.org/…" />
+                  </label>
+                  <label class="field">
+                    <span class="field-label">Year</span>
+                    <input name="year" type="number" min="1900" max="2100" placeholder="2022" />
+                  </label>
+                  <label class="field wide-field">
+                    <span class="field-label">Authors</span>
+                    <input name="authors" placeholder="First Author, Second Author" />
+                  </label>
+                </div>
+              </fieldset>
+
+              <fieldset class="metadata-section">
+                <legend>
+                  <span>Architecture</span>
+                  <small>Used to group models on the leaderboard. Select everything that applies.</small>
+                </legend>
+                <div class="field-grid">
+                  <div class="architecture-picker wide-field" role="group" aria-labelledby="architecture-picker-label">
+                    <span class="field-label" id="architecture-picker-label">Building blocks <em class="req">Required</em></span>
+                    <div class="architecture-options" data-architecture-options>
+                      <label><input type="checkbox" name="architecture_parts" value="Convolutional" /><span>Convolutional</span></label>
+                      <label><input type="checkbox" name="architecture_parts" value="Recurrent" /><span>Recurrent</span></label>
+                      <label><input type="checkbox" name="architecture_parts" value="Attention / Transformer" /><span>Attention / Transformer</span></label>
+                      <label><input type="checkbox" name="architecture_parts" value="Fully connected" /><span>Fully connected</span></label>
+                      <label><input type="checkbox" name="architecture_parts" value="Graph" /><span>Graph</span></label>
+                      <label><input type="checkbox" name="architecture_parts" value="Spectral" /><span>Spectral</span></label>
+                      <label><input type="checkbox" name="architecture_parts" value="Handcrafted features" /><span>Handcrafted features</span></label>
+                    </div>
+                    <div class="custom-architecture-row">
+                      <input
+                        type="text"
+                        data-custom-architecture
+                        aria-label="Other building block"
+                        placeholder="Something else? Type it and press Enter"
+                      />
+                      <button type="button" data-add-architecture>Add</button>
+                    </div>
+                  </div>
+                  <label class="field">
+                    <span class="field-label">Framework <em class="req">Required</em></span>
+                    <select name="framework" required>
+                      <option value="torch">PyTorch</option>
+                      <option value="sklearn">scikit-learn</option>
+                      <option value="tensorflow">TensorFlow / Keras</option>
+                      <option value="other">Other</option>
+                    </select>
+                    <small>HARena trains and exports PyTorch models; others may need porting.</small>
+                  </label>
+                </div>
+              </fieldset>
+
+              <fieldset class="metadata-section">
+                <legend>
+                  <span>Source code</span>
+                  <small>An existing implementation makes the port faster and easier to verify.</small>
+                </legend>
+                <div class="field-grid">
+                  <label class="field">
+                    <span class="field-label">Original implementation</span>
+                    <input name="source_url" type="url" placeholder="https://github.com/…" />
+                  </label>
+                  <label class="field">
+                    <span class="field-label">License of that code</span>
+                    <input name="license" placeholder="e.g. MIT, Apache-2.0" list="license-options" />
+                  </label>
+                  <label class="field wide-field">
+                    <span class="field-label">Anything reviewers should know?</span>
+                    <textarea name="notes" rows="3" placeholder="Why it belongs in HARena, default hyperparameters, deviations from the paper, special input requirements…"></textarea>
+                  </label>
+                </div>
+              </fieldset>
+            </form>
+
+            <form data-contribution-form="dataset" id="dataset-form" hidden>
+              <fieldset class="metadata-section">
+                <legend>
+                  <span>The dataset</span>
+                  <small>What it is called and who published it.</small>
+                </legend>
+                <div class="field-grid">
+                  <label class="field">
+                    <span class="field-label">Dataset name <em class="req">Required</em></span>
+                    <input name="name" required placeholder="e.g. PAMAP2" autocomplete="off" data-name-input />
+                  </label>
+                  <label class="field">
+                    <span class="field-label">Dataset ID</span>
+                    <input name="id" pattern="[a-z0-9]+(?:_[a-z0-9]+)*" placeholder="pamap2" autocomplete="off" data-id-input />
+                    <small>Generated from the name. Lowercase letters, digits and underscores.</small>
+                  </label>
+                  <p class="field-warning wide-field" data-duplicate-warning hidden></p>
+                  <label class="field">
+                    <span class="field-label">Paper link</span>
+                    <input name="paper_url" type="url" placeholder="https://doi.org/…" />
+                  </label>
+                  <label class="field">
+                    <span class="field-label">Year</span>
+                    <input name="year" type="number" min="1900" max="2100" placeholder="2012" />
+                  </label>
+                  <label class="field wide-field">
+                    <span class="field-label">Authors</span>
+                    <input name="authors" placeholder="First Author, Second Author" />
+                  </label>
+                </div>
+              </fieldset>
+
+              <fieldset class="metadata-section">
+                <legend>
+                  <span>Access</span>
+                  <small>HARena never hosts raw data. The adapter downloads it from the original source.</small>
+                </legend>
+                <div class="field-grid">
+                  <label class="field">
+                    <span class="field-label">Dataset page <em class="req">Required</em></span>
+                    <input name="dataset_url" type="url" required placeholder="https://zenodo.org/…" />
+                  </label>
+                  <label class="field">
+                    <span class="field-label">How to get the data</span>
+                    <input name="download_url" placeholder="Direct download link, or “registration required”" />
+                  </label>
+                  <label class="field wide-field">
+                    <span class="field-label">License or access terms</span>
+                    <input name="license" placeholder="e.g. CC BY 4.0, research-only agreement" list="license-options" />
+                    <small>Datasets that cannot be downloaded automatically are harder to include.</small>
+                  </label>
+                </div>
+              </fieldset>
+
+              <fieldset class="metadata-section">
+                <legend>
+                  <span>Contents</span>
+                  <small>Rough numbers are fine. Maintainers verify them during implementation.</small>
+                </legend>
+                <div class="field-grid three-column-grid">
+                  <label class="field">
+                    <span class="field-label">Subjects</span>
+                    <input name="subjects" type="number" min="1" placeholder="9" />
+                  </label>
+                  <label class="field">
+                    <span class="field-label">Activities</span>
+                    <input name="activities" type="number" min="1" placeholder="18" />
+                  </label>
+                  <label class="field">
+                    <span class="field-label">Sampling rate</span>
+                    <span class="input-unit">
+                      <input name="sampling_freq" type="number" min="0" step="any" placeholder="100" />
+                      <span aria-hidden="true">Hz</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="field-grid">
+                  <label class="field wide-field">
+                    <span class="field-label">Sensors and body positions</span>
+                    <input name="sensors" placeholder="e.g. 3 IMUs (acc, gyro, mag) on wrist, chest and ankle" />
+                  </label>
+                  <label class="field wide-field">
+                    <span class="field-label">Activity labels</span>
+                    <input name="activity_names" placeholder="walking, running, sitting, …" />
+                  </label>
+                  <label class="field wide-field">
+                    <span class="field-label">Anything reviewers should know?</span>
+                    <textarea name="notes" rows="3" placeholder="Why it belongs in HARena, missing values, varying sampling rates, label quality, unusual file formats…"></textarea>
+                  </label>
+                  <label class="check-field wide-field">
+                    <input name="benchmark_eligible" type="checkbox" value="true" checked />
+                    <span>
+                      <strong>Include in the official benchmark</strong>
+                      <small>Maintainers decide separately whether a dataset joins the benchmark suite, or is only available through the library.</small>
+                    </span>
+                  </label>
+                </div>
+              </fieldset>
+            </form>
+
+            <datalist id="license-options">
+              <option value="MIT"></option>
+              <option value="Apache-2.0"></option>
+              <option value="BSD-3-Clause"></option>
+              <option value="GPL-3.0"></option>
+              <option value="CC BY 4.0"></option>
+              <option value="CC BY-NC 4.0"></option>
+              <option value="CC0 1.0"></option>
+              <option value="Unknown"></option>
+            </datalist>
+          </div>
+
+          <aside class="preview" aria-labelledby="preview-heading">
+            <div class="preview-head">
+              <div>
+                <p class="step-label">Live preview</p>
+                <h3 id="preview-heading">Your GitHub issue</h3>
+              </div>
+              <span class="repo-badge" data-preview-repo>teco-kit/whar-models</span>
+            </div>
+            <p class="preview-title" data-preview-title></p>
+            <pre class="preview-body"><code data-preview-body></code></pre>
+            <div class="preview-actions">
+              <button type="button" class="primary-action" data-open-issue>
+                Open issue on GitHub
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4" /></svg>
+              </button>
+              <button type="button" class="secondary-action" data-copy-markdown>Copy text</button>
+            </div>
+            <p class="preview-note" data-form-status aria-live="polite">
+              Opens github.com in a new tab with everything filled in. You review it there and click
+              “Create”. A GitHub account is required; this page stores nothing on a server.
+            </p>
+            <button type="button" class="reset-link" data-reset-form>Clear form</button>
+          </aside>
+        </div>
       </div>
     </section>
 
-    <section class="path-panel" aria-labelledby="path-heading">
-      <div data-path="model">
-        <div class="path-intro">
-          <div>
-            <p class="step-label">Step 2</p>
-            <h2 id="path-heading">Implement the model in <code>whar-models</code></h2>
-            <p>
-              The pull request itself is the submission. You do not add results or change the HARena
-              repository.
-            </p>
-          </div>
-          <a class="repo-button" href={modelRepository} target="_blank" rel="noreferrer">
-            Open whar-models
-          </a>
-        </div>
+    <section class="panel next-panel" data-next-panel hidden aria-labelledby="next-heading" tabindex="-1">
+      <div class="section-heading">
+        <p class="step-label">Step 2 · Discuss</p>
+        <h2 id="next-heading">Next: create the issue on GitHub</h2>
+        <p>
+          A new tab opened with your proposal. Check it and click <strong>Create</strong>. If nothing
+          opened, allow pop-ups or use “Copy text” and paste it into a
+          <a data-manual-issue-link target="_blank" rel="noreferrer">new issue</a>.
+        </p>
+      </div>
+      <ol class="next-steps" data-next-self>
+        <li><strong>Note the issue number</strong> GitHub assigns, for example <code>#42</code>.</li>
+        <li><strong>Wait for a quick confirmation</strong> from a maintainer on scope and ID, or start right away if you are confident.</li>
+        <li><strong>Implement it</strong> with the <a href="#implement">guide below</a> and write <code>Closes #42</code> in your pull request description so the issue closes on merge.</li>
+      </ol>
+      <ol class="next-steps" data-next-request hidden>
+        <li><strong>That's it from your side.</strong> Maintainers label the issue so contributors can find it.</li>
+        <li><strong>You get notified on GitHub</strong> when someone comments or opens a pull request for it.</li>
+        <li><strong>Want to help it along?</strong> Links to existing code, data or papers in the issue make it much easier to pick up.</li>
+      </ol>
+    </section>
 
+    <section class="panel path-panel" id="implement" aria-labelledby="implement-heading">
+      <div class="path-intro">
+        <div>
+          <p class="step-label">Step 3 · Implement</p>
+          <h2 id="implement-heading">Implementation guide</h2>
+          <p>
+            For whoever writes the code. The pull request contains only code and tests: no results,
+            no raw data and no changes to the HARena repository.
+          </p>
+        </div>
+        <div class="segmented" role="group" aria-label="Guide type">
+          <button type="button" class="is-active" data-kind-button="model" aria-pressed="true">Model</button>
+          <button type="button" data-kind-button="dataset" aria-pressed="false">Dataset</button>
+        </div>
+      </div>
+
+      <div data-path="model">
         <ol class="code-steps">
           <li>
             <span class="step-number">1</span>
             <div>
               <h3>Add the implementation</h3>
               <p>
-                Create <code>src/whar_models/&lt;model_id&gt;/model.py</code> and
-                <code>__init__.py</code>. Export a builder that accepts
-                <code>input_channels</code>, <code>window_length</code> and
+                Fork <a href={modelRepository} target="_blank" rel="noreferrer">whar-models</a> and create
+                <code>src/whar_models/&lt;model_id&gt;/model.py</code> and <code>__init__.py</code>. Export a
+                builder that accepts <code>input_channels</code>, <code>window_length</code> and
                 <code>num_classes</code> as keyword arguments.
               </p>
             </div>
@@ -69,22 +425,21 @@ const datasetRepository = "https://github.com/teco-kit/whar-datasets";
           <li>
             <span class="step-number">2</span>
             <div>
-              <h3>Register the model and its metadata</h3>
+              <h3>Register it</h3>
               <p>
-                Add an entry to <code>WHARModelID</code> and a matching
-                <code>ModelSpec</code> in <code>src/whar_models/registry.py</code>. The registry stores
-                the ID, display name, family, framework, paper title and builder.
+                Add an entry to <code>WHARModelID</code> and a matching <code>ModelSpec</code> in
+                <code>src/whar_models/registry.py</code> with ID, display name, family, framework, paper
+                title and builder.
               </p>
             </div>
           </li>
           <li>
             <span class="step-number">3</span>
             <div>
-              <h3>Test and open the pull request</h3>
+              <h3>Test it</h3>
               <p>
-                Add a focused build and forward-pass test using a generic input shaped
-                <code>(batch, channels, timesteps)</code>. Models must support different channel,
-                window and class counts.
+                Add a build and forward-pass test with input shaped <code>(batch, channels, timesteps)</code>.
+                The model must work for different channel, window and class counts.
               </p>
               <div class="command-row">
                 <code>uv sync --extra dev</code>
@@ -92,64 +447,52 @@ const datasetRepository = "https://github.com/teco-kit/whar-datasets";
               </div>
             </div>
           </li>
+          <li>
+            <span class="step-number">4</span>
+            <div>
+              <h3>Open the pull request</h3>
+              <p>
+                Push your branch and open a pull request against <code>main</code>. Write
+                <code>Closes #&lt;issue&gt;</code> in the description to link the proposal.
+              </p>
+              <a class="inline-link" href={`${modelRepository}/compare`} target="_blank" rel="noreferrer">Open a pull request →</a>
+            </div>
+          </li>
         </ol>
-
-        <div class="acceptance-note">
-          <strong>After merge</strong>
-          <span>
-            <code>whar_models.list_models()</code> exposes the model. HARena can then plan it against
-            every official dataset; maintainers produce and validate the benchmark results.
-          </span>
-        </div>
       </div>
 
       <div data-path="dataset" hidden>
-        <div class="path-intro">
-          <div>
-            <p class="step-label">Step 2</p>
-            <h2>Implement the dataset in <code>whar-datasets</code></h2>
-            <p>
-              The pull request adds an adapter for the original source. Raw dataset files must not be
-              committed to the repository.
-            </p>
-          </div>
-          <a class="repo-button" href={datasetRepository} target="_blank" rel="noreferrer">
-            Open whar-datasets
-          </a>
-        </div>
-
         <ol class="code-steps">
           <li>
             <span class="step-number">1</span>
             <div>
-              <h3>Add a parser and configuration</h3>
+              <h3>Add a parser and config</h3>
               <p>
-                Create <code>src/whar_datasets/config/cfg_&lt;dataset_id&gt;.py</code>. Its parser returns
-                activity metadata, session metadata and standardized sensor sessions; its
-                <code>WHARConfig</code> declares source URLs, sampling, counts, activities and channels.
+                Fork <a href={datasetRepository} target="_blank" rel="noreferrer">whar-datasets</a> and create
+                <code>src/whar_datasets/config/cfg_&lt;dataset_id&gt;.py</code>. The parser returns activity
+                metadata, session metadata and standardized sensor sessions; the <code>WHARConfig</code>
+                declares source URLs, sampling, counts, activities and channels.
               </p>
             </div>
           </li>
           <li>
             <span class="step-number">2</span>
             <div>
-              <h3>Register the dataset</h3>
+              <h3>Register it</h3>
               <p>
-                Add the ID to <code>WHARDatasetID</code> in
-                <code>src/whar_datasets/config/getter.py</code>. Standard names
-                <code>cfg_&lt;dataset_id&gt;.py</code> and <code>cfg_&lt;dataset_id&gt;</code> are discovered
-                automatically. Add it to <code>BENCHMARK_DATASET_IDS</code> only when requesting
-                official benchmark inclusion.
+                Add the ID to <code>WHARDatasetID</code> in <code>src/whar_datasets/config/getter.py</code>.
+                Add it to <code>BENCHMARK_DATASET_IDS</code> only if maintainers agreed to include it in the
+                official benchmark.
               </p>
             </div>
           </li>
           <li>
             <span class="step-number">3</span>
             <div>
-              <h3>Test and open the pull request</h3>
+              <h3>Test it</h3>
               <p>
-                Add focused parser tests using small synthetic fixtures. Verify subject, activity,
-                timestamp and channel semantics without committing the raw dataset.
+                Add parser tests using small synthetic fixtures that check subject, activity, timestamp
+                and channel semantics. Never commit the raw dataset.
               </p>
               <div class="command-row">
                 <code>uv sync --extra dev</code>
@@ -157,420 +500,254 @@ const datasetRepository = "https://github.com/teco-kit/whar-datasets";
               </div>
             </div>
           </li>
+          <li>
+            <span class="step-number">4</span>
+            <div>
+              <h3>Open the pull request</h3>
+              <p>
+                Push your branch and open a pull request against <code>main</code>. Write
+                <code>Closes #&lt;issue&gt;</code> in the description to link the proposal.
+              </p>
+              <a class="inline-link" href={`${datasetRepository}/compare`} target="_blank" rel="noreferrer">Open a pull request →</a>
+            </div>
+          </li>
         </ol>
-
-        <div class="acceptance-note">
-          <strong>After merge</strong>
-          <span>
-            Maintainers separately review benchmark eligibility. Once the dataset is in
-            <code>BENCHMARK_DATASET_IDS</code>, HARena can plan every registered model against it.
-          </span>
-        </div>
-      </div>
-    </section>
-
-    <section class="brief-panel" aria-labelledby="brief-heading">
-      <div class="section-heading brief-heading">
-        <div>
-          <p class="step-label">Step 3</p>
-          <h2 id="brief-heading">Prepare the pull-request description</h2>
-          <p>
-            This optional helper turns your metadata into Markdown for the PR. It does not upload,
-            save or submit anything.
-          </p>
-        </div>
       </div>
 
-      <form data-contribution-form="model">
-        <div class="metadata-layout model-metadata-layout">
-          <fieldset class="metadata-section">
-            <legend>
-              <span>Identity and publication</span>
-              <small>Stable registry names and the scientific source represented by this implementation.</small>
-            </legend>
-            <div class="field-grid">
-              <label>
-                <span>Model ID *</span>
-                <input name="id" required pattern="[a-z0-9]+(?:_[a-z0-9]+)*" placeholder="tinyhar" />
-                <small>Lowercase snake_case, matching <code>WHARModelID</code>.</small>
-              </label>
-              <label>
-                <span>Display name *</span>
-                <input name="name" required placeholder="TinyHAR" />
-              </label>
-              <label class="wide-field">
-                <span>Paper title *</span>
-                <input name="paper_title" required placeholder="Full publication title" />
-                <small>The model registry requires paper metadata.</small>
-              </label>
-              <label>
-                <span>Paper URL</span>
-                <input name="paper_url" type="url" placeholder="https://doi.org/..." />
-              </label>
-              <label>
-                <span>Publication year</span>
-                <input name="year" type="number" min="1900" max="2100" placeholder="2026" />
-              </label>
-              <label class="wide-field">
-                <span>Authors</span>
-                <input name="authors" placeholder="First Author, Second Author" />
-              </label>
-            </div>
-          </fieldset>
-
-          <fieldset class="metadata-section">
-            <legend>
-              <span>Architecture and implementation</span>
-              <small>How the implementation is classified and licensed.</small>
-            </legend>
-            <div class="field-grid">
-              <div class="architecture-picker wide-field" aria-labelledby="architecture-picker-label">
-                <div class="field-label-row">
-                  <span id="architecture-picker-label">Architecture components *</span>
-                  <small>Select all that apply.</small>
-                </div>
-                <div class="architecture-options" data-architecture-options>
-                  <label><input type="checkbox" name="architecture_parts" value="attention" /><span>Attention</span></label>
-                  <label><input type="checkbox" name="architecture_parts" value="cnn" /><span>Convolutional</span></label>
-                  <label><input type="checkbox" name="architecture_parts" value="dense" /><span>Dense</span></label>
-                  <label><input type="checkbox" name="architecture_parts" value="features" /><span>Handcrafted</span></label>
-                  <label><input type="checkbox" name="architecture_parts" value="graph" /><span>Graph</span></label>
-                  <label><input type="checkbox" name="architecture_parts" value="rnn" /><span>Recurrent</span></label>
-                  <label><input type="checkbox" name="architecture_parts" value="spectral" /><span>Spectral</span></label>
-                </div>
-                <div class="custom-architecture-row">
-                  <input
-                    type="text"
-                    data-custom-architecture
-                    aria-label="Custom architecture component"
-                    placeholder="Add another component"
-                  />
-                  <button type="button" data-add-architecture>Add component</button>
-                </div>
-                <small class="field-help">
-                  Multiple selections are combined into the proposed registry family; custom components
-                  appear as additional selected options.
-                </small>
-              </div>
-              <label>
-                <span>Framework *</span>
-                <select name="framework" required>
-                  <option value="">Select a framework</option>
-                  <option value="torch">PyTorch</option>
-                  <option value="sklearn">scikit-learn</option>
-                  <option value="tensorflow">TensorFlow</option>
-                  <option value="other">Other</option>
-                </select>
-              </label>
-              <label>
-                <span>Implementation license</span>
-                <input name="license" placeholder="Apache-2.0" />
-              </label>
-              <label>
-                <span>Original implementation URL</span>
-                <input name="source_url" type="url" placeholder="https://github.com/..." />
-              </label>
-            </div>
-          </fieldset>
-
-          <fieldset class="metadata-section">
-            <legend>
-              <span>Reproducibility notes</span>
-              <small>Defaults, deviations and constraints reviewers should know about.</small>
-            </legend>
-            <div class="field-grid">
-              <label class="wide-field">
-                <span>Defaults and implementation notes</span>
-                <textarea name="notes" rows="4" placeholder="Default hyperparameters, implementation differences or special constraints"></textarea>
-              </label>
-            </div>
-          </fieldset>
-        </div>
-
-        <div class="form-footer">
-          <p><strong>*</strong> Required for a complete PR description.</p>
-          <button class="prepare-button" type="submit">Prepare model PR description</button>
-        </div>
-      </form>
-
-      <form data-contribution-form="dataset" hidden>
-        <div class="metadata-layout dataset-metadata-layout">
-          <fieldset class="metadata-section">
-            <legend>
-              <span>Identity and publication</span>
-              <small>Stable registry names and the scientific source that introduced the dataset.</small>
-            </legend>
-            <div class="field-grid">
-              <label>
-                <span>Dataset ID *</span>
-                <input name="id" required pattern="[a-z0-9]+(?:_[a-z0-9]+)*" placeholder="example_har" />
-                <small>Lowercase snake_case, matching <code>WHARDatasetID</code>.</small>
-              </label>
-              <label>
-                <span>Display name *</span>
-                <input name="name" required placeholder="Example-HAR" />
-              </label>
-              <label>
-                <span>Paper URL</span>
-                <input name="paper_url" type="url" placeholder="https://doi.org/..." />
-              </label>
-              <label>
-                <span>Publication year</span>
-                <input name="year" type="number" min="1900" max="2100" placeholder="2026" />
-              </label>
-              <label class="wide-field">
-                <span>Authors</span>
-                <input name="authors" placeholder="First Author, Second Author" />
-              </label>
-            </div>
-          </fieldset>
-
-          <fieldset class="metadata-section">
-            <legend>
-              <span>Dataset structure and sampling</span>
-              <small>Scale, labels, channels and timing exposed by <code>WHARConfig</code>.</small>
-            </legend>
-            <div class="field-grid three-column-grid">
-              <label>
-                <span>Subjects</span>
-                <input name="subjects" type="number" min="1" placeholder="30" />
-              </label>
-              <label>
-                <span>Activities</span>
-                <input name="activities" type="number" min="1" placeholder="12" />
-              </label>
-              <label>
-                <span>Sensor channels</span>
-                <input name="channels" type="number" min="1" placeholder="6" />
-              </label>
-            </div>
-            <div class="field-grid dataset-detail-grid">
-              <label>
-                <span>Available activities</span>
-                <input name="activity_names" placeholder="walking, running, sitting" />
-                <small>Comma-separated canonical activity names.</small>
-              </label>
-              <label>
-                <span>Available sensor channels</span>
-                <input name="channel_names" placeholder="wrist_acc_x, wrist_acc_y, wrist_acc_z" />
-                <small>Comma-separated channel names.</small>
-              </label>
-              <label>
-                <span>Source rate mode</span>
-                <select name="source_rate_mode">
-                  <option value="fixed">Fixed sampling rate</option>
-                  <option value="per_session">Varies by session</option>
-                </select>
-              </label>
-              <label>
-                <span>Sampling frequency</span>
-                <input name="sampling_freq" placeholder="50 Hz" />
-              </label>
-            </div>
-          </fieldset>
-
-          <fieldset class="metadata-section">
-            <legend>
-              <span>Source, access and limitations</span>
-              <small>Where the data comes from, how it may be used and constraints reviewers should know.</small>
-            </legend>
-            <div class="field-grid">
-              <label>
-                <span>Official dataset page *</span>
-                <input name="dataset_url" type="url" required placeholder="https://zenodo.org/..." />
-              </label>
-              <label>
-                <span>Download URL or access instructions *</span>
-                <input name="download_url" required placeholder="https://... or registration required" />
-              </label>
-              <label class="wide-field">
-                <span>License or access terms *</span>
-                <input name="license" required placeholder="CC BY 4.0 or research access agreement" />
-              </label>
-              <label class="wide-field">
-                <span>Devices, placements and limitations</span>
-                <textarea name="notes" rows="4" placeholder="Devices, body positions, missing values, access constraints or known quality issues"></textarea>
-              </label>
-            </div>
-          </fieldset>
-        </div>
-
-        <div class="form-footer dataset-form-footer">
-          <label class="eligibility-check">
-            <input name="benchmark_eligible" type="checkbox" value="true" />
-            <span>Ask maintainers to review this dataset for <code>BENCHMARK_DATASET_IDS</code>.</span>
-          </label>
-          <button class="prepare-button" type="submit">Prepare dataset PR description</button>
-        </div>
-      </form>
-    </section>
-
-    <section class="output-panel" data-output-panel hidden aria-labelledby="output-heading">
-      <div class="output-heading">
-        <div>
-          <p class="step-label">Ready to use</p>
-          <h2 id="output-heading">Pull-request description</h2>
-        </div>
-        <span data-output-status>Prepared</span>
+      <div class="acceptance-note">
+        <strong>Step 4 · After merge</strong>
+        <span>
+          Maintainers run the official protocol for the new entry: every model on every benchmark dataset,
+          with latency, memory and model size measured on the reference device. Results then appear on
+          the leaderboard.
+        </span>
       </div>
-      <p>
-        Copy this Markdown into your PR description. If you want early feedback before implementing,
-        open the same content as a GitHub issue instead.
-      </p>
-      <pre><code data-markdown-output></code></pre>
-      <div class="output-actions">
-        <button type="button" data-copy-markdown>Copy PR description</button>
-        <a data-open-repository target="_blank" rel="noreferrer">Open repository</a>
-        <a data-open-issue target="_blank" rel="noreferrer">Ask for feedback first</a>
-        <a class="primary-action" data-open-pr target="_blank" rel="noreferrer">Open pull request</a>
-      </div>
-      <p class="pr-note">
-        Your implementation must already be pushed to a branch before GitHub can open its pull
-        request. HARena never receives the form data directly.
-      </p>
     </section>
   </BenchmarkPage>
 </BaseLayout>
 
 <script>
   type ContributionKind = "model" | "dataset";
+  type Intent = "self" | "request";
+  type Entry = { id: string; name: string };
+  type ExistingEntries = Record<ContributionKind, Entry[]> & { pages: Record<ContributionKind, string> };
 
   const repositories: Record<ContributionKind, string> = {
     model: "https://github.com/teco-kit/whar-models",
     dataset: "https://github.com/teco-kit/whar-datasets",
   };
+  const draftKey = "harena-contribute-draft";
+  const maxUrlLength = 7500;
 
+  const existing = JSON.parse(
+    document.getElementById("existing-entries")?.textContent ?? "{}",
+  ) as ExistingEntries;
+
+  let activeKind: ContributionKind = "model";
+  let currentTitle = "";
   let currentMarkdown = "";
 
   const kindButtons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-kind-button]"));
   const paths = Array.from(document.querySelectorAll<HTMLElement>("[data-path]"));
-  const forms = Array.from(
-    document.querySelectorAll<HTMLFormElement>("[data-contribution-form]"),
-  );
-  const outputPanel = document.querySelector<HTMLElement>("[data-output-panel]");
-  const markdownOutput = document.querySelector<HTMLElement>("[data-markdown-output]");
-  const outputStatus = document.querySelector<HTMLElement>("[data-output-status]");
-  const repositoryLink = document.querySelector<HTMLAnchorElement>("[data-open-repository]");
-  const issueLink = document.querySelector<HTMLAnchorElement>("[data-open-issue]");
-  const pullRequestLink = document.querySelector<HTMLAnchorElement>("[data-open-pr]");
+  const forms = Array.from(document.querySelectorAll<HTMLFormElement>("[data-contribution-form]"));
+  const intentInputs = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="intent"]'));
+  const previewTitle = document.querySelector<HTMLElement>("[data-preview-title]");
+  const previewBody = document.querySelector<HTMLElement>("[data-preview-body]");
+  const previewRepo = document.querySelector<HTMLElement>("[data-preview-repo]");
+  const formStatus = document.querySelector<HTMLElement>("[data-form-status]");
+  const nextPanel = document.querySelector<HTMLElement>("[data-next-panel]");
+  const nextSelf = document.querySelector<HTMLElement>("[data-next-self]");
+  const nextRequest = document.querySelector<HTMLElement>("[data-next-request]");
+  const manualIssueLink = document.querySelector<HTMLAnchorElement>("[data-manual-issue-link]");
   const architectureOptions = document.querySelector<HTMLElement>("[data-architecture-options]");
   const customArchitectureInput = document.querySelector<HTMLInputElement>("[data-custom-architecture]");
-  const addArchitectureButton = document.querySelector<HTMLButtonElement>("[data-add-architecture]");
+  const copyButton = document.querySelector<HTMLButtonElement>("[data-copy-markdown]");
+  const defaultStatus = formStatus?.innerHTML ?? "";
 
+  const formFor = (kind: ContributionKind) =>
+    forms.find((form) => form.dataset.contributionForm === kind) as HTMLFormElement;
   const value = (data: FormData, key: string) => String(data.get(key) ?? "").trim();
-  const row = (label: string, fieldValue: string) =>
-    fieldValue ? `| ${label} | ${fieldValue.replaceAll("|", "\\|").replaceAll("\n", " ")} |` : null;
   const slugify = (text: string) =>
-    text.toLowerCase().trim().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+    text.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+  const currentIntent = (): Intent =>
+    intentInputs.find((input) => input.checked)?.value === "request" ? "request" : "self";
+  const cell = (text: string) => text.replaceAll("|", "\\|").replaceAll("\n", " ");
+  const link = (url: string) => (url ? `<${url}>` : "");
 
-  const addCustomArchitecture = () => {
-    const labelText = customArchitectureInput?.value.trim() ?? "";
-    if (!labelText || !architectureOptions || !customArchitectureInput) return;
+  const entryId = (data: FormData, kind: ContributionKind) =>
+    value(data, "id") || slugify(value(data, "name")) || `new_${kind}`;
 
-    const existing = Array.from(
-      architectureOptions.querySelectorAll<HTMLInputElement>('input[name="architecture_parts"]'),
-    ).find((input) => input.value.toLowerCase() === labelText.toLowerCase());
-
-    if (existing) {
-      existing.checked = true;
-    } else {
-      const label = document.createElement("label");
-      label.className = "is-custom";
-      const input = document.createElement("input");
-      input.type = "checkbox";
-      input.name = "architecture_parts";
-      input.value = labelText;
-      input.checked = true;
-      const text = document.createElement("span");
-      text.textContent = labelText;
-      label.append(input, text);
-      architectureOptions.append(label);
-    }
-
-    customArchitectureInput.value = "";
-    customArchitectureInput.setCustomValidity("");
-  };
-
-  addArchitectureButton?.addEventListener("click", addCustomArchitecture);
-  customArchitectureInput?.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      addCustomArchitecture();
-    }
-  });
-  architectureOptions?.addEventListener("change", () => customArchitectureInput?.setCustomValidity(""));
-
-  const makeDescription = (kind: ContributionKind, data: FormData) => {
-    const rows = [
-      row(kind === "model" ? "Model ID" : "Dataset ID", `\`${value(data, "id")}\``),
-      row("Name", value(data, "name")),
+  const makeIssue = (kind: ContributionKind, data: FormData, intent: Intent) => {
+    const name = value(data, "name") || `New ${kind}`;
+    const rows: [string, string][] = [
+      [kind === "model" ? "Model ID" : "Dataset ID", `\`${entryId(data, kind)}\``],
+      ["Name", name],
     ];
 
     if (kind === "model") {
       const components = data.getAll("architecture_parts").map(String);
       rows.push(
-        row("Architecture components", components.join(", ")),
-        row("Proposed registry family", components.map(slugify).filter(Boolean).join("_")),
-        row("Framework", value(data, "framework")),
-        row("Paper", value(data, "paper_title")),
-        row("Paper URL", value(data, "paper_url")),
-        row("Publication year", value(data, "year")),
-        row("Original implementation", value(data, "source_url")),
-        row("License", value(data, "license")),
-        row("Authors", value(data, "authors")),
-        row("Notes", value(data, "notes")),
+        ["Paper", value(data, "paper_title")],
+        ["Paper link", link(value(data, "paper_url"))],
+        ["Year", value(data, "year")],
+        ["Authors", value(data, "authors")],
+        ["Building blocks", components.join(", ")],
+        ["Framework", formFor("model").querySelector<HTMLSelectElement>('select[name="framework"]')?.selectedOptions[0]?.text ?? ""],
+        ["Original implementation", link(value(data, "source_url"))],
+        ["License", value(data, "license")],
       );
     } else {
+      const rate = value(data, "sampling_freq");
       rows.push(
-        row("Dataset page", value(data, "dataset_url")),
-        row("Download/access", value(data, "download_url")),
-        row("License/access terms", value(data, "license")),
-        row("Paper URL", value(data, "paper_url")),
-        row("Publication year", value(data, "year")),
-        row("Authors", value(data, "authors")),
-        row("Source-rate mode", value(data, "source_rate_mode")),
-        row("Sampling frequency", value(data, "sampling_freq")),
-        row("Subjects", value(data, "subjects")),
-        row("Activities", value(data, "activities")),
-        row("Channels", value(data, "channels")),
-        row("Activity names", value(data, "activity_names")),
-        row("Channel names", value(data, "channel_names")),
-        row("Notes", value(data, "notes")),
-        row(
-          "Official benchmark review",
-          data.get("benchmark_eligible") === "true" ? "Requested" : "Not requested",
-        ),
+        ["Dataset page", link(value(data, "dataset_url"))],
+        ["Data access", value(data, "download_url")],
+        ["License / terms", value(data, "license")],
+        ["Paper link", link(value(data, "paper_url"))],
+        ["Year", value(data, "year")],
+        ["Authors", value(data, "authors")],
+        ["Subjects", value(data, "subjects")],
+        ["Activities", value(data, "activities")],
+        ["Sampling rate", rate ? `${rate} Hz` : ""],
+        ["Sensors / positions", value(data, "sensors")],
+        ["Activity labels", value(data, "activity_names")],
+        ["Official benchmark", data.get("benchmark_eligible") ? "Inclusion requested" : "Library only"],
       );
     }
 
-    const checklist = kind === "model"
-      ? [
-          "- [ ] Implementation package and builder added",
-          "- [ ] `WHARModelID` and `ModelSpec` registered",
-          "- [ ] Generic build and forward-pass test added",
-          "- [ ] `uv run pytest` passes",
-        ]
-      : [
-          "- [ ] Parser and `WHARConfig` added",
-          "- [ ] `WHARDatasetID` registered",
-          "- [ ] Focused parser tests added without raw data",
-          "- [ ] `uv run pytest` passes",
-        ];
+    const notes = value(data, "notes");
+    const label = kind === "model" ? "Model" : "Dataset";
+    const title = `[${label} ${intent === "self" ? "proposal" : "request"}] ${name}`;
+    const intentLine = intent === "self"
+      ? "**I plan to implement this myself** and will open a pull request that references this issue."
+      : "**This is a request.** I am not planning to implement it myself; maintainers or other contributors are welcome to pick it up.";
 
-    return [
-      `## ${kind === "model" ? "Model" : "Dataset"} summary`,
+    const body = [
+      intentLine,
+      "",
+      `## ${label} details`,
       "",
       "| Field | Value |",
       "| --- | --- |",
-      ...rows.filter((item): item is string => item !== null),
+      ...rows.filter(([, fieldValue]) => fieldValue).map(([key, fieldValue]) => `| ${key} | ${cell(fieldValue)} |`),
+      ...(notes ? ["", "## Notes", "", notes] : []),
       "",
-      "## Implementation checklist",
-      "",
-      ...checklist,
+      "---",
+      `_Prepared with the HARena contribute page. Implementation guide: ${window.location.origin}${window.location.pathname}#implement_`,
     ].join("\n");
+
+    return { title, body };
   };
 
-  const setActiveKind = (kind: ContributionKind) => {
+  const updateDuplicateWarning = (form: HTMLFormElement, kind: ContributionKind) => {
+    const warning = form.querySelector<HTMLElement>("[data-duplicate-warning]");
+    const name = form.querySelector<HTMLInputElement>("[data-name-input]")?.value.trim() ?? "";
+    const id = form.querySelector<HTMLInputElement>("[data-id-input]")?.value.trim() ?? "";
+    if (!warning) return;
+    const candidates = new Set([slugify(name), slugify(id)].filter((item) => item.length > 1));
+    const match = (existing[kind] ?? []).find(
+      (entry) => candidates.has(entry.id) || candidates.has(slugify(entry.name)),
+    );
+    warning.hidden = !match;
+    if (match) {
+      warning.replaceChildren(
+        "HARena already includes ",
+        Object.assign(document.createElement("strong"), { textContent: match.name }),
+        ` (${match.id}). `,
+        Object.assign(document.createElement("a"), {
+          href: existing.pages[kind],
+          textContent: `Check the ${kind} list`,
+        }),
+        " before proposing it again. Variants are welcome; explain the difference in the notes.",
+      );
+    }
+  };
+
+  const updatePreview = () => {
+    const form = formFor(activeKind);
+    const issue = makeIssue(activeKind, new FormData(form), currentIntent());
+    currentTitle = issue.title;
+    currentMarkdown = issue.body;
+    if (previewTitle) previewTitle.textContent = issue.title;
+    if (previewBody) previewBody.textContent = issue.body;
+    if (previewRepo) previewRepo.textContent = repositories[activeKind].replace("https://github.com/", "");
+    updateDuplicateWarning(form, activeKind);
+  };
+
+  const formValues = (kind: ContributionKind) => {
+    const data = new FormData(formFor(kind));
+    return Object.fromEntries(Array.from(data.keys(), (key) => [key, data.getAll(key).map(String)]));
+  };
+
+  const saveDraft = () => {
+    try {
+      const draft = { kind: activeKind, intent: currentIntent(), model: formValues("model"), dataset: formValues("dataset") };
+      localStorage.setItem(draftKey, JSON.stringify(draft));
+    } catch {
+      // Drafts are a convenience only.
+    }
+  };
+
+  const restoreDraft = () => {
+    let draft: { kind?: ContributionKind; intent?: Intent; model?: Record<string, string[]>; dataset?: Record<string, string[]> } | null = null;
+    try {
+      draft = JSON.parse(localStorage.getItem(draftKey) ?? "null");
+    } catch {
+      draft = null;
+    }
+    if (!draft) return;
+    (["model", "dataset"] as const).forEach((kind) => {
+      const values = draft?.[kind];
+      if (!values) return;
+      const form = formFor(kind);
+      (values.architecture_parts ?? []).forEach((part) => addArchitecture(part));
+      form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>("[name]").forEach((field) => {
+        const stored = values[field.name];
+        if (field instanceof HTMLInputElement && field.type === "checkbox") {
+          field.checked = (stored ?? []).includes(field.value);
+        } else if (stored?.[0] !== undefined) {
+          field.value = stored[0];
+          if (field.matches("[data-id-input]") && stored[0]) field.dataset.touched = "true";
+        }
+      });
+    });
+    intentInputs.forEach((input) => (input.checked = input.value === (draft?.intent ?? "self")));
+    if (draft.kind === "dataset") setActiveKind("dataset");
+  };
+
+  function addArchitecture(labelText: string) {
+    if (!labelText || !architectureOptions) return;
+    const existingOption = Array.from(
+      architectureOptions.querySelectorAll<HTMLInputElement>('input[name="architecture_parts"]'),
+    ).find((input) => input.value.toLowerCase() === labelText.toLowerCase());
+    if (existingOption) {
+      existingOption.checked = true;
+      return;
+    }
+    const label = document.createElement("label");
+    label.className = "is-custom";
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.name = "architecture_parts";
+    input.value = labelText;
+    input.checked = true;
+    const text = document.createElement("span");
+    text.textContent = labelText;
+    label.append(input, text);
+    architectureOptions.append(label);
+  }
+
+  const addCustomArchitecture = () => {
+    const labelText = customArchitectureInput?.value.trim() ?? "";
+    if (!labelText || !customArchitectureInput) return;
+    addArchitecture(labelText);
+    customArchitectureInput.value = "";
+    customArchitectureInput.setCustomValidity("");
+    updatePreview();
+    saveDraft();
+  };
+
+  function setActiveKind(kind: ContributionKind) {
+    activeKind = kind;
     kindButtons.forEach((button) => {
       const isActive = button.dataset.kindButton === kind;
       button.classList.toggle("is-active", isActive);
@@ -578,130 +755,366 @@ const datasetRepository = "https://github.com/teco-kit/whar-datasets";
     });
     paths.forEach((path) => (path.hidden = path.dataset.path !== kind));
     forms.forEach((form) => (form.hidden = form.dataset.contributionForm !== kind));
-    if (outputPanel) outputPanel.hidden = true;
+    if (nextPanel) nextPanel.hidden = true;
+    updatePreview();
+  }
+
+  const validate = (form: HTMLFormElement) => {
+    if (activeKind === "model") {
+      addCustomArchitecture();
+      const selected = form.querySelectorAll('input[name="architecture_parts"]:checked');
+      if (selected.length === 0 && customArchitectureInput) {
+        customArchitectureInput.setCustomValidity("Select at least one building block, or type your own.");
+        customArchitectureInput.reportValidity();
+        return false;
+      }
+    }
+    return form.reportValidity();
+  };
+
+  const copyText = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   kindButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const kind = button.dataset.kindButton;
-      if (kind === "model" || kind === "dataset") setActiveKind(kind);
+      if (kind === "model" || kind === "dataset") {
+        setActiveKind(kind);
+        saveDraft();
+      }
     });
   });
+
+  intentInputs.forEach((input) => input.addEventListener("change", () => {
+    updatePreview();
+    saveDraft();
+  }));
 
   forms.forEach((form) => {
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const kind = form.dataset.contributionForm as ContributionKind;
-      if (kind === "model") {
-        addCustomArchitecture();
-        const selectedComponents = form.querySelectorAll<HTMLInputElement>(
-          'input[name="architecture_parts"]:checked',
-        );
-        if (selectedComponents.length === 0 && customArchitectureInput) {
-          customArchitectureInput.setCustomValidity("Select or add at least one architecture component.");
-          customArchitectureInput.reportValidity();
-          return;
-        }
-      }
-      if (!form.reportValidity()) return;
-
-      const data = new FormData(form);
-      const repository = repositories[kind];
-      const displayName = value(data, "name") || value(data, "id");
-      currentMarkdown = makeDescription(kind, data);
-
-      if (markdownOutput) markdownOutput.textContent = currentMarkdown;
-      if (outputStatus) {
-        outputStatus.textContent = `${kind === "model" ? "Model" : "Dataset"} PR text ready`;
-      }
-      if (repositoryLink) repositoryLink.href = repository;
-      if (issueLink) {
-        const title = `[${kind} proposal] ${displayName}`;
-        issueLink.href = `${repository}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(currentMarkdown)}`;
-      }
-      if (pullRequestLink) pullRequestLink.href = `${repository}/compare`;
-      if (outputPanel) {
-        outputPanel.hidden = false;
-        outputPanel.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+    const nameInput = form.querySelector<HTMLInputElement>("[data-name-input]");
+    const idInput = form.querySelector<HTMLInputElement>("[data-id-input]");
+    nameInput?.addEventListener("input", () => {
+      if (idInput && !idInput.dataset.touched) idInput.value = slugify(nameInput.value);
     });
+    idInput?.addEventListener("input", () => {
+      idInput.dataset.touched = idInput.value ? "true" : "";
+    });
+    form.addEventListener("input", () => {
+      updatePreview();
+      saveDraft();
+    });
+    form.addEventListener("change", () => {
+      customArchitectureInput?.setCustomValidity("");
+      updatePreview();
+      saveDraft();
+    });
+    form.addEventListener("submit", (event) => event.preventDefault());
   });
 
-  document
-    .querySelector<HTMLButtonElement>("[data-copy-markdown]")
-    ?.addEventListener("click", async (event) => {
-      const button = event.currentTarget as HTMLButtonElement;
-      try {
-        await navigator.clipboard.writeText(currentMarkdown);
-        button.textContent = "Copied";
-      } catch {
-        if (markdownOutput) {
-          const range = document.createRange();
-          range.selectNodeContents(markdownOutput);
-          const selection = window.getSelection();
-          selection?.removeAllRanges();
-          selection?.addRange(range);
-        }
-        button.textContent = "Selected";
-      }
-      window.setTimeout(() => (button.textContent = "Copy PR description"), 1600);
+  document.querySelector("[data-add-architecture]")?.addEventListener("click", addCustomArchitecture);
+  customArchitectureInput?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      addCustomArchitecture();
+    }
+  });
+
+  document.querySelector("[data-open-issue]")?.addEventListener("click", async () => {
+    const form = formFor(activeKind);
+    if (!validate(form)) return;
+    updatePreview();
+
+    const base = `${repositories[activeKind]}/issues/new`;
+    let url = `${base}?title=${encodeURIComponent(currentTitle)}&body=${encodeURIComponent(currentMarkdown)}`;
+    if (url.length > maxUrlLength) {
+      const copied = await copyText(currentMarkdown);
+      const fallback = copied
+        ? "The proposal was copied to your clipboard because it is too long for a link. Paste it here."
+        : "The proposal is too long for a link. Copy it from the HARena contribute page and paste it here.";
+      url = `${base}?title=${encodeURIComponent(currentTitle)}&body=${encodeURIComponent(fallback)}`;
+    }
+    window.open(url, "_blank", "noopener");
+
+    if (manualIssueLink) manualIssueLink.href = base;
+    const intent = currentIntent();
+    if (nextSelf) nextSelf.hidden = intent !== "self";
+    if (nextRequest) nextRequest.hidden = intent !== "request";
+    if (nextPanel) {
+      nextPanel.hidden = false;
+      nextPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+      nextPanel.focus({ preventScroll: true });
+    }
+  });
+
+  copyButton?.addEventListener("click", async () => {
+    updatePreview();
+    const copied = await copyText(`${currentTitle}\n\n${currentMarkdown}`);
+    copyButton.textContent = copied ? "Copied" : "Copy failed";
+    window.setTimeout(() => (copyButton.textContent = "Copy text"), 1600);
+  });
+
+  document.querySelector("[data-reset-form]")?.addEventListener("click", () => {
+    forms.forEach((form) => {
+      form.reset();
+      form.querySelectorAll<HTMLInputElement>("[data-id-input]").forEach((input) => (input.dataset.touched = ""));
     });
+    architectureOptions?.querySelectorAll(".is-custom").forEach((label) => label.remove());
+    try {
+      localStorage.removeItem(draftKey);
+    } catch {
+      // Ignore unavailable storage.
+    }
+    if (nextPanel) nextPanel.hidden = true;
+    if (formStatus) formStatus.innerHTML = defaultStatus;
+    updatePreview();
+  });
+
+  restoreDraft();
+  updatePreview();
 </script>
 
 <style>
-  .start-panel, .path-panel, .brief-panel, .output-panel {
+  .panel {
     margin-top: 14px; overflow: hidden; border: 1px solid lightgray;
     border-radius: 8px; background: var(--panel);
   }
-  .section-heading, .path-intro, .output-heading { padding: 20px; }
-  .section-heading h2, .path-intro h2, .output-heading h2 {
+  .section-heading, .path-intro { padding: 20px; }
+  .section-heading h2, .path-intro h2 {
     margin: 2px 0 0; font-family: var(--display-serif); font-size: 1.35rem;
     font-weight: 500; line-height: 1.15;
   }
-  .section-heading p:last-child, .path-intro p:last-child, .output-panel > p {
+  .section-heading p:last-child, .path-intro p:last-child {
     max-width: 850px; margin: 8px 0 0; color: var(--muted-strong); font-size: 0.86rem;
   }
   .step-label {
     margin: 0; color: var(--muted); font-size: 0.68rem; font-weight: 700;
     letter-spacing: 0.08em; text-transform: uppercase;
   }
-  .type-switch { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--line); }
-  .type-switch button {
-    display: flex; min-height: 90px; align-items: center; gap: 12px; padding: 18px 20px;
-    border: 0; border-right: 1px solid var(--line); background: var(--panel);
-    color: var(--muted-strong); text-align: left; cursor: pointer;
+  code {
+    font-family: "DM Mono", ui-monospace, monospace; font-size: 0.88em;
   }
-  .type-switch button:last-child { border-right: 0; }
-  .type-switch button:hover, .type-switch button:focus-visible, .type-switch button.is-active {
-    background: var(--panel-soft); color: var(--ink); outline: none;
+  a { color: var(--ink); text-underline-offset: 2px; }
+  .step-number {
+    display: grid; flex: 0 0 auto; width: 28px; height: 28px; place-items: center;
+    border: 1px solid var(--line-strong); border-radius: 50%; background: var(--panel);
+    font-family: "DM Mono", ui-monospace, monospace; font-size: 0.73rem;
   }
-  .type-switch button.is-active { box-shadow: inset 0 -2px var(--ink); }
-  .type-switch button > span:last-child { display: grid; gap: 2px; }
-  .type-switch strong { font-size: 0.92rem; }
-  .type-switch small { color: var(--muted); font-size: 0.75rem; }
+
+  /* Flow overview */
+  .flow-steps {
+    display: grid; grid-template-columns: repeat(4, 1fr); margin: 0; padding: 0;
+    border-top: 1px solid var(--line); list-style: none;
+  }
+  .flow-steps li {
+    position: relative; display: grid; grid-template-columns: 30px 1fr; gap: 12px;
+    padding: 18px 20px; border-right: 1px solid var(--line);
+  }
+  .flow-steps li:last-child { border-right: 0; }
+  .flow-steps li.is-current { background: var(--panel-soft); }
+  .flow-steps li.is-current .step-number { border-color: var(--ink); background: var(--ink); color: var(--panel); }
+  .flow-where {
+    color: var(--muted); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .flow-steps h3 { margin: 2px 0 6px; font-family: var(--display-serif); font-size: 1.02rem; font-weight: 500; }
+  .flow-steps p { margin: 0; color: var(--muted-strong); font-size: 0.78rem; line-height: 1.5; }
+  .flow-shortcut {
+    margin: 0; padding: 13px 20px; border-top: 1px solid var(--line);
+    color: var(--muted-strong); font-size: 0.78rem;
+  }
+
+  /* Questions A/B/C */
+  .question { padding: 18px 20px 20px; border-top: 1px solid var(--line); }
+  .question-label {
+    display: flex; align-items: center; gap: 10px; margin: 0 0 12px;
+    font-family: var(--display-serif); font-size: 1.08rem;
+  }
+  .question-number {
+    display: grid; width: 24px; height: 24px; place-items: center; border-radius: 50%;
+    background: var(--ink); color: var(--panel);
+    font-family: "DM Mono", ui-monospace, monospace; font-size: 0.68rem;
+  }
+  .req-inline, .req {
+    color: var(--danger); font-size: 0.62rem; font-style: normal; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .req { margin-left: 6px; }
+  .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .choice-card {
+    position: relative; display: flex; min-height: 76px; align-items: center; gap: 12px;
+    padding: 14px 16px; border: 1px solid var(--line-strong); border-radius: 8px;
+    background: var(--panel); color: var(--muted-strong); font: inherit; text-align: left;
+    cursor: pointer; transition: border-color 120ms, background 120ms, box-shadow 120ms;
+  }
+  .choice-card:hover { border-color: var(--muted); }
+  .choice-card.is-active, .intent-card:has(input:checked) {
+    border-color: var(--ink); background: var(--panel-soft); color: var(--ink);
+    box-shadow: inset 0 0 0 1px var(--ink);
+  }
+  .choice-card:focus-visible, .intent-card:has(input:focus-visible) {
+    outline: 3px solid hsl(24 6% 17% / 0.18); outline-offset: 2px;
+  }
+  .choice-card > span:last-child { display: grid; gap: 3px; }
+  .choice-card strong { font-size: 0.92rem; }
+  .choice-card small { color: var(--muted); font-size: 0.75rem; line-height: 1.4; }
   .type-icon {
     display: grid; flex: 0 0 auto; width: 34px; height: 34px; place-items: center;
     border: 1px solid var(--line-strong); border-radius: 50%; font-family: var(--display-serif);
   }
-  .path-intro, .output-heading, .brief-heading {
-    display: flex; align-items: flex-start; justify-content: space-between; gap: 20px;
+  .choice-card.is-active .type-icon { border-color: var(--ink); background: var(--ink); color: var(--panel); }
+  .intent-card input { position: absolute; opacity: 0; pointer-events: none; }
+  .radio-dot {
+    flex: 0 0 auto; width: 18px; height: 18px; border: 1.5px solid var(--line-strong);
+    border-radius: 50%; background: var(--panel);
   }
-  .path-intro code, .code-steps code, .acceptance-note code, label code {
-    font-family: "DM Mono", ui-monospace, monospace; font-size: 0.88em;
+  .intent-card:has(input:checked) .radio-dot {
+    border-color: var(--ink); box-shadow: inset 0 0 0 4px var(--panel); background: var(--ink);
   }
-  .repo-button, .prepare-button, .output-actions button, .output-actions a {
-    display: inline-flex; min-height: 38px; align-items: center; justify-content: center;
-    padding: 0 13px; border: 1px solid var(--line-strong); border-radius: 6px;
-    background: var(--panel); color: var(--ink); font-size: 0.78rem; font-weight: 700;
-    cursor: pointer; text-decoration: none;
+
+  /* Form + preview */
+  .proposal-layout {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+    gap: 18px; align-items: start;
   }
-  .repo-button { flex: 0 0 auto; }
-  .repo-button:hover, .repo-button:focus-visible, .output-actions button:hover,
-  .output-actions button:focus-visible, .output-actions a:hover, .output-actions a:focus-visible {
-    background: var(--panel-soft); outline: none;
+  form { display: grid; gap: 14px; }
+  .metadata-section {
+    min-width: 0; margin: 0; padding: 16px; border: 1px solid var(--line);
+    border-radius: 7px; background: hsl(33 31% 98%);
   }
+  .metadata-section legend { display: grid; gap: 2px; max-width: calc(100% - 16px); padding: 0 6px; }
+  .metadata-section legend span { font-family: var(--display-serif); font-size: 1.04rem; line-height: 1.2; }
+  .metadata-section legend small { color: var(--muted); font-size: 0.7rem; line-height: 1.35; }
+  .metadata-section .field-grid { margin-top: 10px; }
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field-grid + .field-grid { margin-top: 14px; }
+  .three-column-grid { grid-template-columns: repeat(3, 1fr); }
+  .field { display: grid; gap: 6px; align-content: start; }
+  .field-label { color: var(--muted-strong); font-size: 0.74rem; font-weight: 700; }
+  .field > small { color: var(--muted); font-size: 0.68rem; line-height: 1.4; }
+  .wide-field { grid-column: 1 / -1; }
+  input, select, textarea {
+    width: 100%; border: 1px solid var(--line-strong); border-radius: 6px;
+    background: var(--panel); color: var(--ink); font: inherit; font-size: 0.82rem;
+  }
+  input, select { min-height: 39px; padding: 0 10px; }
+  textarea { min-height: 76px; padding: 9px 10px; resize: vertical; line-height: 1.45; }
+  input::placeholder, textarea::placeholder { color: hsl(35 6% 60%); }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--ink); outline: 2px solid hsl(24 6% 17% / 0.09);
+  }
+  input:user-invalid, textarea:user-invalid, select:user-invalid { border-color: var(--danger); }
+  .input-unit { position: relative; display: block; }
+  .input-unit input { padding-right: 38px; }
+  .input-unit span {
+    position: absolute; top: 50%; right: 11px; transform: translateY(-50%);
+    color: var(--muted); font-size: 0.74rem; pointer-events: none;
+  }
+  .field-warning {
+    margin: 0; padding: 10px 12px; border: 1px solid hsl(48 70% 70%); border-radius: 6px;
+    background: hsl(48 90% 95%); color: var(--muted-strong); font-size: 0.76rem; line-height: 1.45;
+  }
+  .architecture-picker { display: grid; gap: 9px; }
+  .architecture-options { display: flex; flex-wrap: wrap; gap: 7px; }
+  .architecture-options label { position: relative; cursor: pointer; }
+  .architecture-options input {
+    position: absolute; width: 1px; height: 1px; min-height: 0; opacity: 0; pointer-events: none;
+  }
+  .architecture-options span {
+    display: inline-flex; min-height: 31px; align-items: center; padding: 0 11px;
+    border: 1px solid var(--line-strong); border-radius: 999px; background: var(--panel);
+    color: var(--muted-strong); font-size: 0.72rem; font-weight: 600;
+  }
+  .architecture-options label:hover span { border-color: var(--muted); }
+  .architecture-options input:checked + span {
+    border-color: var(--ink); background: var(--ink); color: var(--panel);
+  }
+  .architecture-options input:checked + span::before { margin-right: 5px; content: "✓"; }
+  .architecture-options input:focus-visible + span { outline: 2px solid hsl(24 6% 17% / 0.25); outline-offset: 2px; }
+  .architecture-options label.is-custom span::after { margin-left: 5px; content: "custom"; opacity: 0.6; font-size: 0.58rem; }
+  .custom-architecture-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 7px; }
+  .custom-architecture-row button, .secondary-action {
+    min-height: 39px; padding: 0 13px; border: 1px solid var(--line-strong);
+    border-radius: 6px; background: var(--panel); color: var(--ink);
+    font: inherit; font-size: 0.76rem; font-weight: 700; cursor: pointer;
+  }
+  .custom-architecture-row button:hover, .secondary-action:hover,
+  .custom-architecture-row button:focus-visible, .secondary-action:focus-visible {
+    border-color: var(--ink); background: var(--panel-soft); outline: none;
+  }
+  .check-field {
+    display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start;
+    padding: 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel);
+    cursor: pointer;
+  }
+  .check-field input { width: 16px; min-height: 16px; margin: 2px 0 0; accent-color: var(--ink); }
+  .check-field span { display: grid; gap: 3px; }
+  .check-field strong { font-size: 0.8rem; }
+  .check-field small { color: var(--muted); font-size: 0.7rem; line-height: 1.4; }
+
+  .preview {
+    position: sticky; top: 16px; display: grid; gap: 12px; padding: 16px;
+    border: 1px solid var(--line-strong); border-radius: 8px; background: var(--panel);
+  }
+  .preview-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .preview-head h3 { margin: 2px 0 0; font-family: var(--display-serif); font-size: 1.08rem; font-weight: 500; }
+  .repo-badge {
+    padding: 3px 8px; border: 1px solid var(--line); border-radius: 999px;
+    background: var(--panel-soft); color: var(--muted-strong);
+    font-family: "DM Mono", ui-monospace, monospace; font-size: 0.64rem; white-space: nowrap;
+  }
+  .preview-title {
+    margin: 0; padding-bottom: 10px; border-bottom: 1px solid var(--line);
+    font-size: 0.88rem; font-weight: 700; overflow-wrap: anywhere;
+  }
+  .preview-body {
+    max-height: 360px; margin: 0; padding: 12px; overflow: auto; border: 1px solid var(--line);
+    border-radius: 6px; background: hsl(33 31% 97%); color: var(--muted-strong);
+    font-family: "DM Mono", ui-monospace, monospace; font-size: 0.68rem; line-height: 1.5;
+    white-space: pre-wrap; overflow-wrap: anywhere;
+  }
+  .preview-actions { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+  .primary-action {
+    display: inline-flex; min-height: 42px; align-items: center; justify-content: center; gap: 8px;
+    padding: 0 14px; border: 1px solid var(--ink); border-radius: 6px; background: var(--ink);
+    color: var(--panel); font: inherit; font-size: 0.82rem; font-weight: 700; cursor: pointer;
+  }
+  .primary-action:hover, .primary-action:focus-visible { background: hsl(24 6% 27%); outline: none; }
+  .primary-action svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .preview-note { margin: 0; color: var(--muted); font-size: 0.72rem; line-height: 1.45; }
+  .reset-link {
+    justify-self: start; padding: 0; border: 0; background: none; color: var(--muted);
+    font: inherit; font-size: 0.72rem; text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
+  }
+  .reset-link:hover { color: var(--ink); }
+
+  /* Next steps */
+  .next-panel { border-color: var(--positive); scroll-margin-top: 16px; }
+  .next-panel:focus { outline: none; }
+  .next-steps {
+    display: grid; gap: 10px; margin: 0; padding: 0 20px 20px 42px;
+    color: var(--muted-strong); font-size: 0.82rem; line-height: 1.5;
+  }
+  .next-steps strong { color: var(--ink); }
+
+  /* Implementation guide */
+  .path-intro { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+  .segmented {
+    display: inline-flex; flex: 0 0 auto; padding: 3px; border: 1px solid var(--line-strong);
+    border-radius: 7px; background: var(--panel-soft);
+  }
+  .segmented button {
+    min-height: 32px; padding: 0 14px; border: 0; border-radius: 5px; background: none;
+    color: var(--muted-strong); font: inherit; font-size: 0.76rem; font-weight: 700; cursor: pointer;
+  }
+  .segmented button.is-active { background: var(--panel); color: var(--ink); box-shadow: 0 1px 2px hsl(24 6% 17% / 0.12); }
   .code-steps {
-    display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(4, 1fr); margin: 0; padding: 0;
     border-top: 1px solid var(--line); list-style: none;
   }
   .code-steps li {
@@ -709,11 +1122,6 @@ const datasetRepository = "https://github.com/teco-kit/whar-datasets";
     border-right: 1px solid var(--line);
   }
   .code-steps li:last-child { border-right: 0; }
-  .step-number {
-    display: grid; width: 28px; height: 28px; place-items: center;
-    border: 1px solid var(--line-strong); border-radius: 50%;
-    font-family: "DM Mono", ui-monospace, monospace; font-size: 0.73rem;
-  }
   .code-steps h3 { margin: 3px 0 8px; font-size: 0.88rem; }
   .code-steps p { margin: 0; color: var(--muted-strong); font-size: 0.78rem; line-height: 1.5; }
   .command-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
@@ -721,125 +1129,38 @@ const datasetRepository = "https://github.com/teco-kit/whar-datasets";
     padding: 5px 7px; border: 1px solid var(--line); border-radius: 4px;
     background: var(--panel-soft); font-size: 0.69rem;
   }
+  .inline-link { display: inline-block; margin-top: 10px; font-size: 0.76rem; font-weight: 700; }
   .acceptance-note {
-    display: grid; grid-template-columns: auto 1fr; gap: 12px; padding: 15px 20px;
+    display: grid; grid-template-columns: auto 1fr; gap: 14px; padding: 15px 20px;
     border-top: 1px solid var(--line); background: var(--panel-soft);
-    color: var(--muted-strong); font-size: 0.78rem;
+    color: var(--muted-strong); font-size: 0.78rem; line-height: 1.5;
   }
-  .acceptance-note strong { color: var(--positive); }
-  form { padding: 20px; border-top: 1px solid var(--line); }
-  .metadata-layout {
-    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;
-  }
-  .model-metadata-layout, .dataset-metadata-layout { grid-template-columns: 1fr; }
-  .metadata-section {
-    min-width: 0; margin: 0; padding: 16px; border: 1px solid var(--line);
-    border-radius: 7px; background: hsl(33 31% 98%);
-  }
-  .metadata-section legend {
-    display: grid; gap: 2px; max-width: calc(100% - 16px); padding: 0 6px;
-  }
-  .metadata-section legend span {
-    font-family: var(--display-serif); font-size: 1.04rem; line-height: 1.2;
-  }
-  .metadata-section legend small {
-    color: var(--muted); font-family: inherit; font-size: 0.68rem; line-height: 1.35;
-  }
-  .metadata-section .field-grid { margin-top: 10px; }
-  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .three-column-grid { grid-template-columns: repeat(3, 1fr); }
-  .field-grid label, .eligibility-check { display: grid; gap: 6px; }
-  .field-grid label > span { color: var(--muted-strong); font-size: 0.74rem; font-weight: 700; }
-  .field-grid label > small { color: var(--muted); font-size: 0.68rem; }
-  .wide-field { grid-column: 1 / -1; }
-  input, select, textarea {
-    width: 100%; border: 1px solid var(--line-strong); border-radius: 6px;
-    background: var(--panel); color: var(--ink); font-size: 0.82rem;
-  }
-  input, select { min-height: 39px; padding: 0 10px; }
-  textarea { min-height: 76px; padding: 9px 10px; resize: vertical; }
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--ink); outline: 2px solid hsl(24 6% 17% / 0.09);
-  }
-  .architecture-picker { display: grid; gap: 9px; }
-  .field-label-row {
-    display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
-  }
-  .field-label-row > span { color: var(--muted-strong); font-size: 0.74rem; font-weight: 700; }
-  .field-label-row > small, .field-help { color: var(--muted); font-size: 0.68rem; }
-  .architecture-options { display: flex; flex-wrap: wrap; gap: 7px; }
-  .architecture-options label { position: relative; cursor: pointer; }
-  .architecture-options input {
-    position: absolute; width: 1px; height: 1px; min-height: 0; opacity: 0; pointer-events: none;
-  }
-  .architecture-options span {
-    display: inline-flex; min-height: 31px; align-items: center; padding: 0 10px;
-    border: 1px solid var(--line-strong); border-radius: 999px; background: var(--panel);
-    color: var(--muted-strong); font-size: 0.72rem; font-weight: 600;
-  }
-  .architecture-options input:checked + span {
-    border-color: var(--ink); background: var(--ink); color: var(--panel);
-  }
-  .architecture-options input:focus-visible + span { outline: 2px solid hsl(24 6% 17% / 0.18); }
-  .architecture-options label.is-custom span::after { margin-left: 5px; content: "custom"; opacity: 0.55; font-size: 0.58rem; }
-  .custom-architecture-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 7px; }
-  .custom-architecture-row button {
-    min-height: 39px; padding: 0 11px; border: 1px solid var(--line-strong);
-    border-radius: 6px; background: var(--panel); color: var(--ink);
-    font-size: 0.72rem; font-weight: 700; cursor: pointer;
-  }
-  .custom-architecture-row button:hover, .custom-architecture-row button:focus-visible {
-    border-color: var(--ink); background: var(--panel-soft); outline: none;
-  }
-  .eligibility-check {
-    grid-template-columns: auto 1fr; align-items: start;
-    color: var(--muted-strong); font-size: 0.78rem;
-  }
-  .eligibility-check input { width: 16px; min-height: 16px; margin: 2px 0 0; }
-  .form-footer {
-    display: flex; align-items: center; justify-content: space-between; gap: 18px;
-    margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line);
-  }
-  .form-footer p { margin: 0; color: var(--muted); font-size: 0.72rem; }
-  .form-footer p strong { color: var(--danger); }
-  .dataset-form-footer { align-items: flex-start; }
-  .prepare-button, .primary-action {
-    border-color: var(--ink) !important; background: var(--ink) !important;
-    color: var(--panel) !important;
-  }
-  .prepare-button { flex: 0 0 auto; }
-  .output-panel { scroll-margin-top: 16px; }
-  .output-heading { align-items: center; border-bottom: 1px solid var(--line); background: var(--panel-soft); }
-  .output-heading > span { color: var(--positive); font-size: 0.75rem; font-weight: 700; }
-  .output-panel > p, .pr-note { padding: 0 20px; }
-  .output-panel pre {
-    margin: 16px 20px; padding: 16px; overflow-x: auto; border: 1px solid var(--line);
-    border-radius: 6px; background: hsl(33 31% 97%);
-    font-family: "DM Mono", ui-monospace, monospace; font-size: 0.75rem; line-height: 1.5;
-  }
-  .output-actions { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px; }
-  .pr-note { margin: 12px 0 20px !important; color: var(--muted) !important; font-size: 0.74rem !important; }
+  .acceptance-note strong { color: var(--positive); white-space: nowrap; }
   [hidden] { display: none !important; }
 
+  @media (max-width: 1080px) {
+    .proposal-layout { grid-template-columns: 1fr; }
+    .preview { position: static; }
+    .code-steps { grid-template-columns: 1fr 1fr; }
+    .code-steps li:nth-child(2) { border-right: 0; }
+    .code-steps li:nth-child(-n + 2) { border-bottom: 1px solid var(--line); }
+  }
   @media (max-width: 900px) {
-    .code-steps { grid-template-columns: 1fr; }
-    .code-steps li { border-right: 0; border-bottom: 1px solid var(--line); }
-    .code-steps li:last-child { border-bottom: 0; }
-    .metadata-layout { grid-template-columns: 1fr; }
-    .dataset-metadata-layout .metadata-section:nth-child(3) { grid-column: auto; }
+    .flow-steps { grid-template-columns: 1fr 1fr; }
+    .flow-steps li:nth-child(2) { border-right: 0; }
+    .flow-steps li:nth-child(-n + 2) { border-bottom: 1px solid var(--line); }
   }
   @media (max-width: 620px) {
-    .type-switch, .field-grid, .three-column-grid { grid-template-columns: 1fr; }
-    .type-switch button { border-right: 0; border-bottom: 1px solid var(--line); }
-    .type-switch button:last-child { border-bottom: 0; }
-    .path-intro, .output-heading, .brief-heading { align-items: flex-start; flex-direction: column; }
+    .flow-steps, .code-steps, .choice-grid, .field-grid, .three-column-grid { grid-template-columns: 1fr; }
+    .flow-steps li, .code-steps li { border-right: 0; border-bottom: 1px solid var(--line); padding: 16px; }
+    .flow-steps li:last-child, .code-steps li:last-child { border-bottom: 0; }
     .wide-field { grid-column: auto; }
-    .section-heading, .path-intro, .output-heading, form { padding: 16px; }
-    .code-steps li { padding: 16px; }
-    .acceptance-note { grid-template-columns: 1fr; padding: 14px 16px; }
-    .form-footer { align-items: stretch; flex-direction: column; }
+    .section-heading, .path-intro, .question { padding: 16px; }
+    .flow-shortcut { padding: 12px 16px; }
+    .path-intro { flex-direction: column; }
+    .acceptance-note { grid-template-columns: 1fr; gap: 4px; padding: 14px 16px; }
     .custom-architecture-row { grid-template-columns: 1fr; }
-    .output-panel > p, .pr-note, .output-actions { padding-right: 16px; padding-left: 16px; }
-    .output-panel pre { margin-right: 16px; margin-left: 16px; }
+    .preview-actions { grid-template-columns: 1fr; }
+    .next-steps { padding: 0 16px 16px 36px; }
   }
 </style>
