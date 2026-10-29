@@ -20,7 +20,7 @@ const existingEntries = {
   <BenchmarkPage
     title="Contribute"
     headingId="contribute-heading"
-    description="Propose a new model or dataset for HARena. Every contribution starts as a GitHub issue, so it can be discussed before anyone writes code. You, the maintainers or another contributor can then implement it."
+    description="Propose a new model or dataset. Proposals start as a GitHub issue and can be implemented by you or someone else."
   >
     <script is:inline type="application/json" id="existing-entries" set:html={JSON.stringify(existingEntries)} />
 
@@ -28,10 +28,6 @@ const existingEntries = {
       <div class="section-heading">
         <p class="step-label">How it works</p>
         <h2 id="flow-heading">From proposal to leaderboard</h2>
-        <p>
-          Proposing something does not require writing code. The form below only prepares a GitHub
-          issue; implementation happens afterwards through a pull request.
-        </p>
       </div>
 
       <ol class="flow-steps">
@@ -40,7 +36,7 @@ const existingEntries = {
           <div>
             <span class="flow-where">On this page</span>
             <h3>Propose</h3>
-            <p>Describe the model or dataset. HARena turns it into a pre-filled GitHub issue that you confirm with one click.</p>
+            <p>Fill in the form below.</p>
           </div>
         </li>
         <li>
@@ -48,7 +44,7 @@ const existingEntries = {
           <div>
             <span class="flow-where">GitHub issue</span>
             <h3>Discuss</h3>
-            <p>Maintainers check scope and duplicates and agree on the ID before anyone invests time in code.</p>
+            <p>Maintainers confirm scope and ID.</p>
           </div>
         </li>
         <li>
@@ -56,7 +52,7 @@ const existingEntries = {
           <div>
             <span class="flow-where">Pull request</span>
             <h3>Implement</h3>
-            <p>You, a maintainer or another contributor adds the code to <code>whar-models</code> or <code>whar-datasets</code> and links the issue.</p>
+            <p>Anyone opens a pull request.</p>
           </div>
         </li>
         <li>
@@ -64,26 +60,18 @@ const existingEntries = {
           <div>
             <span class="flow-where">After merge</span>
             <h3>Benchmark</h3>
-            <p>Maintainers train and measure it under the official protocol. Results then appear on the leaderboard.</p>
+            <p>Results appear on the leaderboard.</p>
           </div>
         </li>
       </ol>
 
-      <p class="flow-shortcut">
-        <strong>Already implemented it?</strong>
-        You can skip the issue and open a pull request directly. Follow the
-        <a href="#implement">implementation guide</a>.
-      </p>
+      <p class="flow-shortcut">Already have code? Skip to the <a href="#implement">implementation guide</a>.</p>
     </section>
 
     <section class="panel proposal-panel" aria-labelledby="proposal-heading">
       <div class="section-heading">
         <p class="step-label">Step 1 · Propose</p>
         <h2 id="proposal-heading">Describe your proposal</h2>
-        <p>
-          Only fields marked <em class="req-inline">Required</em> are needed. Everything else helps
-          reviewers and can still be added in the issue later.
-        </p>
       </div>
 
       <div class="question">
@@ -93,14 +81,14 @@ const existingEntries = {
             <span class="type-icon" aria-hidden="true">M</span>
             <span>
               <strong>A model</strong>
-              <small>A HAR architecture or classical baseline, added to <code>whar-models</code></small>
+              <small>Added to <code>whar-models</code></small>
             </span>
           </button>
           <button type="button" class="choice-card" data-kind-button="dataset" aria-pressed="false">
             <span class="type-icon" aria-hidden="true">D</span>
             <span>
               <strong>A dataset</strong>
-              <small>A wearable sensor dataset, added as an adapter to <code>whar-datasets</code></small>
+              <small>Added to <code>whar-datasets</code></small>
             </span>
           </button>
         </div>
@@ -114,7 +102,7 @@ const existingEntries = {
             <span class="radio-dot" aria-hidden="true"></span>
             <span>
               <strong>I'll implement it</strong>
-              <small>You open the pull request yourself. The issue lets maintainers confirm the approach first.</small>
+              <small>You open the pull request</small>
             </span>
           </label>
           <label class="choice-card intent-card">
@@ -122,7 +110,7 @@ const existingEntries = {
             <span class="radio-dot" aria-hidden="true"></span>
             <span>
               <strong>I'm requesting it</strong>
-              <small>Maintainers or other contributors may pick it up. Requests are not guaranteed to be added.</small>
+              <small>Someone else may pick it up</small>
             </span>
           </label>
         </div>
@@ -137,22 +125,20 @@ const existingEntries = {
               <fieldset class="metadata-section">
                 <legend>
                   <span>The model</span>
-                  <small>What it is called and which publication introduced it.</small>
                 </legend>
                 <div class="field-grid">
                   <label class="field">
-                    <span class="field-label">Model name <em class="req">Required</em></span>
+                    <span class="field-label">Model name <em class="req">required</em></span>
                     <input name="name" required placeholder="e.g. TinyHAR" autocomplete="off" data-name-input />
                   </label>
                   <label class="field">
                     <span class="field-label">Model ID</span>
                     <input name="id" pattern="[a-z0-9]+(?:_[a-z0-9]+)*" placeholder="tinyhar" autocomplete="off" data-id-input />
-                    <small>Generated from the name. Lowercase letters, digits and underscores.</small>
                   </label>
                   <p class="field-warning wide-field" data-duplicate-warning hidden></p>
                   <label class="field wide-field">
-                    <span class="field-label">Paper title <em class="req">Required</em></span>
-                    <input name="paper_title" required placeholder="Full title of the publication that introduced the model" />
+                    <span class="field-label">Paper title <em class="req">required</em></span>
+                    <input name="paper_title" required placeholder="Full publication title" />
                   </label>
                   <label class="field">
                     <span class="field-label">Paper link</span>
@@ -172,11 +158,10 @@ const existingEntries = {
               <fieldset class="metadata-section">
                 <legend>
                   <span>Architecture</span>
-                  <small>Used to group models on the leaderboard. Select everything that applies.</small>
                 </legend>
                 <div class="field-grid">
                   <div class="architecture-picker wide-field" role="group" aria-labelledby="architecture-picker-label">
-                    <span class="field-label" id="architecture-picker-label">Building blocks <em class="req">Required</em></span>
+                    <span class="field-label" id="architecture-picker-label">Building blocks <em class="req">required</em></span>
                     <div class="architecture-options" data-architecture-options>
                       <label><input type="checkbox" name="architecture_parts" value="Convolutional" /><span>Convolutional</span></label>
                       <label><input type="checkbox" name="architecture_parts" value="Recurrent" /><span>Recurrent</span></label>
@@ -191,20 +176,19 @@ const existingEntries = {
                         type="text"
                         data-custom-architecture
                         aria-label="Other building block"
-                        placeholder="Something else? Type it and press Enter"
+                        placeholder="Other…"
                       />
                       <button type="button" data-add-architecture>Add</button>
                     </div>
                   </div>
                   <label class="field">
-                    <span class="field-label">Framework <em class="req">Required</em></span>
+                    <span class="field-label">Framework <em class="req">required</em></span>
                     <select name="framework" required>
                       <option value="torch">PyTorch</option>
                       <option value="sklearn">scikit-learn</option>
                       <option value="tensorflow">TensorFlow / Keras</option>
                       <option value="other">Other</option>
                     </select>
-                    <small>HARena trains and exports PyTorch models; others may need porting.</small>
                   </label>
                 </div>
               </fieldset>
@@ -212,7 +196,6 @@ const existingEntries = {
               <fieldset class="metadata-section">
                 <legend>
                   <span>Source code</span>
-                  <small>An existing implementation makes the port faster and easier to verify.</small>
                 </legend>
                 <div class="field-grid">
                   <label class="field">
@@ -224,8 +207,8 @@ const existingEntries = {
                     <input name="license" placeholder="e.g. MIT, Apache-2.0" list="license-options" />
                   </label>
                   <label class="field wide-field">
-                    <span class="field-label">Anything reviewers should know?</span>
-                    <textarea name="notes" rows="3" placeholder="Why it belongs in HARena, default hyperparameters, deviations from the paper, special input requirements…"></textarea>
+                    <span class="field-label">Notes for reviewers</span>
+                    <textarea name="notes" rows="3" placeholder="Optional"></textarea>
                   </label>
                 </div>
               </fieldset>
@@ -235,17 +218,15 @@ const existingEntries = {
               <fieldset class="metadata-section">
                 <legend>
                   <span>The dataset</span>
-                  <small>What it is called and who published it.</small>
                 </legend>
                 <div class="field-grid">
                   <label class="field">
-                    <span class="field-label">Dataset name <em class="req">Required</em></span>
+                    <span class="field-label">Dataset name <em class="req">required</em></span>
                     <input name="name" required placeholder="e.g. PAMAP2" autocomplete="off" data-name-input />
                   </label>
                   <label class="field">
                     <span class="field-label">Dataset ID</span>
                     <input name="id" pattern="[a-z0-9]+(?:_[a-z0-9]+)*" placeholder="pamap2" autocomplete="off" data-id-input />
-                    <small>Generated from the name. Lowercase letters, digits and underscores.</small>
                   </label>
                   <p class="field-warning wide-field" data-duplicate-warning hidden></p>
                   <label class="field">
@@ -266,21 +247,19 @@ const existingEntries = {
               <fieldset class="metadata-section">
                 <legend>
                   <span>Access</span>
-                  <small>HARena never hosts raw data. The adapter downloads it from the original source.</small>
                 </legend>
                 <div class="field-grid">
                   <label class="field">
-                    <span class="field-label">Dataset page <em class="req">Required</em></span>
+                    <span class="field-label">Dataset page <em class="req">required</em></span>
                     <input name="dataset_url" type="url" required placeholder="https://zenodo.org/…" />
                   </label>
                   <label class="field">
                     <span class="field-label">How to get the data</span>
-                    <input name="download_url" placeholder="Direct download link, or “registration required”" />
+                    <input name="download_url" placeholder="Link or access steps" />
                   </label>
                   <label class="field wide-field">
                     <span class="field-label">License or access terms</span>
-                    <input name="license" placeholder="e.g. CC BY 4.0, research-only agreement" list="license-options" />
-                    <small>Datasets that cannot be downloaded automatically are harder to include.</small>
+                    <input name="license" placeholder="e.g. CC BY 4.0" list="license-options" />
                   </label>
                 </div>
               </fieldset>
@@ -288,7 +267,6 @@ const existingEntries = {
               <fieldset class="metadata-section">
                 <legend>
                   <span>Contents</span>
-                  <small>Rough numbers are fine. Maintainers verify them during implementation.</small>
                 </legend>
                 <div class="field-grid three-column-grid">
                   <label class="field">
@@ -310,22 +288,19 @@ const existingEntries = {
                 <div class="field-grid">
                   <label class="field wide-field">
                     <span class="field-label">Sensors and body positions</span>
-                    <input name="sensors" placeholder="e.g. 3 IMUs (acc, gyro, mag) on wrist, chest and ankle" />
+                    <input name="sensors" placeholder="e.g. IMUs on wrist, chest and ankle" />
                   </label>
                   <label class="field wide-field">
                     <span class="field-label">Activity labels</span>
                     <input name="activity_names" placeholder="walking, running, sitting, …" />
                   </label>
                   <label class="field wide-field">
-                    <span class="field-label">Anything reviewers should know?</span>
-                    <textarea name="notes" rows="3" placeholder="Why it belongs in HARena, missing values, varying sampling rates, label quality, unusual file formats…"></textarea>
+                    <span class="field-label">Notes for reviewers</span>
+                    <textarea name="notes" rows="3" placeholder="Optional"></textarea>
                   </label>
                   <label class="check-field wide-field">
                     <input name="benchmark_eligible" type="checkbox" value="true" checked />
-                    <span>
-                      <strong>Include in the official benchmark</strong>
-                      <small>Maintainers decide separately whether a dataset joins the benchmark suite, or is only available through the library.</small>
-                    </span>
+                    <span>Request inclusion in the official benchmark</span>
                   </label>
                 </div>
               </fieldset>
@@ -345,10 +320,7 @@ const existingEntries = {
 
           <aside class="preview" aria-labelledby="preview-heading">
             <div class="preview-head">
-              <div>
-                <p class="step-label">Live preview</p>
-                <h3 id="preview-heading">Your GitHub issue</h3>
-              </div>
+              <h3 id="preview-heading">Issue preview</h3>
               <span class="repo-badge" data-preview-repo>teco-kit/whar-models</span>
             </div>
             <p class="preview-title" data-preview-title></p>
@@ -360,10 +332,7 @@ const existingEntries = {
               </button>
               <button type="button" class="secondary-action" data-copy-markdown>Copy text</button>
             </div>
-            <p class="preview-note" data-form-status aria-live="polite">
-              Opens github.com in a new tab with everything filled in. You review it there and click
-              “Create”. A GitHub account is required; this page stores nothing on a server.
-            </p>
+            <p class="preview-note" data-form-status aria-live="polite">Opens a pre-filled issue on GitHub.</p>
             <button type="button" class="reset-link" data-reset-form>Clear form</button>
           </aside>
         </div>
@@ -373,22 +342,17 @@ const existingEntries = {
     <section class="panel next-panel" data-next-panel hidden aria-labelledby="next-heading" tabindex="-1">
       <div class="section-heading">
         <p class="step-label">Step 2 · Discuss</p>
-        <h2 id="next-heading">Next: create the issue on GitHub</h2>
-        <p>
-          A new tab opened with your proposal. Check it and click <strong>Create</strong>. If nothing
-          opened, allow pop-ups or use “Copy text” and paste it into a
-          <a data-manual-issue-link target="_blank" rel="noreferrer">new issue</a>.
-        </p>
+        <h2 id="next-heading">Create the issue on GitHub</h2>
+        <p>Check the new tab and click <strong>Create</strong>. Nothing opened? Copy the text into a <a data-manual-issue-link target="_blank" rel="noreferrer">new issue</a>.</p>
       </div>
       <ol class="next-steps" data-next-self>
-        <li><strong>Note the issue number</strong> GitHub assigns, for example <code>#42</code>.</li>
-        <li><strong>Wait for a quick confirmation</strong> from a maintainer on scope and ID, or start right away if you are confident.</li>
-        <li><strong>Implement it</strong> with the <a href="#implement">guide below</a> and write <code>Closes #42</code> in your pull request description so the issue closes on merge.</li>
+        <li>Note the issue number, e.g. <code>#42</code>.</li>
+        <li>Implement it with the <a href="#implement">guide below</a>.</li>
+        <li>Write <code>Closes #42</code> in your pull request.</li>
       </ol>
       <ol class="next-steps" data-next-request hidden>
-        <li><strong>That's it from your side.</strong> Maintainers label the issue so contributors can find it.</li>
-        <li><strong>You get notified on GitHub</strong> when someone comments or opens a pull request for it.</li>
-        <li><strong>Want to help it along?</strong> Links to existing code, data or papers in the issue make it much easier to pick up.</li>
+        <li>Maintainers label it so contributors can find it.</li>
+        <li>GitHub notifies you when someone picks it up.</li>
       </ol>
     </section>
 
@@ -397,10 +361,7 @@ const existingEntries = {
         <div>
           <p class="step-label">Step 3 · Implement</p>
           <h2 id="implement-heading">Implementation guide</h2>
-          <p>
-            For whoever writes the code. The pull request contains only code and tests: no results,
-            no raw data and no changes to the HARena repository.
-          </p>
+          <p>Code and tests only. No results, no raw data.</p>
         </div>
         <div class="segmented" role="group" aria-label="Guide type">
           <button type="button" class="is-active" data-kind-button="model" aria-pressed="true">Model</button>
@@ -414,33 +375,21 @@ const existingEntries = {
             <span class="step-number">1</span>
             <div>
               <h3>Add the implementation</h3>
-              <p>
-                Fork <a href={modelRepository} target="_blank" rel="noreferrer">whar-models</a> and create
-                <code>src/whar_models/&lt;model_id&gt;/model.py</code> and <code>__init__.py</code>. Export a
-                builder that accepts <code>input_channels</code>, <code>window_length</code> and
-                <code>num_classes</code> as keyword arguments.
-              </p>
+              <p>Fork <a href={modelRepository} target="_blank" rel="noreferrer">whar-models</a> and add <code>src/whar_models/&lt;model_id&gt;/</code> with a builder taking <code>input_channels</code>, <code>window_length</code> and <code>num_classes</code>.</p>
             </div>
           </li>
           <li>
             <span class="step-number">2</span>
             <div>
               <h3>Register it</h3>
-              <p>
-                Add an entry to <code>WHARModelID</code> and a matching <code>ModelSpec</code> in
-                <code>src/whar_models/registry.py</code> with ID, display name, family, framework, paper
-                title and builder.
-              </p>
+              <p>Add it to <code>WHARModelID</code> and <code>ModelSpec</code> in <code>registry.py</code>.</p>
             </div>
           </li>
           <li>
             <span class="step-number">3</span>
             <div>
               <h3>Test it</h3>
-              <p>
-                Add a build and forward-pass test with input shaped <code>(batch, channels, timesteps)</code>.
-                The model must work for different channel, window and class counts.
-              </p>
+              <p>Add a forward-pass test for varying channel, window and class counts.</p>
               <div class="command-row">
                 <code>uv sync --extra dev</code>
                 <code>uv run pytest</code>
@@ -451,10 +400,7 @@ const existingEntries = {
             <span class="step-number">4</span>
             <div>
               <h3>Open the pull request</h3>
-              <p>
-                Push your branch and open a pull request against <code>main</code>. Write
-                <code>Closes #&lt;issue&gt;</code> in the description to link the proposal.
-              </p>
+              <p>Link the proposal with <code>Closes #&lt;issue&gt;</code>.</p>
               <a class="inline-link" href={`${modelRepository}/compare`} target="_blank" rel="noreferrer">Open a pull request →</a>
             </div>
           </li>
@@ -467,33 +413,21 @@ const existingEntries = {
             <span class="step-number">1</span>
             <div>
               <h3>Add a parser and config</h3>
-              <p>
-                Fork <a href={datasetRepository} target="_blank" rel="noreferrer">whar-datasets</a> and create
-                <code>src/whar_datasets/config/cfg_&lt;dataset_id&gt;.py</code>. The parser returns activity
-                metadata, session metadata and standardized sensor sessions; the <code>WHARConfig</code>
-                declares source URLs, sampling, counts, activities and channels.
-              </p>
+              <p>Fork <a href={datasetRepository} target="_blank" rel="noreferrer">whar-datasets</a> and add <code>config/cfg_&lt;dataset_id&gt;.py</code> with a parser and <code>WHARConfig</code>.</p>
             </div>
           </li>
           <li>
             <span class="step-number">2</span>
             <div>
               <h3>Register it</h3>
-              <p>
-                Add the ID to <code>WHARDatasetID</code> in <code>src/whar_datasets/config/getter.py</code>.
-                Add it to <code>BENCHMARK_DATASET_IDS</code> only if maintainers agreed to include it in the
-                official benchmark.
-              </p>
+              <p>Add the ID to <code>WHARDatasetID</code> in <code>getter.py</code>.</p>
             </div>
           </li>
           <li>
             <span class="step-number">3</span>
             <div>
               <h3>Test it</h3>
-              <p>
-                Add parser tests using small synthetic fixtures that check subject, activity, timestamp
-                and channel semantics. Never commit the raw dataset.
-              </p>
+              <p>Add parser tests with small synthetic fixtures. Never commit raw data.</p>
               <div class="command-row">
                 <code>uv sync --extra dev</code>
                 <code>uv run pytest</code>
@@ -504,10 +438,7 @@ const existingEntries = {
             <span class="step-number">4</span>
             <div>
               <h3>Open the pull request</h3>
-              <p>
-                Push your branch and open a pull request against <code>main</code>. Write
-                <code>Closes #&lt;issue&gt;</code> in the description to link the proposal.
-              </p>
+              <p>Link the proposal with <code>Closes #&lt;issue&gt;</code>.</p>
               <a class="inline-link" href={`${datasetRepository}/compare`} target="_blank" rel="noreferrer">Open a pull request →</a>
             </div>
           </li>
@@ -516,11 +447,7 @@ const existingEntries = {
 
       <div class="acceptance-note">
         <strong>Step 4 · After merge</strong>
-        <span>
-          Maintainers run the official protocol for the new entry: every model on every benchmark dataset,
-          with latency, memory and model size measured on the reference device. Results then appear on
-          the leaderboard.
-        </span>
+        <span>Maintainers benchmark the entry and publish the results.</span>
       </div>
     </section>
   </BenchmarkPage>
@@ -917,16 +844,13 @@ const existingEntries = {
   }
   .flow-steps li:last-child { border-right: 0; }
   .flow-steps li.is-current { background: var(--panel-soft); }
-  .flow-steps li.is-current .step-number { border-color: var(--ink); background: var(--ink); color: var(--panel); }
-  .flow-where {
-    color: var(--muted); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
+  .flow-steps li.is-current .step-number { border-color: var(--ink); }
+  .flow-where { color: var(--muted); font-size: 0.7rem; }
   .flow-steps h3 { margin: 2px 0 6px; font-family: var(--display-serif); font-size: 1.02rem; font-weight: 500; }
-  .flow-steps p { margin: 0; color: var(--muted-strong); font-size: 0.78rem; line-height: 1.5; }
+  .flow-steps p { margin: 0; color: var(--muted); font-size: 0.78rem; line-height: 1.5; }
   .flow-shortcut {
-    margin: 0; padding: 13px 20px; border-top: 1px solid var(--line);
-    color: var(--muted-strong); font-size: 0.78rem;
+    margin: 0; padding: 12px 20px; border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 0.76rem;
   }
 
   /* Questions A/B/C */
@@ -936,15 +860,13 @@ const existingEntries = {
     font-family: var(--display-serif); font-size: 1.08rem;
   }
   .question-number {
-    display: grid; width: 24px; height: 24px; place-items: center; border-radius: 50%;
-    background: var(--ink); color: var(--panel);
+    display: grid; width: 24px; height: 24px; place-items: center; border: 1px solid var(--line-strong);
+    border-radius: 50%; color: var(--muted);
     font-family: "DM Mono", ui-monospace, monospace; font-size: 0.68rem;
   }
-  .req-inline, .req {
-    color: var(--danger); font-size: 0.62rem; font-style: normal; font-weight: 700;
-    letter-spacing: 0.04em; text-transform: uppercase;
+  .req {
+    margin-left: 6px; color: var(--muted); font-size: 0.66rem; font-style: normal; font-weight: 500;
   }
-  .req { margin-left: 6px; }
   .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .choice-card {
     position: relative; display: flex; min-height: 76px; align-items: center; gap: 12px;
@@ -967,7 +889,7 @@ const existingEntries = {
     display: grid; flex: 0 0 auto; width: 34px; height: 34px; place-items: center;
     border: 1px solid var(--line-strong); border-radius: 50%; font-family: var(--display-serif);
   }
-  .choice-card.is-active .type-icon { border-color: var(--ink); background: var(--ink); color: var(--panel); }
+  .choice-card.is-active .type-icon { border-color: var(--ink); }
   .intent-card input { position: absolute; opacity: 0; pointer-events: none; }
   .radio-dot {
     flex: 0 0 auto; width: 18px; height: 18px; border: 1.5px solid var(--line-strong);
@@ -982,21 +904,18 @@ const existingEntries = {
     display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
     gap: 18px; align-items: start;
   }
-  form { display: grid; gap: 14px; }
-  .metadata-section {
-    min-width: 0; margin: 0; padding: 16px; border: 1px solid var(--line);
-    border-radius: 7px; background: hsl(33 31% 98%);
-  }
-  .metadata-section legend { display: grid; gap: 2px; max-width: calc(100% - 16px); padding: 0 6px; }
-  .metadata-section legend span { font-family: var(--display-serif); font-size: 1.04rem; line-height: 1.2; }
-  .metadata-section legend small { color: var(--muted); font-size: 0.7rem; line-height: 1.35; }
+  form { display: grid; gap: 18px; }
+  .metadata-section { min-width: 0; margin: 0; padding: 0; border: 0; }
+  .metadata-section + .metadata-section { padding-top: 18px; border-top: 1px solid var(--line); }
+  .metadata-section legend { float: left; width: 100%; margin-bottom: 12px; padding: 0; }
+  .metadata-section legend span { font-family: var(--display-serif); font-size: 1rem; line-height: 1.2; }
+  .metadata-section legend + * { clear: both; }
   .metadata-section .field-grid { margin-top: 10px; }
   .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .field-grid + .field-grid { margin-top: 14px; }
   .three-column-grid { grid-template-columns: repeat(3, 1fr); }
   .field { display: grid; gap: 6px; align-content: start; }
   .field-label { color: var(--muted-strong); font-size: 0.74rem; font-weight: 700; }
-  .field > small { color: var(--muted); font-size: 0.68rem; line-height: 1.4; }
   .wide-field { grid-column: 1 / -1; }
   input, select, textarea {
     width: 100%; border: 1px solid var(--line-strong); border-radius: 6px;
@@ -1061,8 +980,8 @@ const existingEntries = {
     position: sticky; top: 16px; display: grid; gap: 12px; padding: 16px;
     border: 1px solid var(--line-strong); border-radius: 8px; background: var(--panel);
   }
-  .preview-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
-  .preview-head h3 { margin: 2px 0 0; font-family: var(--display-serif); font-size: 1.08rem; font-weight: 500; }
+  .preview-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .preview-head h3 { margin: 0; font-family: var(--display-serif); font-size: 1.08rem; font-weight: 500; }
   .repo-badge {
     padding: 3px 8px; border: 1px solid var(--line); border-radius: 999px;
     background: var(--panel-soft); color: var(--muted-strong);
@@ -1135,7 +1054,7 @@ const existingEntries = {
     border-top: 1px solid var(--line); background: var(--panel-soft);
     color: var(--muted-strong); font-size: 0.78rem; line-height: 1.5;
   }
-  .acceptance-note strong { color: var(--positive); white-space: nowrap; }
+  .acceptance-note strong { color: var(--ink); font-weight: 600; white-space: nowrap; }
   [hidden] { display: none !important; }
 
   @media (max-width: 1080px) {
