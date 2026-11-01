@@ -96,4 +96,5 @@ git archive --format=zip HEAD -o ../anonymous-review.zip
 
 Commit the anonymized changes before using `git archive`. Do not include local
 Git metadata, dependency directories, caches, or generated Python lockfiles in
-the review package. Contributions are paused in the review website.
+the review package. The Contribute page supports local proposal drafts and previews; identifying
+repository and submission links are replaced with placeholders.
