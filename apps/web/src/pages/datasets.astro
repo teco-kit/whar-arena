@@ -258,7 +258,7 @@ function formatRangeMetric(value: number) {
 }
 
 function formatInstitutionSummary(institutions: string[]) {
-  if (institutions.length === 0) return "Institution pending";
+  if (institutions.length === 0) return "Affiliations withheld during review";
   if (institutions.length > 3) return [...institutions.slice(0, 2), "et al."].join(", ");
   return institutions.join(", ");
 }
@@ -1130,7 +1130,7 @@ function formatInstitutionSummary(institutions: string[]) {
     if (authors.length === 0) {
       const item = document.createElement("li");
       const pending = document.createElement("span");
-      pending.textContent = "Author information pending";
+      pending.textContent = "Author details withheld during review";
       item.append(pending);
       datasetModalAuthors.append(item);
       return;

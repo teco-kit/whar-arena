@@ -179,7 +179,7 @@ function compareLabels(a: string, b: string) {
 
 function formatInstitutionSummary(institutions: string[], baselineDetail?: string) {
   const summary = institutions.length === 0
-    ? "Institution pending"
+    ? "Affiliations withheld during review"
     : institutions.length > 3
       ? [...institutions.slice(0, 2), "et al."].join(", ")
       : institutions.join(", ");
@@ -845,7 +845,7 @@ function formatScaledMetric(value: number) {
     if (authors.length === 0) {
       const item = document.createElement("li");
       const pending = document.createElement("span");
-      pending.textContent = "Author information pending";
+      pending.textContent = "Author details withheld during review";
       item.append(pending);
       modelModalAuthors.append(item);
       return;

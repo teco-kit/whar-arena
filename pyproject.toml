@@ -27,5 +27,5 @@ build-backend = "hatchling.build"
 testpaths = ["tests"]
 
 [tool.uv.sources]
-whar-models = { git = "https://github.com/teco-kit//whar-models.git" }
-whar-datasets = { git = "https://github.com/teco-kit//whar-datasets.git" }
+whar-models = { path = "../whar-models", editable = true }
+whar-datasets = { path = "../whar-datasets", editable = true }

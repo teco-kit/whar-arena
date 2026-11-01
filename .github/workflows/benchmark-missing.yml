@@ -16,6 +16,7 @@ on:
 
 jobs:
   plan:
+    if: ${{ vars.DATASET_REPOSITORY != '' && vars.MODEL_REPOSITORY != '' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -23,11 +24,11 @@ jobs:
           path: whar-arena
       - uses: actions/checkout@v5
         with:
-          repository: teco-kit/whar-datasets
+          repository: ${{ vars.DATASET_REPOSITORY }}
           path: whar-datasets
       - uses: actions/checkout@v5
         with:
-          repository: teco-kit/whar-models
+          repository: ${{ vars.MODEL_REPOSITORY }}
           path: whar-models
       - uses: astral-sh/setup-uv@v7
       - uses: actions/setup-python@v6
