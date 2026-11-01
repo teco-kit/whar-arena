@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "astro dev --host 0.0.0.0",
     "build": "astro check && astro build",
-    "preview": "astro preview --host 0.0.0.0"
+    "preview": "astro preview --host 0.0.0.0",
+    "build:review": "node scripts/build-review.mjs"
   },
   "dependencies": {
     "@astrojs/svelte": "^8.1.2",

@@ -1,0 +1,696 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Protocol-driven benchmark for wearable human activity recognition."><link rel="icon" type="image/png" sizes="512x512" href="../favicon.png"><link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet"><title>HARena | Models</title><link rel="stylesheet" href="../_astro/BaseLayout.Czz46LEB.css">
+<style>.entity-marker[data-astro-cid-njtl7dsr]{display:block;flex:0 0 auto;overflow:visible;stroke:var(--panel);stroke-width:1.25}.timeline-panel[data-astro-cid-vtufdqkg]{min-width:0;margin-bottom:14px;overflow:hidden;border:1px solid lightgray;border-radius:8px;background:var(--panel)}.timeline-header[data-astro-cid-vtufdqkg]{display:flex;min-height:65px;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;border-bottom:1px solid var(--line);background:var(--panel-soft)}.timeline-header[data-astro-cid-vtufdqkg] h2[data-astro-cid-vtufdqkg],.timeline-header[data-astro-cid-vtufdqkg] p[data-astro-cid-vtufdqkg]{margin:0}.timeline-header[data-astro-cid-vtufdqkg] h2[data-astro-cid-vtufdqkg]{color:var(--ink);font-family:var(--display-serif);font-size:1.3rem;font-weight:500;letter-spacing:0;line-height:1.05}.timeline-header[data-astro-cid-vtufdqkg]>div[data-astro-cid-vtufdqkg] p[data-astro-cid-vtufdqkg],.timeline-count[data-astro-cid-vtufdqkg]{margin-top:3px;color:var(--muted);font-size:.78rem}.timeline-count[data-astro-cid-vtufdqkg]{flex:0 0 auto}.timeline-count[data-astro-cid-vtufdqkg] strong[data-astro-cid-vtufdqkg]{color:var(--ink);font-family:DM Mono,ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:600}.timeline-chart-wrap[data-astro-cid-vtufdqkg]{padding:10px 16px 8px;overflow-x:auto}.timeline-chart[data-astro-cid-vtufdqkg]{display:block;width:100%;min-width:680px;height:auto}.timeline-axis[data-astro-cid-vtufdqkg],.timeline-tick[data-astro-cid-vtufdqkg] line[data-astro-cid-vtufdqkg]{stroke:var(--line-strong);stroke-width:1.2}.timeline-tick[data-astro-cid-vtufdqkg] text[data-astro-cid-vtufdqkg]{fill:var(--muted);font-family:DM Mono,ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;text-anchor:middle}.timeline-point[data-astro-cid-vtufdqkg]{cursor:pointer;outline:none;transition:opacity .12s ease}.timeline-point-shape[data-astro-cid-vtufdqkg]{stroke:var(--panel);stroke-width:2;transform-box:fill-box;transform-origin:center;transition:transform .12s ease,stroke-width .12s ease}.timeline-point[data-astro-cid-vtufdqkg]:hover .timeline-point-shape[data-astro-cid-vtufdqkg],.timeline-point[data-astro-cid-vtufdqkg]:focus-visible .timeline-point-shape[data-astro-cid-vtufdqkg]{stroke:var(--ink);stroke-width:2.5;transform:scale(1.22)}.timeline-point[data-astro-cid-vtufdqkg].is-filtered-out{opacity:.16}.timeline-point[data-astro-cid-vtufdqkg].is-filtered-out:hover,.timeline-point[data-astro-cid-vtufdqkg].is-filtered-out:focus-visible{opacity:.55}.timeline-tooltip[data-astro-cid-vtufdqkg]{position:fixed;z-index:120;display:grid;gap:2px;width:max-content;max-width:min(19rem,calc(100vw - 24px));padding:.55rem .65rem;transform:translate(-50%,calc(-100% - .55rem));border:1px solid var(--ink);border-left-width:4px;border-radius:8px;background:var(--ink);color:var(--panel);font-size:.72rem;font-weight:600;line-height:1.2;pointer-events:none;text-align:left}.timeline-tooltip[data-astro-cid-vtufdqkg][hidden]{display:none}.timeline-tooltip[data-astro-cid-vtufdqkg] strong[data-astro-cid-vtufdqkg]{color:var(--panel);font-size:.78rem}.timeline-tooltip[data-astro-cid-vtufdqkg] span[data-astro-cid-vtufdqkg]{color:#f4f0ebc7;font-weight:500}@media(max-width:760px){.timeline-header[data-astro-cid-vtufdqkg]{display:grid;align-items:start}}
+</style>
+<link rel="stylesheet" href="../_astro/models.EXkb69u7.css"></head> <body> <header class="site-nav"> <nav aria-label="Primary"> <a class="brand" href="../leadboard/"> <img class="brand-icon" src="../whar-arena-icon.png" width="64" height="36" alt="" aria-hidden="true"> <span>HARena</span> </a> <div class="site-tabs" role="tablist" aria-label="HARena sections" style="display:inline-flex;justify-self:center;gap:8px;padding:0;border:0;background:transparent;box-shadow:none;"> <a class="site-tab" href="../leadboard/" role="tab" aria-selected="false" style="position:relative;display:inline-flex;min-height:40px;align-items:center;justify-content:center;border:1px solid transparent;border-radius:999px;background:transparent;box-shadow:none;padding:0 14px;font-size:0.88rem;font-weight:600;line-height:1;text-decoration:none;color:var(--muted-strong);"> Leaderboard </a><a class="site-tab is-active" href="./" role="tab" aria-selected="true" aria-current="page" style="position:relative;display:inline-flex;min-height:40px;align-items:center;justify-content:center;border:1px solid transparent;border-radius:999px;background:transparent;box-shadow:none;padding:0 14px;font-size:0.88rem;font-weight:600;line-height:1;text-decoration:none;color:var(--ink);"> Models </a><a class="site-tab" href="../datasets/" role="tab" aria-selected="false" style="position:relative;display:inline-flex;min-height:40px;align-items:center;justify-content:center;border:1px solid transparent;border-radius:999px;background:transparent;box-shadow:none;padding:0 14px;font-size:0.88rem;font-weight:600;line-height:1;text-decoration:none;color:var(--muted-strong);"> Datasets </a><a class="site-tab" href="../contribute/" role="tab" aria-selected="false" style="position:relative;display:inline-flex;min-height:40px;align-items:center;justify-content:center;border:1px solid transparent;border-radius:999px;background:transparent;box-shadow:none;padding:0 14px;font-size:0.88rem;font-weight:600;line-height:1;text-decoration:none;color:var(--muted-strong);"> Contribute </a> </div> </nav> </header>  <main class="page-shell" data-astro-cid-4qsg7pld> <section class="page-intro" aria-labelledby="models-heading" data-astro-cid-4qsg7pld> <h1 id="models-heading" data-astro-cid-4qsg7pld>Models</h1> <p data-astro-cid-4qsg7pld>Model catalog for the static HARena paper snapshot.</p> </section> <section class="page-meta" aria-label="Models summary" data-astro-cid-4qsg7pld> <dl class="benchmark-meta" data-astro-cid-4qsg7pld> <div data-astro-cid-4qsg7pld> <span class="meta-icon" aria-hidden="true" data-astro-cid-4qsg7pld> <svg viewBox="0 0 24 24" data-astro-cid-4qsg7pld> <path d="M7 3v3M17 3v3M4.5 9h15M6.5 5h11a2 2 0 0 1 2 2v10.5a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" data-astro-cid-4qsg7pld></path> </svg>    </span> <dt data-astro-cid-4qsg7pld>Snapshot</dt> <dd data-astro-cid-4qsg7pld> <time datetime="2026-05-01" data-astro-cid-4qsg7pld>May 1, 2026</time> </dd> </div><div data-astro-cid-4qsg7pld> <span class="meta-icon" aria-hidden="true" data-astro-cid-4qsg7pld>   <svg viewBox="0 0 24 24" data-astro-cid-4qsg7pld> <path d="M9 8h6v6H9zM9 3v3M15 3v3M9 16v3M15 16v3M3 9h3M3 13h3M18 9h3M18 13h3M11 10h2v2h-2z" data-astro-cid-4qsg7pld></path> </svg>  </span> <dt data-astro-cid-4qsg7pld>Models</dt> <dd data-astro-cid-4qsg7pld> 17 </dd> </div> </dl> </section>  <section class="timeline-panel" data-release-timeline aria-labelledby="model-timeline-title" data-astro-cid-vtufdqkg> <div class="timeline-header" data-astro-cid-vtufdqkg> <div data-astro-cid-vtufdqkg> <h2 id="model-timeline-title" data-astro-cid-vtufdqkg>Release Timeline</h2> </div> <p class="timeline-count" aria-live="polite" data-astro-cid-vtufdqkg> <strong data-timeline-visible-count data-astro-cid-vtufdqkg>14</strong>/14 dated models </p> </div> <div class="timeline-chart-wrap" data-astro-cid-vtufdqkg> <svg class="timeline-chart" viewBox="0 0 1000 180" role="img" aria-label="model releases from 2015 to 2025" data-astro-cid-vtufdqkg> <line class="timeline-axis" x1="50" y1="132" x2="970" y2="132" data-astro-cid-vtufdqkg></line> <g class="timeline-tick" data-astro-cid-vtufdqkg> <line x1="50" y1="132" x2="50" y2="138" data-astro-cid-vtufdqkg></line> <text x="50" y="157" data-astro-cid-vtufdqkg>2015</text> </g><g class="timeline-tick" data-astro-cid-vtufdqkg> <line x1="142" y1="132" x2="142" y2="138" data-astro-cid-vtufdqkg></line>  </g><g class="timeline-tick" data-astro-cid-vtufdqkg> <line x1="234" y1="132" x2="234" y2="138" data-astro-cid-vtufdqkg></line> <text x="234" y="157" data-astro-cid-vtufdqkg>2017</text> </g><g class="timeline-tick" data-astro-cid-vtufdqkg> <line x1="326" y1="132" x2="326" y2="138" data-astro-cid-vtufdqkg></line>  </g><g class="timeline-tick" data-astro-cid-vtufdqkg> <line x1="418" y1="132" x2="418" y2="138" data-astro-cid-vtufdqkg></line> <text x="418" y="157" data-astro-cid-vtufdqkg>2019</text> </g><g class="timeline-tick" data-astro-cid-vtufdqkg> <line x1="510" y1="132" x2="510" y2="138" data-astro-cid-vtufdqkg></line>  </g><g class="timeline-tick" data-astro-cid-vtufdqkg> <line x1="602" y1="132" x2="602" y2="138" data-astro-cid-vtufdqkg></line> <text x="602" y="157" data-astro-cid-vtufdqkg>2021</text> </g><g class="timeline-tick" data-astro-cid-vtufdqkg> <line x1="694" y1="132" x2="694" y2="138" data-astro-cid-vtufdqkg></line>  </g><g class="timeline-tick" data-astro-cid-vtufdqkg> <line x1="786" y1="132" x2="786" y2="138" data-astro-cid-vtufdqkg></line> <text x="786" y="157" data-astro-cid-vtufdqkg>2023</text> </g><g class="timeline-tick" data-astro-cid-vtufdqkg> <line x1="878" y1="132" x2="878" y2="138" data-astro-cid-vtufdqkg></line>  </g><g class="timeline-tick" data-astro-cid-vtufdqkg> <line x1="970" y1="132" x2="970" y2="138" data-astro-cid-vtufdqkg></line> <text x="970" y="157" data-astro-cid-vtufdqkg>2025</text> </g> <g class="timeline-point" transform="translate(50 114)" role="button" tabindex="0" data-timeline-point data-timeline-id="cnn_har" data-timeline-name="CNN-HAR" data-timeline-year="2015" data-timeline-color="#b35806" aria-label="CNN-HAR, released 2015. Open details." data-astro-cid-vtufdqkg> <path class="timeline-point-shape" d="M 0 -6.2 A 6.2 6.2 0 1 1 0 6.2 A 6.2 6.2 0 1 1 0 -6.2 Z" fill="#b35806" fill-rule="evenodd" data-astro-cid-vtufdqkg></path> </g><g class="timeline-point" transform="translate(142 114)" role="button" tabindex="0" data-timeline-point data-timeline-id="deepconv_lstm" data-timeline-name="DeepConvLSTM" data-timeline-year="2016" data-timeline-color="#9c6644" aria-label="DeepConvLSTM, released 2016. Open details." data-astro-cid-vtufdqkg> <path class="timeline-point-shape" d="M 0 7.8 C -1.3 6.4 -7.3 2.6 -7.3 -2.4 C -7.3 -6.7 -2 -8 0 -4.5 C 2 -8 7.3 -6.7 7.3 -2.4 C 7.3 2.6 1.3 6.4 0 7.8 Z" fill="#9c6644" fill-rule="evenodd" data-astro-cid-vtufdqkg></path> </g><g class="timeline-point" transform="translate(234 114)" role="button" tabindex="0" data-timeline-point data-timeline-id="lstms_ensemble" data-timeline-name="Guan-LSTM" data-timeline-year="2017" data-timeline-color="#b35806" aria-label="Guan-LSTM, released 2017. Open details." data-astro-cid-vtufdqkg> <path class="timeline-point-shape" d="M -8 -6 C -7 2.5 -4.5 8 0 8 C 4.5 8 7 2.5 8 -6 C 5 -1.2 2.2 1 0 1 C -2.2 1 -5 -1.2 -8 -6 Z" fill="#b35806" fill-rule="evenodd" data-astro-cid-vtufdqkg></path> </g><g class="timeline-point" transform="translate(326 114)" role="button" tabindex="0" data-timeline-point data-timeline-id="deepconv_lstm_attention" data-timeline-name="DeepConvLSTM-Attn" data-timeline-year="2018" data-timeline-color="#7f5539" aria-label="DeepConvLSTM-Attn, released 2018. Open details." data-astro-cid-vtufdqkg> <path class="timeline-point-shape" d="M 0 -9.03 L 2.66 -3.65 L 8.59 -2.79 L 4.3 1.39 L 5.3 7.3 L 0 4.52 L -5.3 7.3 L -4.3 1.39 L -8.59 -2.79 L -2.66 -3.65 Z" fill="#7f5539" fill-rule="evenodd" data-astro-cid-vtufdqkg></path> </g><g class="timeline-point" transform="translate(510 114)" role="button" tabindex="0" data-timeline-point data-timeline-id="sa_har" data-timeline-name="SA-HAR" data-timeline-year="2020" data-timeline-color="#2a9d8f" aria-label="SA-HAR, released 2020. Open details." data-astro-cid-vtufdqkg> <path class="timeline-point-shape" d="M 0 -8 C 2.7 -8 4.2 -6.3 4.2 -4.2 C 6.3 -4.2 8 -2.7 8 0 C 8 2.7 6.3 4.2 4.2 4.2 C 4.2 6.3 2.7 8 0 8 C -2.7 8 -4.2 6.3 -4.2 4.2 C -6.3 4.2 -8 2.7 -8 0 C -8 -2.7 -6.3 -4.2 -4.2 -4.2 C -4.2 -6.3 -2.7 -8 0 -8 Z" fill="#2a9d8f" fill-rule="evenodd" data-astro-cid-vtufdqkg></path> </g><g class="timeline-point" transform="translate(602 114)" role="button" tabindex="0" data-timeline-point data-timeline-id="attend_discriminate" data-timeline-name="Attend+Discriminate" data-timeline-year="2021" data-timeline-color="#b5179e" aria-label="Attend+Discriminate, released 2021. Open details." data-astro-cid-vtufdqkg> <path class="timeline-point-shape" d="M -4.8 -5.7 H 8 L 4.8 5.7 H -8 Z" fill="#b5179e" fill-rule="evenodd" data-astro-cid-vtufdqkg></path> </g><g class="timeline-point" transform="translate(602 94)" role="button" tabindex="0" data-timeline-point data-timeline-id="dana" data-timeline-name="DANA" data-timeline-year="2021" data-timeline-color="#c1121f" aria-label="DANA, released 2021. Open details." data-astro-cid-vtufdqkg> <path class="timeline-point-shape" d="M 0 -7.1 L 5.55 -4.43 L 6.92 1.58 L 3.08 6.4 L -3.08 6.4 L -6.92 1.58 L -5.55 -4.43 Z" fill="#c1121f" fill-rule="evenodd" data-astro-cid-vtufdqkg></path> </g><g class="timeline-point" transform="translate(602 74)" role="button" tabindex="0" data-timeline-point data-timeline-id="deepconv_lstm_iswc" data-timeline-name="DeepConvShallowLSTM" data-timeline-year="2021" data-timeline-color="#6d597a" aria-label="DeepConvShallowLSTM, released 2021. Open details." data-astro-cid-vtufdqkg> <path class="timeline-point-shape" d="M -8 5 A 8 8 0 0 1 8 5 H 4.2 A 4.2 4.2 0 0 0 -4.2 5 Z" fill="#6d597a" fill-rule="evenodd" data-astro-cid-vtufdqkg></path> </g><g class="timeline-point" transform="translate(694 114)" role="button" tabindex="0" data-timeline-point data-timeline-id="dynamic_whar" data-timeline-name="DynamicWHAR" data-timeline-year="2022" data-timeline-color="#e76f51" aria-label="DynamicWHAR, released 2022. Open details." data-astro-cid-vtufdqkg> <path class="timeline-point-shape" d="M 0 -4.8 A 8 4.8 0 1 1 0 4.8 A 8 4.8 0 1 1 0 -4.8 Z" fill="#e76f51" fill-rule="evenodd" data-astro-cid-vtufdqkg></path> </g><g class="timeline-point" transform="translate(694 94)" role="button" tabindex="0" data-timeline-point data-timeline-id="tinyhar" data-timeline-name="TinyHAR" data-timeline-year="2022" data-timeline-color="#6d597a" aria-label="TinyHAR, released 2022. Open details." data-astro-cid-vtufdqkg> <path class="timeline-point-shape" d="M 0 -8.04 L 8.04 6.89 L -8.04 6.89 Z" fill="#6d597a" fill-rule="evenodd" data-astro-cid-vtufdqkg></path> </g><g class="timeline-point" transform="translate(694 74)" role="button" tabindex="0" data-timeline-point data-timeline-id="triple_cross_domain_attention" data-timeline-name="Triple-Cross-Attn" data-timeline-year="2022" data-timeline-color="#2a9d8f" aria-label="Triple-Cross-Attn, released 2022. Open details." data-astro-cid-vtufdqkg> <path class="timeline-point-shape" d="M 0 -7.11 L 6.76 -2.19 L 4.17 5.74 L -4.17 5.74 L -6.76 -2.19 Z" fill="#2a9d8f" fill-rule="evenodd" data-astro-cid-vtufdqkg></path> </g><g class="timeline-point" transform="translate(786 114)" role="button" tabindex="0" data-timeline-point data-timeline-id="mlp_mixer" data-timeline-name="MLP-Mixer" data-timeline-year="2023" data-timeline-color="#457b9d" aria-label="MLP-Mixer, released 2023. Open details." data-astro-cid-vtufdqkg> <path class="timeline-point-shape" d="M -2.5 7.5 V 0.5 H -7 L 0 -8 L 7 0.5 H 2.5 V 7.5 Z" fill="#457b9d" fill-rule="evenodd" data-astro-cid-vtufdqkg></path> </g><g class="timeline-point" transform="translate(878 114)" role="button" tabindex="0" data-timeline-point data-timeline-id="mlp_har" data-timeline-name="MLP-HAR" data-timeline-year="2024" data-timeline-color="#4361ee" aria-label="MLP-HAR, released 2024. Open details." data-astro-cid-vtufdqkg> <path class="timeline-point-shape" d="M -8 -5 L -4 3 L 0 -3 L 4 3 L 8 -5 L 6.2 6 H -6.2 Z" fill="#4361ee" fill-rule="evenodd" data-astro-cid-vtufdqkg></path> </g><g class="timeline-point" transform="translate(970 114)" role="button" tabindex="0" data-timeline-point data-timeline-id="tinierhar" data-timeline-name="TinierHAR" data-timeline-year="2025" data-timeline-color="#1d5f91" aria-label="TinierHAR, released 2025. Open details." data-astro-cid-vtufdqkg> <path class="timeline-point-shape" d="M -8 -4.2 H 8 V 4.2 H -8 Z" fill="#1d5f91" fill-rule="evenodd" data-astro-cid-vtufdqkg></path> </g> </svg> </div> <div class="timeline-tooltip" data-timeline-tooltip role="tooltip" hidden data-astro-cid-vtufdqkg> <strong data-timeline-tooltip-name data-astro-cid-vtufdqkg></strong> <span data-timeline-tooltip-year data-astro-cid-vtufdqkg></span> </div> </section> <script type="module">document.querySelectorAll("[data-release-timeline]").forEach(n=>{if(n.dataset.timelineBound==="true")return;n.dataset.timelineBound="true";const o=n.querySelector("[data-timeline-tooltip]"),l=o?.querySelector("[data-timeline-tooltip-name]"),d=o?.querySelector("[data-timeline-tooltip-year]");if(!o||!l||!d)return;document.body.append(o);const i=(e,t)=>{const a=o.offsetWidth/2,s=Math.min(Math.max(e,a+8),window.innerWidth-a-8);o.style.left=`${s}px`,o.style.top=`${t}px`},r=(e,t,a)=>{l.textContent=e.dataset.timelineName??"",d.textContent=`Released ${e.dataset.timelineYear??"year unknown"}`,o.style.borderLeftColor=e.dataset.timelineColor??"var(--panel)",o.hidden=!1,i(t,a)};n.querySelectorAll("[data-timeline-point]").forEach(e=>{e.addEventListener("mouseenter",t=>{r(e,t.clientX,t.clientY)}),e.addEventListener("mousemove",t=>{i(t.clientX,t.clientY)}),e.addEventListener("mouseleave",()=>{o.hidden=!0}),e.addEventListener("focus",()=>{const t=e.getBoundingClientRect();r(e,t.left+t.width/2,t.top)}),e.addEventListener("blur",()=>{o.hidden=!0})})});</script> <section class="arena-panel filter-panel" data-astro-cid-wmd6b3pc> <div class="panel-header" data-astro-cid-wmd6b3pc> <h2 data-astro-cid-wmd6b3pc>Filters</h2> <button type="button" class="filter-reset-all" data-reset-all-filters data-astro-cid-wmd6b3pc>Reset all</button> </div> <div class="filter-content" data-astro-cid-wmd6b3pc> <div class="model-filter" data-astro-cid-wmd6b3pc> <span class="filter-label" data-astro-cid-wmd6b3pc>Components</span> <details data-astro-cid-wmd6b3pc> <summary aria-label="Components" data-astro-cid-wmd6b3pc> <span data-filter-summary="architecture" data-astro-cid-wmd6b3pc>All components</span> <span class="filter-count" data-filter-count="architecture" data-astro-cid-wmd6b3pc> 7/7 </span> </summary> <div class="filter-menu" data-astro-cid-wmd6b3pc> <div class="filter-actions component-actions" aria-label="Component selection actions" data-astro-cid-wmd6b3pc> <button type="button" data-filter-action="all-architecture" data-astro-cid-wmd6b3pc>All</button> <button type="button" data-filter-action="none-architecture" data-astro-cid-wmd6b3pc>None</button> <label class="component-match-toggle" data-astro-cid-wmd6b3pc> <input type="checkbox" data-component-match-exact data-astro-cid-wmd6b3pc> <span data-astro-cid-wmd6b3pc>Exact combination</span> </label> </div> <div class="filter-options" data-astro-cid-wmd6b3pc> <div class="filter-option" data-filter-option="architecture" data-astro-cid-wmd6b3pc> <input id="model-architecture-filter-attn" type="checkbox" value="attn" data-filter-kind="architecture" checked data-astro-cid-wmd6b3pc> <label class="filter-check" for="model-architecture-filter-attn" aria-label="Toggle Attention" data-astro-cid-wmd6b3pc></label> <label class="filter-name-toggle" for="model-architecture-filter-attn" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Attention <span class="pill-info" tabindex="0" title="Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention." data-tip="Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention." aria-label="Definition: Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </label> </div><div class="filter-option" data-filter-option="architecture" data-astro-cid-wmd6b3pc> <input id="model-architecture-filter-cnn" type="checkbox" value="cnn" data-filter-kind="architecture" checked data-astro-cid-wmd6b3pc> <label class="filter-check" for="model-architecture-filter-cnn" aria-label="Toggle Convolutional" data-astro-cid-wmd6b3pc></label> <label class="filter-name-toggle" for="model-architecture-filter-cnn" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Convolutional <span class="pill-info" tabindex="0" title="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-tip="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." aria-label="Definition: Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </label> </div><div class="filter-option" data-filter-option="architecture" data-astro-cid-wmd6b3pc> <input id="model-architecture-filter-dense" type="checkbox" value="dense" data-filter-kind="architecture" checked data-astro-cid-wmd6b3pc> <label class="filter-check" for="model-architecture-filter-dense" aria-label="Toggle Dense" data-astro-cid-wmd6b3pc></label> <label class="filter-name-toggle" for="model-architecture-filter-dense" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Dense <span class="pill-info" tabindex="0" title="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-tip="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." aria-label="Definition: Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </label> </div><div class="filter-option" data-filter-option="architecture" data-astro-cid-wmd6b3pc> <input id="model-architecture-filter-graph" type="checkbox" value="graph" data-filter-kind="architecture" checked data-astro-cid-wmd6b3pc> <label class="filter-check" for="model-architecture-filter-graph" aria-label="Toggle Graph" data-astro-cid-wmd6b3pc></label> <label class="filter-name-toggle" for="model-architecture-filter-graph" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Graph <span class="pill-info" tabindex="0" title="Represents sensors, channels, or body parts as connected nodes and learns from their relationships." data-tip="Represents sensors, channels, or body parts as connected nodes and learns from their relationships." aria-label="Definition: Represents sensors, channels, or body parts as connected nodes and learns from their relationships." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </label> </div><div class="filter-option" data-filter-option="architecture" data-astro-cid-wmd6b3pc> <input id="model-architecture-filter-fe" type="checkbox" value="fe" data-filter-kind="architecture" checked data-astro-cid-wmd6b3pc> <label class="filter-check" for="model-architecture-filter-fe" aria-label="Toggle Handcrafted" data-astro-cid-wmd6b3pc></label> <label class="filter-name-toggle" for="model-architecture-filter-fe" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Handcrafted <span class="pill-info" tabindex="0" title="Uses manually designed statistical, temporal, or frequency features before classification instead of learning every representation end to end." data-tip="Uses manually designed statistical, temporal, or frequency features before classification instead of learning every representation end to end." aria-label="Definition: Uses manually designed statistical, temporal, or frequency features before classification instead of learning every representation end to end." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </label> </div><div class="filter-option" data-filter-option="architecture" data-astro-cid-wmd6b3pc> <input id="model-architecture-filter-rnn" type="checkbox" value="rnn" data-filter-kind="architecture" checked data-astro-cid-wmd6b3pc> <label class="filter-check" for="model-architecture-filter-rnn" aria-label="Toggle Recurrent" data-astro-cid-wmd6b3pc></label> <label class="filter-name-toggle" for="model-architecture-filter-rnn" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Recurrent <span class="pill-info" tabindex="0" title="Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." data-tip="Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." aria-label="Definition: Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </label> </div><div class="filter-option" data-filter-option="architecture" data-astro-cid-wmd6b3pc> <input id="model-architecture-filter-spec" type="checkbox" value="spec" data-filter-kind="architecture" checked data-astro-cid-wmd6b3pc> <label class="filter-check" for="model-architecture-filter-spec" aria-label="Toggle Spectral" data-astro-cid-wmd6b3pc></label> <label class="filter-name-toggle" for="model-architecture-filter-spec" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Spectral <span class="pill-info" tabindex="0" title="Transforms signals into frequency-domain representations or otherwise processes spectral features before classification." data-tip="Transforms signals into frequency-domain representations or otherwise processes spectral features before classification." aria-label="Definition: Transforms signals into frequency-domain representations or otherwise processes spectral features before classification." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </label> </div> </div> </div> </details> </div> <div class="model-filter" data-astro-cid-wmd6b3pc> <span class="filter-label" data-astro-cid-wmd6b3pc>Framework</span> <details data-astro-cid-wmd6b3pc> <summary aria-label="Framework" data-astro-cid-wmd6b3pc> <span data-filter-summary="framework" data-astro-cid-wmd6b3pc>All frameworks</span> <span class="filter-count" data-filter-count="framework" data-astro-cid-wmd6b3pc> 2/2 </span> </summary> <div class="filter-menu" data-astro-cid-wmd6b3pc> <div class="filter-actions" aria-label="Framework selection actions" data-astro-cid-wmd6b3pc> <button type="button" data-filter-action="all-framework" data-astro-cid-wmd6b3pc>All</button> <button type="button" data-filter-action="none-framework" data-astro-cid-wmd6b3pc>None</button> </div> <div class="filter-options" data-astro-cid-wmd6b3pc> <div class="filter-option" data-filter-option="framework" data-astro-cid-wmd6b3pc> <input id="model-framework-filter-torch" type="checkbox" value="torch" data-filter-kind="framework" checked data-astro-cid-wmd6b3pc> <label class="filter-check" for="model-framework-filter-torch" aria-label="Toggle PyTorch" data-astro-cid-wmd6b3pc></label> <label class="filter-name-toggle" for="model-framework-filter-torch" data-astro-cid-wmd6b3pc> PyTorch </label> </div><div class="filter-option" data-filter-option="framework" data-astro-cid-wmd6b3pc> <input id="model-framework-filter-sklearn" type="checkbox" value="sklearn" data-filter-kind="framework" checked data-astro-cid-wmd6b3pc> <label class="filter-check" for="model-framework-filter-sklearn" aria-label="Toggle scikit-learn" data-astro-cid-wmd6b3pc></label> <label class="filter-name-toggle" for="model-framework-filter-sklearn" data-astro-cid-wmd6b3pc> scikit-learn </label> </div> </div> </div> </details> </div> <div class="model-filter range-model-filter" data-astro-cid-wmd6b3pc> <span class="filter-label" data-astro-cid-wmd6b3pc>Params</span> <details data-astro-cid-wmd6b3pc> <summary aria-label="Params" data-astro-cid-wmd6b3pc> <span data-range-summary="params" data-astro-cid-wmd6b3pc>0 - 1.2M</span> <span class="filter-count" data-range-count="params" data-astro-cid-wmd6b3pc>range</span> </summary> <div class="filter-menu range-menu" data-astro-cid-wmd6b3pc> <div class="range-values" aria-live="polite" data-astro-cid-wmd6b3pc> <span data-astro-cid-wmd6b3pc>Min <strong data-range-value="params-min" data-astro-cid-wmd6b3pc>0</strong></span> <span data-astro-cid-wmd6b3pc>Max <strong data-range-value="params-max" data-astro-cid-wmd6b3pc>1.2M</strong></span> </div> <div class="dual-range" data-range-track="params" data-astro-cid-wmd6b3pc> <input id="model-params-min" type="range" min="0" max="1200000" step="1000" value="0" aria-label="Minimum parameters" data-range-kind="params" data-range-bound="min" data-range-default="0" data-astro-cid-wmd6b3pc> <input id="model-params-max" type="range" min="0" max="1200000" step="1000" value="1200000" aria-label="Maximum parameters" data-range-kind="params" data-range-bound="max" data-range-default="1200000" data-astro-cid-wmd6b3pc> </div> <button type="button" class="range-reset" data-range-reset="params" data-astro-cid-wmd6b3pc>Reset</button> </div> </details> </div> <div class="model-filter range-model-filter" data-astro-cid-wmd6b3pc> <span class="filter-label" data-astro-cid-wmd6b3pc>FLOPs</span> <details data-astro-cid-wmd6b3pc> <summary aria-label="FLOPs" data-astro-cid-wmd6b3pc> <span data-range-summary="flops" data-astro-cid-wmd6b3pc>0 - 210M</span> <span class="filter-count" data-range-count="flops" data-astro-cid-wmd6b3pc>range</span> </summary> <div class="filter-menu range-menu" data-astro-cid-wmd6b3pc> <div class="range-values" aria-live="polite" data-astro-cid-wmd6b3pc> <span data-astro-cid-wmd6b3pc>Min <strong data-range-value="flops-min" data-astro-cid-wmd6b3pc>0</strong></span> <span data-astro-cid-wmd6b3pc>Max <strong data-range-value="flops-max" data-astro-cid-wmd6b3pc>210M</strong></span> </div> <div class="dual-range" data-range-track="flops" data-astro-cid-wmd6b3pc> <input id="model-flops-min" type="range" min="0" max="210000000" step="100000" value="0" aria-label="Minimum FLOPs" data-range-kind="flops" data-range-bound="min" data-range-default="0" data-astro-cid-wmd6b3pc> <input id="model-flops-max" type="range" min="0" max="210000000" step="100000" value="210000000" aria-label="Maximum FLOPs" data-range-kind="flops" data-range-bound="max" data-range-default="210000000" data-astro-cid-wmd6b3pc> </div> <button type="button" class="range-reset" data-range-reset="flops" data-astro-cid-wmd6b3pc>Reset</button> </div> </details> </div> </div> </section> <section class="arena-panel" data-astro-cid-wmd6b3pc> <div class="panel-header" data-astro-cid-wmd6b3pc> <h2 data-astro-cid-wmd6b3pc><span data-visible-model-count data-astro-cid-wmd6b3pc>17</span> Models</h2> </div> <div class="table-wrap" data-astro-cid-wmd6b3pc> <table class="catalog-table" data-astro-cid-wmd6b3pc> <thead data-astro-cid-wmd6b3pc> <tr data-astro-cid-wmd6b3pc> <th data-astro-cid-wmd6b3pc>Name</th> <th aria-sort="descending" data-astro-cid-wmd6b3pc> <button class="sort-button is-active" type="button" data-sort-key="year" data-sort-type="number" data-sort-default="desc" data-sort-direction="desc" data-astro-cid-wmd6b3pc>
+Year
+<span class="sort-arrows" aria-hidden="true" data-astro-cid-wmd6b3pc> <span class="sort-arrow-up" data-astro-cid-wmd6b3pc></span> <span class="sort-arrow-down" data-astro-cid-wmd6b3pc></span> </span> </button> </th> <th data-astro-cid-wmd6b3pc>Components</th> <th aria-sort="none" data-astro-cid-wmd6b3pc> <button class="sort-button" type="button" data-sort-key="framework" data-sort-type="string" data-sort-default="asc" data-astro-cid-wmd6b3pc>
+Framework
+<span class="sort-arrows" aria-hidden="true" data-astro-cid-wmd6b3pc> <span class="sort-arrow-up" data-astro-cid-wmd6b3pc></span> <span class="sort-arrow-down" data-astro-cid-wmd6b3pc></span> </span> </button> </th> <th aria-sort="none" data-astro-cid-wmd6b3pc> <button class="sort-button" type="button" data-sort-key="params" data-sort-type="number" data-sort-default="asc" data-astro-cid-wmd6b3pc>
+Params
+<span class="sort-arrows" aria-hidden="true" data-astro-cid-wmd6b3pc> <span class="sort-arrow-up" data-astro-cid-wmd6b3pc></span> <span class="sort-arrow-down" data-astro-cid-wmd6b3pc></span> </span> </button> </th> <th aria-sort="none" data-astro-cid-wmd6b3pc> <button class="sort-button" type="button" data-sort-key="flops" data-sort-type="number" data-sort-default="asc" data-astro-cid-wmd6b3pc>
+FLOPs
+<span class="sort-arrows" aria-hidden="true" data-astro-cid-wmd6b3pc> <span class="sort-arrow-up" data-astro-cid-wmd6b3pc></span> <span class="sort-arrow-down" data-astro-cid-wmd6b3pc></span> </span> </button> </th> </tr> </thead> <tbody data-model-table-body data-astro-cid-wmd6b3pc> <tr data-model-row data-model-id="tinierhar" data-model-name="TinierHAR" data-model-paper-title="TinierHAR: Towards Ultra-Lightweight Deep Learning Models for Efficient Human Activity Recognition on Edge Devices" data-model-paper-url="https://arxiv.org/pdf/2507.07949" data-model-year="2025" data-model-params="7.3k" data-model-flops="892.3k" data-model-authors="[]" data-architecture-parts="attn cnn dense rnn" data-framework="torch" data-params-value="7300" data-flops-value="892300" data-sort-index="0" data-sort-year="2025" data-sort-framework="PyTorch" data-sort-params="7300" data-sort-flops="892300" tabindex="0" aria-label="Open model details: TinierHAR" data-astro-cid-wmd6b3pc> <td class="name-cell" data-astro-cid-wmd6b3pc> <span class="name-title" data-astro-cid-wmd6b3pc> <svg class="entity-marker" width="15" height="15" viewBox="-10 -10 20 20" aria-hidden="true" focusable="false" data-astro-cid-njtl7dsr> <path d="M -8 -4.2 H 8 V 4.2 H -8 Z" fill="#1d5f91" fill-rule="evenodd" data-astro-cid-njtl7dsr></path> </svg> <strong data-astro-cid-wmd6b3pc>TinierHAR</strong> </span> <span class="name-meta" data-astro-cid-wmd6b3pc>Affiliations withheld during review</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>2025</strong> </td> <td data-astro-cid-wmd6b3pc> <div class="pill-list" aria-label="Components: Attention Convolutional Dense Recurrent" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Attention <span class="pill-info" tabindex="0" title="Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention." data-tip="Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention." aria-label="Definition: Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Convolutional <span class="pill-info" tabindex="0" title="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-tip="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." aria-label="Definition: Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Dense <span class="pill-info" tabindex="0" title="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-tip="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." aria-label="Definition: Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Recurrent <span class="pill-info" tabindex="0" title="Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." data-tip="Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." aria-label="Definition: Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </div> </td> <td data-astro-cid-wmd6b3pc> <span class="mono" data-astro-cid-wmd6b3pc>PyTorch</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>7.3k</strong> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>892.3k</strong> </td> </tr><tr data-model-row data-model-id="mlp_har" data-model-name="MLP-HAR" data-model-paper-title="MLP-HAR: Boosting Performance and Efficiency of HAR Models on Edge Devices with Purely Fully Connected Layers" data-model-paper-url="https://dl.acm.org/doi/pdf/10.1145/3675095.3676624" data-model-year="2024" data-model-params="157.7k" data-model-flops="2.3M" data-model-authors="[]" data-architecture-parts="dense spec" data-framework="torch" data-params-value="157700" data-flops-value="2300000" data-sort-index="1" data-sort-year="2024" data-sort-framework="PyTorch" data-sort-params="157700" data-sort-flops="2300000" tabindex="0" aria-label="Open model details: MLP-HAR" data-astro-cid-wmd6b3pc> <td class="name-cell" data-astro-cid-wmd6b3pc> <span class="name-title" data-astro-cid-wmd6b3pc> <svg class="entity-marker" width="15" height="15" viewBox="-10 -10 20 20" aria-hidden="true" focusable="false" data-astro-cid-njtl7dsr> <path d="M -8 -5 L -4 3 L 0 -3 L 4 3 L 8 -5 L 6.2 6 H -6.2 Z" fill="#4361ee" fill-rule="evenodd" data-astro-cid-njtl7dsr></path> </svg> <strong data-astro-cid-wmd6b3pc>MLP-HAR</strong> </span> <span class="name-meta" data-astro-cid-wmd6b3pc>Affiliations withheld during review</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>2024</strong> </td> <td data-astro-cid-wmd6b3pc> <div class="pill-list" aria-label="Components: Dense Spectral" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Dense <span class="pill-info" tabindex="0" title="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-tip="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." aria-label="Definition: Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Spectral <span class="pill-info" tabindex="0" title="Transforms signals into frequency-domain representations or otherwise processes spectral features before classification." data-tip="Transforms signals into frequency-domain representations or otherwise processes spectral features before classification." aria-label="Definition: Transforms signals into frequency-domain representations or otherwise processes spectral features before classification." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </div> </td> <td data-astro-cid-wmd6b3pc> <span class="mono" data-astro-cid-wmd6b3pc>PyTorch</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>157.7k</strong> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>2.3M</strong> </td> </tr><tr data-model-row data-model-id="mlp_mixer" data-model-name="MLP-Mixer" data-model-paper-title="MLPs Are All You Need for Human Activity Recognition" data-model-paper-url="https://www.mdpi.com/2076-3417/13/20/11154/pdf" data-model-year="2023" data-model-params="605.9k" data-model-flops="87.5M" data-model-authors="[]" data-architecture-parts="dense" data-framework="torch" data-params-value="605900" data-flops-value="87500000" data-sort-index="2" data-sort-year="2023" data-sort-framework="PyTorch" data-sort-params="605900" data-sort-flops="87500000" tabindex="0" aria-label="Open model details: MLP-Mixer" data-astro-cid-wmd6b3pc> <td class="name-cell" data-astro-cid-wmd6b3pc> <span class="name-title" data-astro-cid-wmd6b3pc> <svg class="entity-marker" width="15" height="15" viewBox="-10 -10 20 20" aria-hidden="true" focusable="false" data-astro-cid-njtl7dsr> <path d="M -2.5 7.5 V 0.5 H -7 L 0 -8 L 7 0.5 H 2.5 V 7.5 Z" fill="#457b9d" fill-rule="evenodd" data-astro-cid-njtl7dsr></path> </svg> <strong data-astro-cid-wmd6b3pc>MLP-Mixer</strong> </span> <span class="name-meta" data-astro-cid-wmd6b3pc>Affiliations withheld during review</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>2023</strong> </td> <td data-astro-cid-wmd6b3pc> <div class="pill-list" aria-label="Components: Dense" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Dense <span class="pill-info" tabindex="0" title="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-tip="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." aria-label="Definition: Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </div> </td> <td data-astro-cid-wmd6b3pc> <span class="mono" data-astro-cid-wmd6b3pc>PyTorch</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>605.9k</strong> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>87.5M</strong> </td> </tr><tr data-model-row data-model-id="dynamic_whar" data-model-name="DynamicWHAR" data-model-paper-title="Towards a Dynamic Inter-Sensor Correlations Learning Framework for Multi-Sensor-Based Wearable Human Activity Recognition" data-model-paper-url="https://dl.acm.org/doi/pdf/10.1145/3550331" data-model-year="2022" data-model-params="1.12M" data-model-flops="14.7M" data-model-authors="[]" data-architecture-parts="cnn dense graph" data-framework="torch" data-params-value="1120000" data-flops-value="14700000" data-sort-index="3" data-sort-year="2022" data-sort-framework="PyTorch" data-sort-params="1120000" data-sort-flops="14700000" tabindex="0" aria-label="Open model details: DynamicWHAR" data-astro-cid-wmd6b3pc> <td class="name-cell" data-astro-cid-wmd6b3pc> <span class="name-title" data-astro-cid-wmd6b3pc> <svg class="entity-marker" width="15" height="15" viewBox="-10 -10 20 20" aria-hidden="true" focusable="false" data-astro-cid-njtl7dsr> <path d="M 0 -4.8 A 8 4.8 0 1 1 0 4.8 A 8 4.8 0 1 1 0 -4.8 Z" fill="#e76f51" fill-rule="evenodd" data-astro-cid-njtl7dsr></path> </svg> <strong data-astro-cid-wmd6b3pc>DynamicWHAR</strong> </span> <span class="name-meta" data-astro-cid-wmd6b3pc>Affiliations withheld during review</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>2022</strong> </td> <td data-astro-cid-wmd6b3pc> <div class="pill-list" aria-label="Components: Convolutional Dense Graph" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Convolutional <span class="pill-info" tabindex="0" title="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-tip="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." aria-label="Definition: Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Dense <span class="pill-info" tabindex="0" title="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-tip="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." aria-label="Definition: Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Graph <span class="pill-info" tabindex="0" title="Represents sensors, channels, or body parts as connected nodes and learns from their relationships." data-tip="Represents sensors, channels, or body parts as connected nodes and learns from their relationships." aria-label="Definition: Represents sensors, channels, or body parts as connected nodes and learns from their relationships." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </div> </td> <td data-astro-cid-wmd6b3pc> <span class="mono" data-astro-cid-wmd6b3pc>PyTorch</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>1.12M</strong> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>14.7M</strong> </td> </tr><tr data-model-row data-model-id="tinyhar" data-model-name="TinyHAR" data-model-paper-title="TinyHAR: A Lightweight Deep Learning Model Designed for Human Activity Recognition" data-model-paper-url="https://dl.acm.org/doi/pdf/10.1145/3544794.3558467" data-model-year="2022" data-model-params="159.1k" data-model-flops="9.3M" data-model-authors="[]" data-architecture-parts="attn cnn dense rnn" data-framework="torch" data-params-value="159100" data-flops-value="9300000" data-sort-index="4" data-sort-year="2022" data-sort-framework="PyTorch" data-sort-params="159100" data-sort-flops="9300000" tabindex="0" aria-label="Open model details: TinyHAR" data-astro-cid-wmd6b3pc> <td class="name-cell" data-astro-cid-wmd6b3pc> <span class="name-title" data-astro-cid-wmd6b3pc> <svg class="entity-marker" width="15" height="15" viewBox="-10 -10 20 20" aria-hidden="true" focusable="false" data-astro-cid-njtl7dsr> <path d="M 0 -8.04 L 8.04 6.89 L -8.04 6.89 Z" fill="#6d597a" fill-rule="evenodd" data-astro-cid-njtl7dsr></path> </svg> <strong data-astro-cid-wmd6b3pc>TinyHAR</strong> </span> <span class="name-meta" data-astro-cid-wmd6b3pc>Affiliations withheld during review</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>2022</strong> </td> <td data-astro-cid-wmd6b3pc> <div class="pill-list" aria-label="Components: Attention Convolutional Dense Recurrent" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Attention <span class="pill-info" tabindex="0" title="Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention." data-tip="Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention." aria-label="Definition: Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Convolutional <span class="pill-info" tabindex="0" title="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-tip="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." aria-label="Definition: Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Dense <span class="pill-info" tabindex="0" title="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-tip="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." aria-label="Definition: Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Recurrent <span class="pill-info" tabindex="0" title="Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." data-tip="Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." aria-label="Definition: Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </div> </td> <td data-astro-cid-wmd6b3pc> <span class="mono" data-astro-cid-wmd6b3pc>PyTorch</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>159.1k</strong> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>9.3M</strong> </td> </tr><tr data-model-row data-model-id="triple_cross_domain_attention" data-model-name="Triple-Cross-Attn" data-model-paper-title="Triple Cross-Domain Attention on Human Activity Recognition Using Wearable Sensors" data-model-paper-url="https://yinntag.github.io/publications/P3.pdf" data-model-year="2022" data-model-params="278.3k" data-model-flops="17.9M" data-model-authors="[]" data-architecture-parts="attn cnn dense" data-framework="torch" data-params-value="278300" data-flops-value="17900000" data-sort-index="5" data-sort-year="2022" data-sort-framework="PyTorch" data-sort-params="278300" data-sort-flops="17900000" tabindex="0" aria-label="Open model details: Triple-Cross-Attn" data-astro-cid-wmd6b3pc> <td class="name-cell" data-astro-cid-wmd6b3pc> <span class="name-title" data-astro-cid-wmd6b3pc> <svg class="entity-marker" width="15" height="15" viewBox="-10 -10 20 20" aria-hidden="true" focusable="false" data-astro-cid-njtl7dsr> <path d="M 0 -7.11 L 6.76 -2.19 L 4.17 5.74 L -4.17 5.74 L -6.76 -2.19 Z" fill="#2a9d8f" fill-rule="evenodd" data-astro-cid-njtl7dsr></path> </svg> <strong data-astro-cid-wmd6b3pc>Triple-Cross-Attn</strong> </span> <span class="name-meta" data-astro-cid-wmd6b3pc>Affiliations withheld during review</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>2022</strong> </td> <td data-astro-cid-wmd6b3pc> <div class="pill-list" aria-label="Components: Attention Convolutional Dense" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Attention <span class="pill-info" tabindex="0" title="Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention." data-tip="Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention." aria-label="Definition: Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Convolutional <span class="pill-info" tabindex="0" title="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-tip="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." aria-label="Definition: Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Dense <span class="pill-info" tabindex="0" title="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-tip="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." aria-label="Definition: Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </div> </td> <td data-astro-cid-wmd6b3pc> <span class="mono" data-astro-cid-wmd6b3pc>PyTorch</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>278.3k</strong> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>17.9M</strong> </td> </tr><tr data-model-row data-model-id="attend_discriminate" data-model-name="Attend+Discriminate" data-model-paper-title="Attend and Discriminate: Beyond the State-of-the-Art for Human Activity Recognition Using Wearable Sensors" data-model-paper-url="https://arxiv.org/pdf/2007.07172" data-model-year="2021" data-model-params="371.5k" data-model-flops="171.5M" data-model-authors="[]" data-architecture-parts="attn cnn dense rnn" data-framework="torch" data-params-value="371500" data-flops-value="171500000" data-sort-index="6" data-sort-year="2021" data-sort-framework="PyTorch" data-sort-params="371500" data-sort-flops="171500000" tabindex="0" aria-label="Open model details: Attend+Discriminate" data-astro-cid-wmd6b3pc> <td class="name-cell" data-astro-cid-wmd6b3pc> <span class="name-title" data-astro-cid-wmd6b3pc> <svg class="entity-marker" width="15" height="15" viewBox="-10 -10 20 20" aria-hidden="true" focusable="false" data-astro-cid-njtl7dsr> <path d="M -4.8 -5.7 H 8 L 4.8 5.7 H -8 Z" fill="#b5179e" fill-rule="evenodd" data-astro-cid-njtl7dsr></path> </svg> <strong data-astro-cid-wmd6b3pc>Attend+Discriminate</strong> </span> <span class="name-meta" data-astro-cid-wmd6b3pc>Affiliations withheld during review</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>2021</strong> </td> <td data-astro-cid-wmd6b3pc> <div class="pill-list" aria-label="Components: Attention Convolutional Dense Recurrent" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Attention <span class="pill-info" tabindex="0" title="Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention." data-tip="Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention." aria-label="Definition: Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Convolutional <span class="pill-info" tabindex="0" title="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-tip="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." aria-label="Definition: Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Dense <span class="pill-info" tabindex="0" title="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-tip="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." aria-label="Definition: Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Recurrent <span class="pill-info" tabindex="0" title="Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." data-tip="Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." aria-label="Definition: Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </div> </td> <td data-astro-cid-wmd6b3pc> <span class="mono" data-astro-cid-wmd6b3pc>PyTorch</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>371.5k</strong> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>171.5M</strong> </td> </tr><tr data-model-row data-model-id="dana" data-model-name="DANA" data-model-paper-title="DANA: Dimension-Adaptive Neural Architecture for Multivariate Sensor Data" data-model-paper-url="https://arxiv.org/pdf/2008.02397" data-model-year="2021" data-model-params="457.9k" data-model-flops="102.4M" data-model-authors="[]" data-architecture-parts="cnn dense rnn" data-framework="torch" data-params-value="457900" data-flops-value="102400000" data-sort-index="7" data-sort-year="2021" data-sort-framework="PyTorch" data-sort-params="457900" data-sort-flops="102400000" tabindex="0" aria-label="Open model details: DANA" data-astro-cid-wmd6b3pc> <td class="name-cell" data-astro-cid-wmd6b3pc> <span class="name-title" data-astro-cid-wmd6b3pc> <svg class="entity-marker" width="15" height="15" viewBox="-10 -10 20 20" aria-hidden="true" focusable="false" data-astro-cid-njtl7dsr> <path d="M 0 -7.1 L 5.55 -4.43 L 6.92 1.58 L 3.08 6.4 L -3.08 6.4 L -6.92 1.58 L -5.55 -4.43 Z" fill="#c1121f" fill-rule="evenodd" data-astro-cid-njtl7dsr></path> </svg> <strong data-astro-cid-wmd6b3pc>DANA</strong> </span> <span class="name-meta" data-astro-cid-wmd6b3pc>Affiliations withheld during review</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>2021</strong> </td> <td data-astro-cid-wmd6b3pc> <div class="pill-list" aria-label="Components: Convolutional Dense Recurrent" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Convolutional <span class="pill-info" tabindex="0" title="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-tip="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." aria-label="Definition: Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Dense <span class="pill-info" tabindex="0" title="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-tip="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." aria-label="Definition: Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Recurrent <span class="pill-info" tabindex="0" title="Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." data-tip="Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." aria-label="Definition: Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </div> </td> <td data-astro-cid-wmd6b3pc> <span class="mono" data-astro-cid-wmd6b3pc>PyTorch</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>457.9k</strong> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>102.4M</strong> </td> </tr><tr data-model-row data-model-id="deepconv_lstm_iswc" data-model-name="DeepConvShallowLSTM" data-model-paper-title="Improving Deep Learning for HAR with Shallow LSTMs" data-model-paper-url="https://dl.acm.org/doi/pdf/10.1145/3460421.3480419" data-model-year="2021" data-model-params="399.9k" data-model-flops="207.6M" data-model-authors="[]" data-architecture-parts="cnn dense rnn" data-framework="torch" data-params-value="399900" data-flops-value="207600000" data-sort-index="8" data-sort-year="2021" data-sort-framework="PyTorch" data-sort-params="399900" data-sort-flops="207600000" tabindex="0" aria-label="Open model details: DeepConvShallowLSTM" data-astro-cid-wmd6b3pc> <td class="name-cell" data-astro-cid-wmd6b3pc> <span class="name-title" data-astro-cid-wmd6b3pc> <svg class="entity-marker" width="15" height="15" viewBox="-10 -10 20 20" aria-hidden="true" focusable="false" data-astro-cid-njtl7dsr> <path d="M -8 5 A 8 8 0 0 1 8 5 H 4.2 A 4.2 4.2 0 0 0 -4.2 5 Z" fill="#6d597a" fill-rule="evenodd" data-astro-cid-njtl7dsr></path> </svg> <strong data-astro-cid-wmd6b3pc>DeepConvShallowLSTM</strong> </span> <span class="name-meta" data-astro-cid-wmd6b3pc>Affiliations withheld during review</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>2021</strong> </td> <td data-astro-cid-wmd6b3pc> <div class="pill-list" aria-label="Components: Convolutional Dense Recurrent" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Convolutional <span class="pill-info" tabindex="0" title="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-tip="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." aria-label="Definition: Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Dense <span class="pill-info" tabindex="0" title="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-tip="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." aria-label="Definition: Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Recurrent <span class="pill-info" tabindex="0" title="Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." data-tip="Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." aria-label="Definition: Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </div> </td> <td data-astro-cid-wmd6b3pc> <span class="mono" data-astro-cid-wmd6b3pc>PyTorch</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>399.9k</strong> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>207.6M</strong> </td> </tr><tr data-model-row data-model-id="sa_har" data-model-name="SA-HAR" data-model-paper-title="Human Activity Recognition from Wearable Sensor Data Using Self-Attention" data-model-paper-url="https://arxiv.org/pdf/2003.09018" data-model-year="2020" data-model-params="401.3k" data-model-flops="121.5M" data-model-authors="[]" data-architecture-parts="attn cnn dense" data-framework="torch" data-params-value="401300" data-flops-value="121500000" data-sort-index="9" data-sort-year="2020" data-sort-framework="PyTorch" data-sort-params="401300" data-sort-flops="121500000" tabindex="0" aria-label="Open model details: SA-HAR" data-astro-cid-wmd6b3pc> <td class="name-cell" data-astro-cid-wmd6b3pc> <span class="name-title" data-astro-cid-wmd6b3pc> <svg class="entity-marker" width="15" height="15" viewBox="-10 -10 20 20" aria-hidden="true" focusable="false" data-astro-cid-njtl7dsr> <path d="M 0 -8 C 2.7 -8 4.2 -6.3 4.2 -4.2 C 6.3 -4.2 8 -2.7 8 0 C 8 2.7 6.3 4.2 4.2 4.2 C 4.2 6.3 2.7 8 0 8 C -2.7 8 -4.2 6.3 -4.2 4.2 C -6.3 4.2 -8 2.7 -8 0 C -8 -2.7 -6.3 -4.2 -4.2 -4.2 C -4.2 -6.3 -2.7 -8 0 -8 Z" fill="#2a9d8f" fill-rule="evenodd" data-astro-cid-njtl7dsr></path> </svg> <strong data-astro-cid-wmd6b3pc>SA-HAR</strong> </span> <span class="name-meta" data-astro-cid-wmd6b3pc>Affiliations withheld during review</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>2020</strong> </td> <td data-astro-cid-wmd6b3pc> <div class="pill-list" aria-label="Components: Attention Convolutional Dense" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Attention <span class="pill-info" tabindex="0" title="Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention." data-tip="Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention." aria-label="Definition: Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Convolutional <span class="pill-info" tabindex="0" title="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-tip="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." aria-label="Definition: Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Dense <span class="pill-info" tabindex="0" title="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-tip="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." aria-label="Definition: Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </div> </td> <td data-astro-cid-wmd6b3pc> <span class="mono" data-astro-cid-wmd6b3pc>PyTorch</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>401.3k</strong> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>121.5M</strong> </td> </tr><tr data-model-row data-model-id="deepconv_lstm_attention" data-model-name="DeepConvLSTM-Attn" data-model-paper-title="On Attention Models for Human Activity Recognition" data-model-paper-url="https://arxiv.org/pdf/1805.07648" data-model-year="2018" data-model-params="474.6k" data-model-flops="179.9M" data-model-authors="[]" data-architecture-parts="attn cnn dense rnn" data-framework="torch" data-params-value="474600" data-flops-value="179900000" data-sort-index="10" data-sort-year="2018" data-sort-framework="PyTorch" data-sort-params="474600" data-sort-flops="179900000" tabindex="0" aria-label="Open model details: DeepConvLSTM-Attn" data-astro-cid-wmd6b3pc> <td class="name-cell" data-astro-cid-wmd6b3pc> <span class="name-title" data-astro-cid-wmd6b3pc> <svg class="entity-marker" width="15" height="15" viewBox="-10 -10 20 20" aria-hidden="true" focusable="false" data-astro-cid-njtl7dsr> <path d="M 0 -9.03 L 2.66 -3.65 L 8.59 -2.79 L 4.3 1.39 L 5.3 7.3 L 0 4.52 L -5.3 7.3 L -4.3 1.39 L -8.59 -2.79 L -2.66 -3.65 Z" fill="#7f5539" fill-rule="evenodd" data-astro-cid-njtl7dsr></path> </svg> <strong data-astro-cid-wmd6b3pc>DeepConvLSTM-Attn</strong> </span> <span class="name-meta" data-astro-cid-wmd6b3pc>Affiliations withheld during review</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>2018</strong> </td> <td data-astro-cid-wmd6b3pc> <div class="pill-list" aria-label="Components: Attention Convolutional Dense Recurrent" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Attention <span class="pill-info" tabindex="0" title="Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention." data-tip="Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention." aria-label="Definition: Uses learned, input-dependent weights to emphasize relevant timesteps, sensor channels, or features; includes transformer-style attention." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Convolutional <span class="pill-info" tabindex="0" title="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-tip="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." aria-label="Definition: Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Dense <span class="pill-info" tabindex="0" title="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-tip="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." aria-label="Definition: Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Recurrent <span class="pill-info" tabindex="0" title="Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." data-tip="Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." aria-label="Definition: Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </div> </td> <td data-astro-cid-wmd6b3pc> <span class="mono" data-astro-cid-wmd6b3pc>PyTorch</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>474.6k</strong> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>179.9M</strong> </td> </tr><tr data-model-row data-model-id="lstms_ensemble" data-model-name="Guan-LSTM" data-model-paper-title="Ensembles of Deep LSTM Learners for Activity Recognition Using Wearables" data-model-paper-url="https://arxiv.org/pdf/1703.09370" data-model-year="2017" data-model-params="798.0k" data-model-flops="205.6M" data-model-authors="[]" data-architecture-parts="dense rnn" data-framework="torch" data-params-value="798000" data-flops-value="205600000" data-sort-index="11" data-sort-year="2017" data-sort-framework="PyTorch" data-sort-params="798000" data-sort-flops="205600000" tabindex="0" aria-label="Open model details: Guan-LSTM" data-astro-cid-wmd6b3pc> <td class="name-cell" data-astro-cid-wmd6b3pc> <span class="name-title" data-astro-cid-wmd6b3pc> <svg class="entity-marker" width="15" height="15" viewBox="-10 -10 20 20" aria-hidden="true" focusable="false" data-astro-cid-njtl7dsr> <path d="M -8 -6 C -7 2.5 -4.5 8 0 8 C 4.5 8 7 2.5 8 -6 C 5 -1.2 2.2 1 0 1 C -2.2 1 -5 -1.2 -8 -6 Z" fill="#b35806" fill-rule="evenodd" data-astro-cid-njtl7dsr></path> </svg> <strong data-astro-cid-wmd6b3pc>Guan-LSTM</strong> </span> <span class="name-meta" data-astro-cid-wmd6b3pc>Affiliations withheld during review</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>2017</strong> </td> <td data-astro-cid-wmd6b3pc> <div class="pill-list" aria-label="Components: Dense Recurrent" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Dense <span class="pill-info" tabindex="0" title="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-tip="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." aria-label="Definition: Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Recurrent <span class="pill-info" tabindex="0" title="Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." data-tip="Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." aria-label="Definition: Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </div> </td> <td data-astro-cid-wmd6b3pc> <span class="mono" data-astro-cid-wmd6b3pc>PyTorch</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>798.0k</strong> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>205.6M</strong> </td> </tr><tr data-model-row data-model-id="deepconv_lstm" data-model-name="DeepConvLSTM" data-model-paper-title="Deep Convolutional and LSTM Recurrent Neural Networks for Multimodal Wearable Activity Recognition" data-model-paper-url="https://www.mdpi.com/1424-8220/16/1/115/pdf" data-model-year="2016" data-model-params="457.9k" data-model-flops="176.2M" data-model-authors="[]" data-architecture-parts="cnn dense rnn" data-framework="torch" data-params-value="457900" data-flops-value="176200000" data-sort-index="12" data-sort-year="2016" data-sort-framework="PyTorch" data-sort-params="457900" data-sort-flops="176200000" tabindex="0" aria-label="Open model details: DeepConvLSTM" data-astro-cid-wmd6b3pc> <td class="name-cell" data-astro-cid-wmd6b3pc> <span class="name-title" data-astro-cid-wmd6b3pc> <svg class="entity-marker" width="15" height="15" viewBox="-10 -10 20 20" aria-hidden="true" focusable="false" data-astro-cid-njtl7dsr> <path d="M 0 7.8 C -1.3 6.4 -7.3 2.6 -7.3 -2.4 C -7.3 -6.7 -2 -8 0 -4.5 C 2 -8 7.3 -6.7 7.3 -2.4 C 7.3 2.6 1.3 6.4 0 7.8 Z" fill="#9c6644" fill-rule="evenodd" data-astro-cid-njtl7dsr></path> </svg> <strong data-astro-cid-wmd6b3pc>DeepConvLSTM</strong> </span> <span class="name-meta" data-astro-cid-wmd6b3pc>Affiliations withheld during review</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>2016</strong> </td> <td data-astro-cid-wmd6b3pc> <div class="pill-list" aria-label="Components: Convolutional Dense Recurrent" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Convolutional <span class="pill-info" tabindex="0" title="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-tip="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." aria-label="Definition: Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Dense <span class="pill-info" tabindex="0" title="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-tip="Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." aria-label="Definition: Uses fully connected layers in which each output combines all inputs, commonly for feature mixing or classification." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span><span class="pill" data-astro-cid-wmd6b3pc> Recurrent <span class="pill-info" tabindex="0" title="Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." data-tip="Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." aria-label="Definition: Uses sequence layers such as LSTMs or GRUs that carry hidden state across timesteps to model temporal dependencies." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </div> </td> <td data-astro-cid-wmd6b3pc> <span class="mono" data-astro-cid-wmd6b3pc>PyTorch</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>457.9k</strong> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>176.2M</strong> </td> </tr><tr data-model-row data-model-id="cnn_har" data-model-name="CNN-HAR" data-model-paper-title="Deep Convolutional Neural Networks on Multichannel Time Series for Human Activity Recognition" data-model-paper-url="https://www.ijcai.org/Proceedings/15/Papers/561.pdf" data-model-year="2015" data-model-params="63.2k" data-model-flops="11.3M" data-model-authors="[]" data-architecture-parts="cnn" data-framework="torch" data-params-value="63200" data-flops-value="11300000" data-sort-index="13" data-sort-year="2015" data-sort-framework="PyTorch" data-sort-params="63200" data-sort-flops="11300000" tabindex="0" aria-label="Open model details: CNN-HAR" data-astro-cid-wmd6b3pc> <td class="name-cell" data-astro-cid-wmd6b3pc> <span class="name-title" data-astro-cid-wmd6b3pc> <svg class="entity-marker" width="15" height="15" viewBox="-10 -10 20 20" aria-hidden="true" focusable="false" data-astro-cid-njtl7dsr> <path d="M 0 -6.2 A 6.2 6.2 0 1 1 0 6.2 A 6.2 6.2 0 1 1 0 -6.2 Z" fill="#b35806" fill-rule="evenodd" data-astro-cid-njtl7dsr></path> </svg> <strong data-astro-cid-wmd6b3pc>CNN-HAR</strong> </span> <span class="name-meta" data-astro-cid-wmd6b3pc>Affiliations withheld during review</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>2015</strong> </td> <td data-astro-cid-wmd6b3pc> <div class="pill-list" aria-label="Components: Convolutional" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Convolutional <span class="pill-info" tabindex="0" title="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-tip="Uses learned convolutional filters over time or sensor channels to detect local activity patterns." aria-label="Definition: Uses learned convolutional filters over time or sensor channels to detect local activity patterns." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </div> </td> <td data-astro-cid-wmd6b3pc> <span class="mono" data-astro-cid-wmd6b3pc>PyTorch</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>63.2k</strong> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>11.3M</strong> </td> </tr><tr data-model-row data-model-id="knn" data-model-name="k-NN" data-model-paper-title="k-NN" data-model-paper-url data-model-year data-model-params data-model-flops data-model-authors="[]" data-architecture-parts="fe" data-framework="sklearn" data-params-value data-flops-value data-sort-index="14" data-sort-year data-sort-framework="scikit-learn" data-sort-params data-sort-flops tabindex="0" aria-label="Open model details: k-NN" data-astro-cid-wmd6b3pc> <td class="name-cell" data-astro-cid-wmd6b3pc> <span class="name-title" data-astro-cid-wmd6b3pc> <svg class="entity-marker" width="15" height="15" viewBox="-10 -10 20 20" aria-hidden="true" focusable="false" data-astro-cid-njtl7dsr> <path d="M 0 -8.04 L 8.04 6.89 L -8.04 6.89 Z" fill="#1d5f91" fill-rule="evenodd" data-astro-cid-njtl7dsr></path> </svg> <strong data-astro-cid-wmd6b3pc>k-NN</strong> </span> <span class="name-meta" data-astro-cid-wmd6b3pc>Affiliations withheld during review · k=5, distance-weighted</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>-</strong> </td> <td data-astro-cid-wmd6b3pc> <div class="pill-list" aria-label="Components: Handcrafted" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Handcrafted <span class="pill-info" tabindex="0" title="Uses manually designed statistical, temporal, or frequency features before classification instead of learning every representation end to end." data-tip="Uses manually designed statistical, temporal, or frequency features before classification instead of learning every representation end to end." aria-label="Definition: Uses manually designed statistical, temporal, or frequency features before classification instead of learning every representation end to end." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </div> </td> <td data-astro-cid-wmd6b3pc> <span class="mono" data-astro-cid-wmd6b3pc>scikit-learn</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>-</strong> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>-</strong> </td> </tr><tr data-model-row data-model-id="random_forest" data-model-name="Random Forest" data-model-paper-title="Random Forest" data-model-paper-url data-model-year data-model-params data-model-flops data-model-authors="[]" data-architecture-parts="fe" data-framework="sklearn" data-params-value data-flops-value data-sort-index="15" data-sort-year data-sort-framework="scikit-learn" data-sort-params data-sort-flops tabindex="0" aria-label="Open model details: Random Forest" data-astro-cid-wmd6b3pc> <td class="name-cell" data-astro-cid-wmd6b3pc> <span class="name-title" data-astro-cid-wmd6b3pc> <svg class="entity-marker" width="15" height="15" viewBox="-10 -10 20 20" aria-hidden="true" focusable="false" data-astro-cid-njtl7dsr> <path d="M -2.4 -7.5 H 2.4 V -2.4 H 7.5 V 2.4 H 2.4 V 7.5 H -2.4 V 2.4 H -7.5 V -2.4 H -2.4 Z" fill="#588157" fill-rule="evenodd" data-astro-cid-njtl7dsr></path> </svg> <strong data-astro-cid-wmd6b3pc>Random Forest</strong> </span> <span class="name-meta" data-astro-cid-wmd6b3pc>Affiliations withheld during review · 100 trees, depth=8</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>-</strong> </td> <td data-astro-cid-wmd6b3pc> <div class="pill-list" aria-label="Components: Handcrafted" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Handcrafted <span class="pill-info" tabindex="0" title="Uses manually designed statistical, temporal, or frequency features before classification instead of learning every representation end to end." data-tip="Uses manually designed statistical, temporal, or frequency features before classification instead of learning every representation end to end." aria-label="Definition: Uses manually designed statistical, temporal, or frequency features before classification instead of learning every representation end to end." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </div> </td> <td data-astro-cid-wmd6b3pc> <span class="mono" data-astro-cid-wmd6b3pc>scikit-learn</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>-</strong> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>-</strong> </td> </tr><tr data-model-row data-model-id="svm" data-model-name="SVM" data-model-paper-title="SVM" data-model-paper-url data-model-year data-model-params data-model-flops data-model-authors="[]" data-architecture-parts="fe" data-framework="sklearn" data-params-value data-flops-value data-sort-index="16" data-sort-year data-sort-framework="scikit-learn" data-sort-params data-sort-flops tabindex="0" aria-label="Open model details: SVM" data-astro-cid-wmd6b3pc> <td class="name-cell" data-astro-cid-wmd6b3pc> <span class="name-title" data-astro-cid-wmd6b3pc> <svg class="entity-marker" width="15" height="15" viewBox="-10 -10 20 20" aria-hidden="true" focusable="false" data-astro-cid-njtl7dsr> <path d="M 0 -6.2 A 6.2 6.2 0 1 1 0 6.2 A 6.2 6.2 0 1 1 0 -6.2 Z" fill="#c1121f" fill-rule="evenodd" data-astro-cid-njtl7dsr></path> </svg> <strong data-astro-cid-wmd6b3pc>SVM</strong> </span> <span class="name-meta" data-astro-cid-wmd6b3pc>Affiliations withheld during review · RBF kernel, C=1</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>-</strong> </td> <td data-astro-cid-wmd6b3pc> <div class="pill-list" aria-label="Components: Handcrafted" data-astro-cid-wmd6b3pc> <span class="pill" data-astro-cid-wmd6b3pc> Handcrafted <span class="pill-info" tabindex="0" title="Uses manually designed statistical, temporal, or frequency features before classification instead of learning every representation end to end." data-tip="Uses manually designed statistical, temporal, or frequency features before classification instead of learning every representation end to end." aria-label="Definition: Uses manually designed statistical, temporal, or frequency features before classification instead of learning every representation end to end." data-astro-cid-wmd6b3pc>
+ⓘ
+</span> </span> </div> </td> <td data-astro-cid-wmd6b3pc> <span class="mono" data-astro-cid-wmd6b3pc>scikit-learn</span> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>-</strong> </td> <td data-astro-cid-wmd6b3pc> <strong class="metric" data-astro-cid-wmd6b3pc>-</strong> </td> </tr> </tbody> </table> </div> </section> <div class="modal-layer" data-model-modal hidden role="presentation" data-astro-cid-wmd6b3pc> <button class="modal-backdrop" type="button" aria-label="Close model details" data-model-modal-close data-astro-cid-wmd6b3pc></button> <section class="model-modal" role="dialog" aria-modal="true" aria-labelledby="model-detail-title" tabindex="-1" data-astro-cid-wmd6b3pc> <div class="model-modal-header" data-astro-cid-wmd6b3pc> <div data-astro-cid-wmd6b3pc> <h2 id="model-detail-title" data-model-modal-title data-astro-cid-wmd6b3pc></h2> <a class="modal-paper-title" href="" target="_blank" rel="noreferrer" data-model-modal-paper data-astro-cid-wmd6b3pc> <span class="paper-title-icon" aria-hidden="true" data-astro-cid-wmd6b3pc> <svg viewBox="0 0 24 24" data-astro-cid-wmd6b3pc> <path d="M7 3.5h7l3 3V20.5H7z" data-astro-cid-wmd6b3pc></path> <path d="M14 3.5V7h3" data-astro-cid-wmd6b3pc></path> <path d="M9.5 11h5M9.5 14h5M9.5 17h3" data-astro-cid-wmd6b3pc></path> </svg> </span> <span data-model-modal-paper-title data-astro-cid-wmd6b3pc></span> </a> <span class="modal-paper-title muted" data-model-modal-paper-pending hidden data-astro-cid-wmd6b3pc> <span class="paper-title-icon" aria-hidden="true" data-astro-cid-wmd6b3pc> <svg viewBox="0 0 24 24" data-astro-cid-wmd6b3pc> <path d="M7 3.5h7l3 3V20.5H7z" data-astro-cid-wmd6b3pc></path> <path d="M14 3.5V7h3" data-astro-cid-wmd6b3pc></path> <path d="M9.5 11h5M9.5 14h5M9.5 17h3" data-astro-cid-wmd6b3pc></path> </svg> </span> <span data-model-modal-paper-pending-title data-astro-cid-wmd6b3pc></span> </span> <ul class="author-list modal-author-list" data-model-modal-authors data-astro-cid-wmd6b3pc></ul> </div> <button class="modal-close" type="button" aria-label="Close model details" data-model-modal-close data-astro-cid-wmd6b3pc></button> </div> <div class="detail-metrics" aria-label="Model size and compute" data-astro-cid-wmd6b3pc> <div data-astro-cid-wmd6b3pc> <span data-astro-cid-wmd6b3pc>Year</span> <strong data-model-modal-field="year" data-astro-cid-wmd6b3pc></strong> </div> <div data-astro-cid-wmd6b3pc> <span data-astro-cid-wmd6b3pc>Params*</span> <strong data-model-modal-field="params" data-astro-cid-wmd6b3pc></strong> </div> <div data-astro-cid-wmd6b3pc> <span data-astro-cid-wmd6b3pc>FLOPs*</span> <strong data-model-modal-field="flops" data-astro-cid-wmd6b3pc></strong> </div> </div> <p class="model-size-note" data-astro-cid-wmd6b3pc>
+* <strong data-astro-cid-wmd6b3pc>Model size setup.</strong> These counts are reported for 6
+          sensors, 5 classes, and 128 timesteps.
+</p> </section> </div>  </main>  <footer class="review-notice">Anonymous submission for double-blind review.</footer></body></html> <script>
+  const modelRows = Array.from(document.querySelectorAll("[data-model-row]"));
+  const modelTimelinePoints = Array.from(document.querySelectorAll("[data-timeline-point]"));
+  const modelTimelineVisibleCount = document.querySelector("[data-timeline-visible-count]");
+  const modelModal = document.querySelector("[data-model-modal]");
+  const modelDialog = modelModal?.querySelector(".model-modal");
+  const modelModalTitle = modelModal?.querySelector("[data-model-modal-title]");
+  const modelModalPaper = modelModal?.querySelector("[data-model-modal-paper]");
+  const modelModalPaperPending = modelModal?.querySelector("[data-model-modal-paper-pending]");
+  const modelModalPaperTitle = modelModal?.querySelector("[data-model-modal-paper-title]");
+  const modelModalPaperPendingTitle = modelModal?.querySelector(
+    "[data-model-modal-paper-pending-title]",
+  );
+  const modelModalAuthors = modelModal?.querySelector("[data-model-modal-authors]");
+  const modelTableBody = document.querySelector("[data-model-table-body]");
+  const modelSortButtons = Array.from(document.querySelectorAll("[data-sort-key]"));
+  const modelModalFields = {
+    year: modelModal?.querySelector('[data-model-modal-field="year"]'),
+    params: modelModal?.querySelector('[data-model-modal-field="params"]'),
+    flops: modelModal?.querySelector('[data-model-modal-field="flops"]'),
+  };
+  const visibleModelCount = document.querySelector("[data-visible-model-count]");
+  const componentMatchInput = document.querySelector("[data-component-match-exact]");
+  const architectureTooltip = document.createElement("div");
+  architectureTooltip.className = "architecture-pill-tooltip";
+  architectureTooltip.id = "architecture-pill-tooltip";
+  architectureTooltip.setAttribute("role", "tooltip");
+  Object.assign(architectureTooltip.style, {
+    position: "fixed",
+    zIndex: "120",
+    maxWidth: "min(280px, calc(100vw - 24px))",
+    padding: "8px 10px",
+    border: "1px solid lightgray",
+    borderRadius: "7px",
+    background: "var(--ink)",
+    color: "var(--panel)",
+    fontFamily:
+      '"baselGrotesk", "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    fontSize: "0.74rem",
+    fontWeight: "500",
+    lineHeight: "1.35",
+    pointerEvents: "none",
+    textAlign: "left",
+    whiteSpace: "normal",
+  });
+  architectureTooltip.hidden = true;
+  document.body.append(architectureTooltip);
+  let lastModelTrigger = null;
+  const modelSortState = {
+    key: "year",
+    direction: "desc",
+    type: "number",
+  };
+  const groups = {
+    architecture: {
+      allLabel: "All components",
+      noneLabel: "No components",
+      plural: "components",
+      inputs: Array.from(document.querySelectorAll('[data-filter-kind="architecture"]')),
+      summary: document.querySelector('[data-filter-summary="architecture"]'),
+      count: document.querySelector('[data-filter-count="architecture"]'),
+    },
+    framework: {
+      allLabel: "All frameworks",
+      noneLabel: "No frameworks",
+      plural: "frameworks",
+      inputs: Array.from(document.querySelectorAll('[data-filter-kind="framework"]')),
+      summary: document.querySelector('[data-filter-summary="framework"]'),
+      count: document.querySelector('[data-filter-count="framework"]'),
+    },
+  };
+  const ranges = {
+    params: {
+      min: document.querySelector('[data-range-kind="params"][data-range-bound="min"]'),
+      max: document.querySelector('[data-range-kind="params"][data-range-bound="max"]'),
+      summary: document.querySelector('[data-range-summary="params"]'),
+      count: document.querySelector('[data-range-count="params"]'),
+      minValue: document.querySelector('[data-range-value="params-min"]'),
+      maxValue: document.querySelector('[data-range-value="params-max"]'),
+      track: document.querySelector('[data-range-track="params"]'),
+    },
+    flops: {
+      min: document.querySelector('[data-range-kind="flops"][data-range-bound="min"]'),
+      max: document.querySelector('[data-range-kind="flops"][data-range-bound="max"]'),
+      summary: document.querySelector('[data-range-summary="flops"]'),
+      count: document.querySelector('[data-range-count="flops"]'),
+      minValue: document.querySelector('[data-range-value="flops-min"]'),
+      maxValue: document.querySelector('[data-range-value="flops-max"]'),
+      track: document.querySelector('[data-range-track="flops"]'),
+    },
+  };
+
+  function isInteractiveTarget(target) {
+    return target instanceof Element && Boolean(target.closest("a, button, .pill-info"));
+  }
+
+  function setModelModalText(element, value) {
+    if (element) element.textContent = value || "-";
+  }
+
+  function clampNumber(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+  }
+
+  function positionArchitectureTooltip(trigger) {
+    const triggerRect = trigger.getBoundingClientRect();
+    const tooltipRect = architectureTooltip.getBoundingClientRect();
+    const left = clampNumber(
+      triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2,
+      8,
+      window.innerWidth - tooltipRect.width - 8,
+    );
+    const belowTop = triggerRect.bottom + 8;
+    const aboveTop = triggerRect.top - tooltipRect.height - 8;
+    const top =
+      belowTop + tooltipRect.height <= window.innerHeight - 8
+        ? belowTop
+        : Math.max(8, aboveTop);
+
+    architectureTooltip.style.left = `${left}px`;
+    architectureTooltip.style.top = `${top}px`;
+  }
+
+  function showArchitectureTooltip(trigger) {
+    const definition = trigger.dataset.tip || trigger.getAttribute("title") || "";
+    if (!definition) return;
+
+    architectureTooltip.textContent = definition;
+    architectureTooltip.hidden = false;
+    trigger.setAttribute("aria-describedby", architectureTooltip.id);
+    positionArchitectureTooltip(trigger);
+  }
+
+  function hideArchitectureTooltip(trigger) {
+    architectureTooltip.hidden = true;
+    trigger.removeAttribute("aria-describedby");
+  }
+
+  function bindArchitectureTooltips(root = document) {
+    root.querySelectorAll(".pill-info").forEach((info) => {
+      if (info.dataset.tooltipBound === "true") return;
+      info.dataset.tooltipBound = "true";
+      if (!info.dataset.tip && info.title) info.dataset.tip = info.title;
+      if (info.title) {
+        info.dataset.nativeTitle = info.title;
+        info.removeAttribute("title");
+      }
+
+      info.addEventListener("mouseenter", () => showArchitectureTooltip(info));
+      info.addEventListener("mousemove", () => positionArchitectureTooltip(info));
+      info.addEventListener("mouseleave", () => hideArchitectureTooltip(info));
+      info.addEventListener("focus", () => showArchitectureTooltip(info));
+      info.addEventListener("blur", () => hideArchitectureTooltip(info));
+      info.addEventListener("pointerdown", (event) => {
+        event.stopPropagation();
+      });
+      info.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        showArchitectureTooltip(info);
+      });
+      info.addEventListener("keydown", (event) => {
+        event.stopPropagation();
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          showArchitectureTooltip(info);
+        } else if (event.key === "Escape") {
+          hideArchitectureTooltip(info);
+        }
+      });
+    });
+  }
+
+  function modelAuthors(row) {
+    try {
+      const authors = JSON.parse(row.dataset.modelAuthors || "[]");
+      return Array.isArray(authors) ? authors : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function renderModelAuthors(authors) {
+    if (!modelModalAuthors) return;
+
+    modelModalAuthors.replaceChildren();
+    if (authors.length === 0) {
+      const item = document.createElement("li");
+      const pending = document.createElement("span");
+      pending.textContent = "Author details withheld during review";
+      item.append(pending);
+      modelModalAuthors.append(item);
+      return;
+    }
+
+    authors.forEach((author) => {
+      const item = document.createElement("li");
+      const name = document.createElement("strong");
+      const affiliation = document.createElement("span");
+      name.textContent = author.name || "Author pending";
+      affiliation.textContent = author.affiliation || "Affiliation pending";
+      item.append(name, affiliation);
+      modelModalAuthors.append(item);
+    });
+  }
+
+  function openModelModal(row) {
+    if (!modelModal || !modelDialog) return;
+
+    lastModelTrigger = row;
+    setModelModalText(modelModalTitle, row.dataset.modelName);
+    const paperTitle = row.dataset.modelPaperTitle || row.dataset.modelName || "Paper pending";
+    setModelModalText(modelModalPaperTitle, paperTitle);
+    setModelModalText(modelModalPaperPendingTitle, paperTitle);
+    setModelModalText(modelModalFields.year, row.dataset.modelYear);
+    setModelModalText(modelModalFields.params, row.dataset.modelParams);
+    setModelModalText(modelModalFields.flops, row.dataset.modelFlops);
+    renderModelAuthors(modelAuthors(row));
+
+    const paperUrl = row.dataset.modelPaperUrl || "";
+    if (modelModalPaper && modelModalPaperPending) {
+      modelModalPaper.hidden = !paperUrl;
+      modelModalPaperPending.hidden = Boolean(paperUrl);
+      modelModalPaper.setAttribute("href", paperUrl);
+      modelModalPaper.setAttribute(
+        "title",
+        `Open paper: ${row.dataset.modelPaperTitle || row.dataset.modelName || "Model"}`,
+      );
+    }
+
+    modelModal.hidden = false;
+    modelDialog.focus();
+  }
+
+  function closeModelModal() {
+    if (!modelModal) return;
+
+    modelModal.hidden = true;
+    if (lastModelTrigger) lastModelTrigger.focus();
+    lastModelTrigger = null;
+  }
+
+  function selectedValues(kind) {
+    return new Set(groups[kind].inputs.filter((input) => input.checked).map((input) => input.value));
+  }
+
+  function optionLabel(input) {
+    return input
+      .closest(".filter-option")
+      ?.querySelector(".filter-name-toggle")
+      ?.textContent.trim();
+  }
+
+  function updateSummary(kind) {
+    const group = groups[kind];
+    const checked = group.inputs.filter((input) => input.checked);
+    const selectedCount = checked.length;
+    const total = group.inputs.length;
+
+    if (group.count) group.count.textContent = `${selectedCount}/${total}`;
+    if (!group.summary) return;
+    if (selectedCount === total) {
+      group.summary.textContent = group.allLabel;
+    } else if (selectedCount === 0) {
+      group.summary.textContent = group.noneLabel;
+    } else if (selectedCount === 1) {
+      group.summary.textContent = optionLabel(checked[0]) ?? `1 ${kind}`;
+    } else {
+      group.summary.textContent = `${selectedCount} ${group.plural}`;
+    }
+
+    if (
+      kind === "architecture" &&
+      componentMatchInput?.checked &&
+      selectedCount > 0 &&
+      selectedCount < total
+    ) {
+      group.summary.textContent += " · exact";
+    }
+  }
+
+  function compactMetric(value) {
+    if (!Number.isFinite(value)) return "0";
+    if (value >= 1_000_000_000) return `${scaledMetric(value / 1_000_000_000)}B`;
+    if (value >= 1_000_000) return `${scaledMetric(value / 1_000_000)}M`;
+    if (value >= 1_000) return `${scaledMetric(value / 1_000)}k`;
+    return value.toLocaleString("en-US");
+  }
+
+  function scaledMetric(value) {
+    return value.toFixed(value >= 10 || Number.isInteger(value) ? 0 : 1).replace(/\.0$/, "");
+  }
+
+  function inputNumber(input, fallback) {
+    const value = Number(input?.value);
+    return Number.isFinite(value) ? value : fallback;
+  }
+
+  function rangeState(kind) {
+    const range = ranges[kind];
+    const defaultMin = inputNumber({ value: range.min?.dataset.rangeDefault }, 0);
+    const defaultMax = inputNumber({ value: range.max?.dataset.rangeDefault }, 0);
+    const min = Math.max(0, inputNumber(range.min, defaultMin));
+    const max = Math.max(0, inputNumber(range.max, defaultMax));
+
+    return {
+      min,
+      max,
+      defaultMin,
+      defaultMax,
+      isDefault: min <= defaultMin && max >= defaultMax,
+    };
+  }
+
+  function updateRangeSummary(kind, state = rangeState(kind)) {
+    const range = ranges[kind];
+    if (range.summary) {
+      range.summary.textContent = `${compactMetric(state.min)} - ${compactMetric(state.max)}`;
+    }
+    if (range.count) {
+      range.count.textContent = state.isDefault ? "range" : "filtered";
+    }
+    if (range.minValue) range.minValue.textContent = compactMetric(state.min);
+    if (range.maxValue) range.maxValue.textContent = compactMetric(state.max);
+    if (range.track && state.defaultMax > state.defaultMin) {
+      const start = ((state.min - state.defaultMin) / (state.defaultMax - state.defaultMin)) * 100;
+      const end = ((state.max - state.defaultMin) / (state.defaultMax - state.defaultMin)) * 100;
+      range.track.style.setProperty("--range-start", `${start}%`);
+      range.track.style.setProperty("--range-end", `${end}%`);
+    }
+  }
+
+  function isMetricInRange(rawValue, state) {
+    if (rawValue === undefined || rawValue === null || rawValue === "") {
+      return state.isDefault;
+    }
+
+    const value = Number(rawValue);
+    if (!Number.isFinite(value)) return state.isDefault;
+    return value >= state.min && value <= state.max;
+  }
+
+  function sortRawValue(row, key) {
+    return row.getAttribute(`data-sort-${key}`) ?? "";
+  }
+
+  function sortNumberValue(row, key) {
+    const rawValue = sortRawValue(row, key).trim();
+    if (!rawValue) return null;
+
+    const value = Number(rawValue);
+    return Number.isFinite(value) ? value : null;
+  }
+
+  function compareSortValues(a, b, state) {
+    const direction = state.direction === "asc" ? 1 : -1;
+
+    if (state.type === "number") {
+      const aValue = sortNumberValue(a, state.key);
+      const bValue = sortNumberValue(b, state.key);
+
+      if (aValue === null && bValue === null) return compareOriginalIndex(a, b);
+      if (aValue === null) return 1;
+      if (bValue === null) return -1;
+      if (aValue !== bValue) return (aValue - bValue) * direction;
+      return compareOriginalIndex(a, b);
+    }
+
+    const aValue = sortRawValue(a, state.key).toLowerCase();
+    const bValue = sortRawValue(b, state.key).toLowerCase();
+
+    if (!aValue && !bValue) return compareOriginalIndex(a, b);
+    if (!aValue) return 1;
+    if (!bValue) return -1;
+    return aValue.localeCompare(bValue) * direction || compareOriginalIndex(a, b);
+  }
+
+  function compareOriginalIndex(a, b) {
+    return Number(a.dataset.sortIndex ?? 0) - Number(b.dataset.sortIndex ?? 0);
+  }
+
+  function updateModelSortButtons() {
+    modelSortButtons.forEach((button) => {
+      const isActive = button.dataset.sortKey === modelSortState.key;
+      button.classList.toggle("is-active", isActive);
+      button.dataset.sortDirection = isActive ? modelSortState.direction : "";
+      button.setAttribute("aria-pressed", isActive ? "true" : "false");
+      button
+        .closest("th")
+        ?.setAttribute(
+          "aria-sort",
+          isActive ? (modelSortState.direction === "asc" ? "ascending" : "descending") : "none",
+        );
+    });
+  }
+
+  function applyModelSort() {
+    if (!modelTableBody) return;
+
+    [...modelRows]
+      .sort((a, b) => compareSortValues(a, b, modelSortState))
+      .forEach((row) => modelTableBody.append(row));
+    updateModelSortButtons();
+  }
+
+  function updateModelFilters() {
+    const selectedArchitecture = selectedValues("architecture");
+    const selectedFramework = selectedValues("framework");
+    const paramsRange = rangeState("params");
+    const flopsRange = rangeState("flops");
+    let visibleCount = 0;
+
+    modelRows.forEach((row) => {
+      const architectureParts = (row.dataset.architectureParts ?? "")
+        .split(" ")
+        .filter(Boolean);
+      const allComponentsSelected = selectedArchitecture.size === groups.architecture.inputs.length;
+      const isArchitectureVisible =
+        selectedArchitecture.size > 0 &&
+        (allComponentsSelected ||
+          (componentMatchInput?.checked
+            ? architectureParts.length === selectedArchitecture.size &&
+              architectureParts.every((part) => selectedArchitecture.has(part))
+            : architectureParts.some((part) => selectedArchitecture.has(part))));
+      const isFrameworkVisible = selectedFramework.has(row.dataset.framework ?? "");
+      const isParamsVisible = isMetricInRange(row.dataset.paramsValue, paramsRange);
+      const isFlopsVisible = isMetricInRange(row.dataset.flopsValue, flopsRange);
+      const isVisible =
+        isArchitectureVisible && isFrameworkVisible && isParamsVisible && isFlopsVisible;
+
+      row.hidden = !isVisible;
+      const timelinePoint = modelTimelinePoints.find(
+        (point) => point.dataset.timelineId === row.dataset.modelId,
+      );
+      timelinePoint?.classList.toggle("is-filtered-out", !isVisible);
+      if (isVisible) visibleCount += 1;
+    });
+
+    if (visibleModelCount) visibleModelCount.textContent = String(visibleCount);
+    if (modelTimelineVisibleCount) {
+      modelTimelineVisibleCount.textContent = String(
+        modelTimelinePoints.filter((point) => !point.classList.contains("is-filtered-out")).length,
+      );
+    }
+    updateSummary("architecture");
+    updateSummary("framework");
+    updateRangeSummary("params", paramsRange);
+    updateRangeSummary("flops", flopsRange);
+  }
+
+  document.querySelectorAll("[data-filter-action]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const action = button.getAttribute("data-filter-action");
+      const [mode, kind] = action.split("-");
+      const group = groups[kind];
+
+      if (!group) return;
+      group.inputs.forEach((input) => {
+        input.checked = mode === "all";
+      });
+      updateModelFilters();
+    });
+  });
+
+  document.querySelectorAll("[data-range-reset]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const kind = button.getAttribute("data-range-reset");
+      const range = ranges[kind];
+      if (!range) return;
+
+      range.min.value = range.min.dataset.rangeDefault;
+      range.max.value = range.max.dataset.rangeDefault;
+      updateModelFilters();
+    });
+  });
+
+  document.querySelector("[data-reset-all-filters]")?.addEventListener("click", () => {
+    Object.values(groups).forEach((group) => {
+      group.inputs.forEach((input) => {
+        input.checked = true;
+      });
+    });
+    Object.values(ranges).forEach((range) => {
+      range.min.value = range.min.dataset.rangeDefault;
+      range.max.value = range.max.dataset.rangeDefault;
+    });
+    if (componentMatchInput) componentMatchInput.checked = false;
+    updateModelFilters();
+  });
+
+  document.querySelectorAll(".model-filter details").forEach((details) => {
+    details.addEventListener("toggle", () => {
+      if (!details.open) return;
+      details.closest(".filter-panel")?.querySelectorAll(".model-filter details").forEach((other) => {
+        if (other !== details) other.open = false;
+      });
+    });
+  });
+
+  Object.values(groups).forEach((group) => {
+    group.inputs.forEach((input) => {
+      input.addEventListener("change", updateModelFilters);
+    });
+  });
+
+  componentMatchInput?.addEventListener("change", () => {
+    updateModelFilters();
+  });
+
+  Object.values(ranges).forEach((range) => {
+    [range.min, range.max].forEach((input) => {
+      input.addEventListener("input", () => {
+        if (input === range.min && Number(range.min.value) > Number(range.max.value)) {
+          range.min.value = range.max.value;
+        }
+        if (input === range.max && Number(range.max.value) < Number(range.min.value)) {
+          range.max.value = range.min.value;
+        }
+        updateModelFilters();
+      });
+      input.addEventListener("change", updateModelFilters);
+    });
+  });
+
+  modelSortButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const key = button.dataset.sortKey;
+      if (!key) return;
+
+      if (modelSortState.key === key) {
+        modelSortState.direction = modelSortState.direction === "asc" ? "desc" : "asc";
+      } else {
+        modelSortState.key = key;
+        modelSortState.type = button.dataset.sortType || "string";
+        modelSortState.direction = button.dataset.sortDefault || "asc";
+      }
+
+      applyModelSort();
+    });
+  });
+
+  modelRows.forEach((row) => {
+    row.addEventListener("click", (event) => {
+      if (isInteractiveTarget(event.target)) return;
+      openModelModal(row);
+    });
+
+    row.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      openModelModal(row);
+    });
+  });
+
+  modelTimelinePoints.forEach((point) => {
+    const openTimelineModel = () => {
+      const row = modelRows.find((candidate) => candidate.dataset.modelId === point.dataset.timelineId);
+      if (row) openModelModal(row);
+    };
+
+    point.addEventListener("click", openTimelineModel);
+    point.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      openTimelineModel();
+    });
+  });
+
+  document.querySelectorAll("[data-model-modal-close]").forEach((button) => {
+    button.addEventListener("click", closeModelModal);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && modelModal && !modelModal.hidden) {
+      closeModelModal();
+    }
+  });
+
+  bindArchitectureTooltips();
+  applyModelSort();
+  updateModelFilters();
+</script>

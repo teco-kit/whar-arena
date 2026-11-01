@@ -1,20 +1,24 @@
-name: Deploy GitHub Pages
+name: Build and Deploy Review Pages
 
 on:
+  push:
+    branches: [main_annonymous]
+    paths-ignore:
+      - "docs/**"
   workflow_dispatch:
 
 permissions:
-  actions: read
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
 concurrency:
-  group: pages
+  group: review-pages
   cancel-in-progress: false
 
 jobs:
   build:
+    if: github.ref == 'refs/heads/main_annonymous'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -26,18 +30,25 @@ jobs:
       - name: Install dependencies
         working-directory: apps/web
         run: npm ci
-      - name: Build static site
+      - name: Build portable review website
         working-directory: apps/web
-        run: npm run build
-        env:
-          PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
-          PUBLIC_SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+        run: npm run build:review
+      - name: Commit generated pages for the anonymous mirror
+        run: |
+          git add docs
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Update generated review website"
+            git push origin HEAD:main_annonymous
+          fi
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
-          path: apps/web/dist
+          path: docs
 
   deploy:
+    if: github.ref == 'refs/heads/main_annonymous'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
